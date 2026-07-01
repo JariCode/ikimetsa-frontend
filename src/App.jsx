@@ -7,13 +7,14 @@ export default function App() {
   const [activeSession, setActiveSession] = useState(null);
   const [error, setError] = useState('');
   
-  // Taistelun tilat
+  // Taistelun ja noppien tilat
   const [combatLogs, setCombatLogs] = useState([]);
   const [monsterHp, setMonsterHp] = useState(25);
   const [isShaking, setIsShaking] = useState(false);
+  const [isRolling, setIsRolling] = useState(false);
+  const [diceResult, setDiceResult] = useState(null);
 
-  // Väliaikainen testi-id ennen kuin kirjautuminen liitetään tähän
-  const testUserId = "660d1a2b3c4d5e687a8b790d"; 
+  const testUserId = "660d1a2b3c4d4e688a8b7c0d"; 
 
   // Haetaan hahmoluokat tietokannasta, kun pelaaja painaa "Astu Ikimetsään"
   useEffect(() => {
@@ -52,6 +53,16 @@ export default function App() {
 
   // Taisteluvuoron suorittaminen nopanheitolla
   const handleCombatTurn = async () => {
+    if (isRolling) return;
+
+    setIsRolling(true);
+    setDiceResult(null);
+
+    // Animoidaan noppaa taustalla ennen tuloksen lukitsemista
+    const interval = setInterval(() => {
+      setDiceResult(Math.floor(Math.random() * 20) + 1);
+    }, 60);
+
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/combat/turn`, {
         method: 'POST',
@@ -64,26 +75,43 @@ export default function App() {
       });
       const data = await response.json();
 
-      setCombatLogs(data.combatLog);
-      setMonsterHp(data.monsterHp);
-      
-      setActiveSession(prev => ({
-        ...prev,
-        stats: { ...prev.stats, hp: data.playerHp },
-        inventory: [{ ...prev.inventory[0], durability: data.weaponDurability }]
-      }));
+      setTimeout(() => {
+        clearInterval(interval);
+        setIsRolling(false);
 
-      // Laukaistaan ruudun tärähdys osumasta
-      setIsShaking(true);
-      setTimeout(() => setIsShaking(false), 400);
+        // Etsitään d20-heiton tulos lokeista tai arvotaan luku jos ei löydy
+        const foundRoll = data.combatLog.find(l => l.includes('Heitit'))?.match(/\d+/)?.[0];
+        setDiceResult(foundRoll ? parseInt(foundRoll) : Math.floor(Math.random() * 8) + 12);
+
+        setCombatLogs(data.combatLog);
+        setMonsterHp(data.monsterHp);
+        
+        setActiveSession(prev => ({
+          ...prev,
+          stats: { ...prev.stats, hp: data.playerHp },
+          inventory: [{ ...prev.inventory[0], durability: data.weaponDurability }]
+        }));
+
+        setIsShaking(true);
+        setTimeout(() => setIsShaking(false), 400);
+      }, 800); // Noppa pyörii vähän alle sekunnin
+
     } catch (err) { 
+      clearInterval(interval);
+      setIsRolling(false);
       console.error('Virhe taistelussa:', err); 
     }
   };
 
-  return (
+ return (
     <div className={`game-container ${isShaking ? 'screen-hit-shake' : ''}`}>
-      <div className="fog-overlay"></div>
+      
+      {/* 🌙 PUHDAS TAUSTA: Vain kuu ja leijuva usva */}
+      <div className="dark-forest-bg">
+        <div className="blood-moon"></div>
+        <div className="fog-layer layer-1"></div>
+        <div className="fog-layer layer-2"></div>
+      </div>
 
       {/* VAIHE 1: ALKURUUTU ANIMAATIOILLA */}
       {!gameStarted && !activeSession && (
@@ -99,21 +127,24 @@ export default function App() {
         </div>
       )}
 
-      {/* VAIHE 2: HAHMON VALINTA */}
+      {/* VAIHE 2: HAHMON VALINTA (UPEA TYYLI VIEREKKÄIN) */}
       {gameStarted && !activeSession && (
         <div className="character-selection-screen">
-          <h2>Valitse Selviytyjä</h2>
+          <h2 className="section-title">Valitse Selviytyjä</h2>
           {error && <p className="error-text">{error}</p>}
           
           <div className="character-cards">
             {characterClasses.map((char) => (
               <div key={char._id} className="char-card" onClick={() => selectCharacter(char.name)}>
+                <div className="char-portrait-placeholder">
+                  {char.name === 'Metsästäjä' ? '🏹' : '🔧'}
+                </div>
                 <h3>{char.name}</h3>
                 <p className="char-desc">{char.description}</p>
                 <ul className="char-stats">
-                  <li>Elämä: {char.baseHp} HP</li>
-                  <li>Aloitusase: {char.startingWeapon?.name}</li>
-                  <li>Aloitebonus: +{char.initiativeBonus}</li>
+                  <li><strong>Elämä:</strong> {char.baseHp} HP</li>
+                  <li><strong>Aloitusase:</strong> {char.startingWeapon?.name}</li>
+                  <li><strong>Aloitebonus:</strong> +{char.initiativeBonus}</li>
                 </ul>
               </div>
             ))}
@@ -121,7 +152,7 @@ export default function App() {
         </div>
       )}
 
-      {/* VAIHE 3: PELIRUUTU JA TAISTELUAREENA */}
+      {/* VAIHE 3: PELIRUUTU (TÄYSIN ENTISENLLÄÄN + NOPPA) */}
       {activeSession && (
         <div className="game-play-screen">
           <div className="player-status-bar">
@@ -148,6 +179,15 @@ export default function App() {
               </div>
             )}
 
+            {/* Noppa ilmestyy nätisti tähän väliin heitettäessä */}
+            {diceResult !== null && (
+              <div className="dice-row">
+                <div className={`d20-visual-dice ${isRolling ? 'spinning' : 'stopped'}`}>
+                  <span>{diceResult}</span>
+                </div>
+              </div>
+            )}
+
             <div className="log-box">
               {combatLogs.length === 0 ? (
                 <p className="story-text-small">Polku katkeaa edessäsi risteyskohtaan. Puista kuuluu outoa korahtelua...</p>
@@ -160,7 +200,9 @@ export default function App() {
 
             {monsterHp > 0 && activeSession.stats.hp > 0 && (
               <div className="action-buttons">
-                <button className="attack-btn" onClick={handleCombatTurn}>Nosta ase ja Hyökkää</button>
+                <button className="attack-btn" onClick={handleCombatTurn} disabled={isRolling}>
+                  {isRolling ? 'Heitetään...' : 'Nosta ase ja Hyökkää'}
+                </button>
               </div>
             )}
           </div>
