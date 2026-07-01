@@ -13,7 +13,7 @@ export default function App() {
   const [isShaking, setIsShaking] = useState(false);
 
   // Väliaikainen testi-id ennen kuin kirjautuminen liitetään tähän
-  const testUserId = "660d1a2b3c4d5e6f7a8b7c0d"; 
+  const testUserId = "660d1a2b3c4d5e687a8b790d"; 
 
   // Haetaan hahmoluokat tietokannasta, kun pelaaja painaa "Astu Ikimetsään"
   useEffect(() => {
@@ -37,7 +37,7 @@ export default function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           userId: testUserId, 
-          characterClassName: className // Lähetetään nimi dynaamisesti tietokannasta
+          characterClassName: className
         })
       });
       
@@ -99,7 +99,7 @@ export default function App() {
         </div>
       )}
 
-      {/* VAIHE 2: HAHMON VALINTA (LADATAAN TIETOKANNASTA) */}
+      {/* VAIHE 2: HAHMON VALINTA */}
       {gameStarted && !activeSession && (
         <div className="character-selection-screen">
           <h2>Valitse Selviytyjä</h2>
@@ -125,9 +125,15 @@ export default function App() {
       {activeSession && (
         <div className="game-play-screen">
           <div className="player-status-bar">
-            <p>Hahmo: <strong>{activeSession.characterType}</strong></p>
-            <p>Kunto: <strong className={activeSession.stats.hp < 15 ? 'low-hp' : ''}>{activeSession.stats.hp} / {activeSession.stats.maxHp} HP</strong></p>
-            <p>Ase: <strong>{activeSession.inventory[0]?.name} ({activeSession.inventory[0]?.durability}/{activeSession.inventory[0]?.maxDurability} Kestävyys)</strong></p>
+            <div className="status-item">
+              <span>Hahmo:</span> <strong>{activeSession.characterType}</strong>
+            </div>
+            <div className="status-item">
+              <span>Kunto:</span> <strong className={activeSession.stats.hp < 15 ? 'low-hp' : ''}>{activeSession.stats.hp} / {activeSession.stats.maxHp} HP</strong>
+            </div>
+            <div className="status-item">
+              <span>Ase:</span> <strong>{activeSession.inventory[0]?.name} ({activeSession.inventory[0]?.durability}/{activeSession.inventory[0]?.maxDurability} Kestävyys)</strong>
+            </div>
           </div>
 
           <div className="combat-arena">
