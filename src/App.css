@@ -89,3 +89,78 @@ body {
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 0%; }
 }
+
+.character-selection-screen {
+  text-align: center;
+  z-index: 2;
+  width: 100%;
+  max-width: 800px;
+}
+
+.character-cards {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 40px;
+}
+
+.char-card {
+  background: rgba(10, 20, 10, 0.85);
+  border: 1px solid #1e3a1e;
+  padding: 25px;
+  width: 250px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 4px;
+}
+
+.char-card:hover {
+  border-color: #4ade80;
+  box-shadow: 0 0 15px rgba(74, 222, 128, 0.4);
+  transform: translateY(-5px);
+}
+
+.char-card h3 {
+  color: #4ade80;
+  font-size: 1.5rem;
+  margin-top: 0;
+}
+
+.char-desc {
+  font-size: 0.95rem;
+  color: #9ca3af;
+  line-height: 1.4;
+  height: 60px;
+}
+
+.char-stats {
+  list-style: none;
+  padding: 0;
+  text-align: left;
+  margin-top: 20px;
+  font-size: 0.9rem;
+  border-top: 1px solid #1e3a1e;
+  padding-top: 15px;
+}
+
+.char-stats li {
+  margin-bottom: 8px;
+  color: #d1d5db;
+}
+
+.player-status-bar {
+  display: flex;
+  justify-content: space-around;
+  background: #0a140a;
+  border: 1px solid #1e3a1e;
+  padding: 10px;
+  margin-bottom: 30px;
+  font-size: 0.95rem;
+}
+
+.story-text {
+  font-size: 1.2rem;
+  line-height: 1.6;
+  margin-top: 40px;
+  color: #e5e7eb;
+}
