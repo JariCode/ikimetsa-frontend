@@ -1,0 +1,608 @@
+/* ==========================================================================
+   😱 JUMP-SCARE JA YHTEISET RAUTAISET TÄRINÄT
+   ========================================================================== */
+
+.jumpscare-overlay {
+  position: fixed;
+  top: 0; 
+  left: 0; 
+  width: 100vw; 
+  height: 100vh;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #000;
+  /* Sun loistava taustavälähdys yhdistettynä raskaaseen tärinään */
+  animation: flashScreenRed 0.15s ease-in-out infinite alternate, monster-heavy-jolt 2.5s forwards;
+  overflow: hidden;
+}
+
+@keyframes flashScreenRed {
+  0% { background-color: #000000; }
+  100% { background-color: #0f0202; }
+}
+
+@keyframes monster-heavy-jolt {
+  0% { transform: scale(0.4); opacity: 0; filter: contrast(1.5); }
+  4% { transform: scale(1.2) translate(-12px, 15px); opacity: 1; filter: contrast(2); }
+  12% { transform: scale(0.95) translate(15px, -10px) rotate(-3deg); }
+  25% { transform: scale(1.15) translate(-15px, -5px) rotate(4deg); }
+  40% { transform: scale(1.05) translate(10px, 12px); }
+  60% { transform: scale(1.1) translate(-5px, -10px) rotate(-2deg); }
+  80% { transform: scale(1.15) translate(0, 0) rotate(0deg); opacity: 1; filter: contrast(1.5); }
+  92% { transform: scale(1.1); opacity: 0.4; }
+  100% { transform: scale(0.7); opacity: 0; visibility: hidden; }
+}
+
+/* Kasvojen ja pään yleinen sijoitusalue */
+.monster-reveal-card {
+  width: 600px;
+  height: 700px;
+  background: transparent;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.monster-jumpscare-face {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+
+/* ==========================================================================
+   1. VARJOHAHMO (Suippo, pitkänomainen kallo ja tyhjät, vinot silmät)
+   ========================================================================== */
+
+.varjohahmo-scare { 
+  background: radial-gradient(circle, #200000 10%, #000000 90%); 
+}
+
+/* Luodaan pitkänomainen, alaspäin kapeneva aavemainen pään muoto */
+.varjohahmo-scare .monster-jumpscare-face::before {
+  content: '';
+  position: absolute;
+  top: 15%;
+  left: 20%;
+  width: 60%;
+  height: 65%;
+  background: #050101;
+  border-radius: 50% 50% 30% 30% / 60% 60% 40% 40%; /* Suippo leuka */
+  box-shadow: 0 0 40px 15px rgba(255, 0, 0, 0.25), inset 0 0 30px #000;
+  filter: blur(2px);
+}
+
+/* Erittäin vihaiset, pystyt ja vinot silmät kallon sisällä */
+.varjohahmo-scare .monster-eye {
+  position: absolute;
+  top: 35%;
+  width: 35px;
+  height: 35px;
+  background: #ff1111;
+  box-shadow: 0 0 25px #ff0000, inset 0 0 10px #000;
+}
+.varjohahmo-scare .eye-left { 
+  left: 28%; 
+  border-radius: 100% 0 70% 0; /* Vinossa nouseva ilme */
+  transform: rotate(15deg);
+}
+.varjohahmo-scare .eye-right { 
+  right: 28%; 
+  border-radius: 0 100% 0 70%; 
+  transform: rotate(-15deg);
+}
+
+/* Luisevat, synkät kulmaviivat korostamaan raivoa */
+.varjohahmo-scare .monster-brow {
+  position: absolute;
+  top: 30%;
+  width: 50px;
+  height: 5px;
+  background: #150000;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.9);
+}
+.varjohahmo-scare .brow-left { left: 22%; transform: rotate(20deg); }
+.varjohahmo-scare .brow-right { right: 22%; transform: rotate(-20deg); }
+
+/* Ammottava, kapea ja syvä suu huutoon */
+.varjohahmo-scare .monster-mouth {
+  position: absolute;
+  bottom: 26%;
+  left: 38%;
+  width: 24%;
+  height: 75px;
+  background: #000;
+  border-radius: 50% 50% 30% 30%;
+  border: 1px solid #300000;
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
+}
+
+/* Areena */
+.monster-box-varjohahmo {
+  background: transparent;
+  border-left: 4px solid #ff3333;
+  padding: 20px;
+  color: #ffcccc;
+  text-shadow: 0 0 12px #ff3333;
+}
+
+
+/* ==========================================================================
+   2. SUOLIEJU (Leveä, epämuodostunut kallo ja kierot, tuijottavat viirunilmät)
+   ========================================================================== */
+
+.suolieju-scare { 
+  background: radial-gradient(circle, #052e16 10%, #000000 90%); 
+}
+
+/* Leveä, möykkyinen ja epäsymmetrinen pään muoto */
+.suolieju-scare .monster-jumpscare-face::before {
+  content: '';
+  position: absolute;
+  top: 18%;
+  left: 12%;
+  width: 76%;
+  height: 55%;
+  background: #020f07;
+  border-radius: 40% 60% 35% 55% / 50% 45% 55% 50%; /* Rujo ja vino */
+  box-shadow: 0 0 35px 10px rgba(34, 197, 94, 0.25);
+  filter: blur(4px);
+}
+
+/* Kierot, erikokoiset ja pahansuopaiset viirusilmät */
+.suolieju-scare .monster-eye {
+  position: absolute;
+  top: 36%;
+  background: #22c55e;
+  box-shadow: 0 0 25px #22c55e;
+}
+.suolieju-scare .eye-left { 
+  left: 22%; 
+  width: 45px; 
+  height: 14px; 
+  border-radius: 100% 0; 
+  transform: rotate(-15deg); 
+}
+.suolieju-scare .eye-right { 
+  right: 25%; 
+  width: 35px; /* Pienempi silmä tekee ilmeestä hullun */
+  height: 18px; 
+  border-radius: 0 100%; 
+  transform: rotate(20deg); 
+}
+
+/* Ruma, irvistää ja vino suu valuvilla tipeillä */
+.suolieju-scare .monster-mouth {
+  position: absolute;
+  bottom: 32%;
+  left: 22%;
+  width: 56%;
+  height: 35px;
+  background: #000;
+  border-radius: 10% 30% 50% 50%;
+  border-bottom: 3px solid #22c55e;
+}
+
+.suolieju-scare .monster-drip {
+  position: absolute;
+  background: #22c55e;
+  width: 5px;
+  border-radius: 0 0 5px 5px;
+  box-shadow: 0 0 12px #22c55e;
+}
+.suolieju-scare .drip-1 { bottom: 18%; left: 35%; height: 25px; }
+.suolieju-scare .drip-2 { bottom: 12%; left: 48%; height: 40px; }
+.suolieju-scare .drip-3 { bottom: 22%; right: 38%; height: 18px; }
+
+/* Areena */
+.monster-box-suolieju {
+  background: transparent;
+  border-left: 4px solid #22c55e;
+  padding: 20px;
+  color: #d1fae5;
+  text-shadow: 0 0 12px #22c55e;
+}
+
+
+/* ==========================================================================
+   3. KOSKENKURISTAJA (Kulmikas, massiivinen kallo ja purevat raateluhampaat)
+   ========================================================================== */
+
+.koskenkuristaja-scare { 
+  background: radial-gradient(circle, #172554 10%, #000000 90%); 
+}
+
+/* Massiivinen, kulmikas ja raskas pään muoto */
+.koskenkuristaja-scare .monster-jumpscare-face::before {
+  content: '';
+  position: absolute;
+  top: 10%;
+  left: 15%;
+  width: 70%;
+  height: 75%;
+  background: #091024;
+  border-radius: 20% 20% 40% 40%; /* Erittäin raskas leuka */
+  box-shadow: 0 0 40px rgba(59, 130, 246, 0.3);
+  border: 1px solid #1e3a8a;
+}
+
+/* Pienet, kylmät ja pistävät neon-siniset silmät syvällä kuopissaan */
+.koskenkuristaja-scare .monster-eye {
+  position: absolute;
+  top: 32%;
+  width: 18px;
+  height: 18px;
+  background: #3b82f6;
+  border-radius: 50%;
+  box-shadow: 0 0 30px #3b82f6, 0 0 10px #ffff00;
+}
+.koskenkuristaja-scare .eye-left { left: 30%; }
+.koskenkuristaja-scare .eye-right { right: 30%; }
+
+/* Raskaat, alas painuvat kulmaluut tekemään ilmeestä brutaalin */
+.koskenkuristaja-scare .monster-brow {
+  position: absolute;
+  top: 26%;
+  width: 65px;
+  height: 8px;
+  background: #020617;
+  border-radius: 3px;
+}
+.koskenkuristaja-scare .brow-left { left: 20%; transform: rotate(-10deg); }
+.koskenkuristaja-scare .brow-right { right: 20%; transform: rotate(10deg); }
+
+/* Valtava leuka täynnä raastavia sahalaitahampaita */
+.koskenkuristaja-scare .monster-mouth {
+  position: absolute;
+  bottom: 18%;
+  left: 18%;
+  width: 64%;
+  height: 85px;
+  background: #020617;
+  border: 2px solid #3b82f6;
+  box-shadow: 0 0 25px rgba(59, 130, 246, 0.4);
+  /* Brutaali hampaisto clip-pathilla leikattuna */
+  clip-path: polygon(0 35%, 15% 15%, 30% 35%, 45% 15%, 60% 35%, 75% 15%, 90% 35%, 100% 15%, 100% 85%, 85% 65%, 70% 85%, 55% 65%, 40% 85%, 25% 65%, 10% 85%, 0 65%);
+}
+
+/* Areena */
+.monster-box-koskenkuristaja {
+  background: transparent;
+  border-left: 4px solid #3b82f6;
+  padding: 20px;
+  color: #dbeafe;
+  text-shadow: 0 0 12px #3b82f6;
+}
+
+/* ==========================================================================
+   4. SUOMUINEN JÄRVIKÄÄRME (Täydellisesti lukitut silmät suoraan SVG:ssä)
+   ========================================================================== */
+.jarvikaarme-scare { 
+  background: radial-gradient(circle, #021a1e 10%, #000000 90%); 
+}
+
+/* 🐍 KÄÄRMEEN VALTAVA VARTALO JA SILMÄT LUKITTUNA SAMAA VEKTORIIN */
+.jarvikaarme-scare .monster-jumpscare-face::before {
+  content: '';
+  position: absolute;
+  top: 5%;
+  left: 5%;
+  width: 100%;
+  height: 100%;
+  /* Levitetty hehkuvat keltaiset matelijan silmät ja vihaiset kulmat suoraan koodiin */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><path d='M100,160 C120,160 140,140 130,110 C120,80 70,90 70,60 C70,30 110,20 100,5' fill='none' stroke='%2301070a' stroke-width='24' stroke-linecap='round'/><path d='M100,5 C95,10 90,20 100,25 C110,20 105,10 100,5' fill='%2301070a'/><path d='M88,14 Q94,18 97,14' fill='none' stroke='%23eab308' stroke-width='2.5' stroke-linecap='round'/><path d='M112,14 Q106,18 103,14' fill='none' stroke='%23eab308' stroke-width='2.5' stroke-linecap='round'/><path d='M86,10 L96,13' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round'/><path d='M114,10 L104,13' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round'/></svg>");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  /* Luodaan käärmeelle ja sen silmille massiivinen yhteinen neon-cyan hehku */
+  filter: drop-shadow(0 0 35px rgba(6, 182, 212, 0.5));
+  animation: kaarmeVapare 0.22s ease-in-out infinite alternate;
+}
+
+@keyframes kaarmeVapare {
+  0% { transform: scale(1) skewX(-2deg); }
+  100% { transform: scale(1.04) skewX(2deg); filter: drop-shadow(0 0 45px rgba(6, 182, 212, 0.7)); }
+}
+
+/* Nollataan HTML-puolen kelluvat silmät ja kulmat tämän mörön osalta, jotta ne eivät kummittele taustalla */
+.jarvikaarme-scare .monster-eye,
+.jarvikaarme-scare .monster-brow,
+.jarvikaarme-scare .monster-mouth {
+  display: none;
+}
+
+/* Areena-tekstit */
+.monster-box-jarvikaarme {
+  background: transparent;
+  border-left: 4px solid #06b6d4;
+  padding: 20px;
+  color: #cffafe;
+  text-shadow: 0 0 12px #06b6d4;
+}
+
+/* ==========================================================================
+   5. LUOLAPEIKKO (Level 5) - KORJATTU: KORVAT LUKITTU KIINNI PÄÄHÄN
+   ========================================================================== */
+.luolapeikko-scare { 
+  background: radial-gradient(circle, #1e1b4b 10%, #000000 90%); 
+}
+
+/* 🧌 KORJATTU VEKTORI: Korvat alkavat suoraan pään rungon sisäpuolelta */
+.luolapeikko-scare .monster-jumpscare-face::before {
+  content: '';
+  position: absolute;
+  top: 10%;
+  left: 10%;
+  width: 80%;
+  height: 80%;
+  /* Korvien reitit (M48 ja M152) alkavat nyt pään (leveys 50-150) sisältä, tehden niistä yhtenäiset */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><path d='M50,45 C40,70 45,110 60,130 C80,150 120,152 140,135 C155,115 160,75 150,45 C140,25 115,15 100,20 C80,15 60,25 50,45 Z' fill='%230c0a1c'/><path d='M52,50 C25,40 20,65 48,70 Z M148,50 C175,40 180,65 152,70 Z' fill='%230c0a1c' stroke='%234338ca' stroke-width='2'/><path d='M70,52 L92,58 M130,50 L108,57' fill='none' stroke='%23000' stroke-width='4' stroke-linecap='round'/><circle cx='80' cy='67' r='8' fill='%236366f1'/><circle cx='82' cy='67' r='2' fill='%23fff'/><circle cx='120' cy='65' r='6' fill='%236366f1'/><circle cx='121' cy='65' r='1.5' fill='%23fff'/><path d='M70,105 Q100,125 130,100' fill='none' stroke='%23000' stroke-width='8' stroke-linecap='round'/><path d='M76,106 L80,111 M120,103 L116,109' fill='none' stroke='%23fff' stroke-width='3'/></svg>");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  filter: drop-shadow(0 0 35px rgba(99, 102, 241, 0.45));
+  animation: peikkoTarina 0.2s ease-in-out infinite alternate;
+}
+
+@keyframes peikkoTarina {
+  0% { transform: scale(1) translate(-2px, 2px); }
+  100% { transform: scale(1.04) translate(2px, -2px); filter: drop-shadow(0 0 45px rgba(99, 102, 241, 0.65)); }
+}
+
+/* Nollataan HTML-divit */
+.luolapeikko-scare .monster-eye,
+.luolapeikko-scare .monster-brow,
+.luolapeikko-scare .monster-mouth {
+  display: none;
+}
+
+/* Areena */
+.monster-box-luolapeikko {
+  background: transparent;
+  border-left: 4px solid #6366f1;
+  padding: 20px;
+  color: #e0e7ff;
+  text-shadow: 0 0 12px #6366f1;
+}
+
+/* ==========================================================================
+   6. JÄTTILÄISHÄMÄHÄKKI (Level 6) - KORJATTU: SOPUSUHTAISET LEUAT JA NIVELJALAT
+   ========================================================================== */
+.hamahakki-scare { 
+  background: radial-gradient(circle, #111827 10%, #000000 90%); 
+}
+
+/* 🕷️ HÄMÄHÄKIN RUNKO, LEUAT JA 8 NIVELIKÄSTÄ JALKAA SAMASSA VEKTORISSA */
+.hamahakki-scare .monster-jumpscare-face::before {
+  content: '';
+  position: absolute;
+  top: 5%;
+  left: 5%;
+  width: 90%;
+  height: 90%;
+  /* Sisältää keskellä pään, alhaalla sopivat leuat ja sivuille levittäytyvät aidot hämähäkin jalat */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><g stroke='%2305070a' stroke-width='6' stroke-linecap='round' fill='none'><path d='M70,80 C40,75 20,50 15,30'/><path d='M70,85 C35,85 15,70 10,55'/><path d='M70,90 C35,95 20,110 12,125'/><path d='M70,95 C40,115 25,135 20,155'/><path d='M130,80 C160,75 180,50 185,30'/><path d='M130,85 C165,85 185,70 190,55'/><path d='M130,90 C165,95 180,110 188,125'/><path d='M130,95 C160,115 175,135 180,155'/></g><circle cx='100' cy='90' r='35' fill='%2305070a'/><path d='M88,115 Q82,135 96,132 Q88,120 90,115 Z M112,115 Q118,135 104,132 Q112,120 110,115 Z' fill='%2305070a' stroke='%23f43f5e' stroke-width='1.5'/><circle cx='88' cy='85' r='7' fill='%23f43f5e'/><circle cx='89' cy='84' r='1.5' fill='%23fff'/><circle cx='112' cy='85' r='7' fill='%23f43f5e'/><circle cx='111' cy='84' r='1.5' fill='%23fff'/><circle cx='76' cy='83' r='4' fill='%23f43f5e'/><circle cx='124' cy='83' r='4' fill='%23f43f5e'/><circle cx='84' cy='98' r='4' fill='%23f43f5e'/><circle cx='116' cy='98' r='4' fill='%23f43f5e'/><circle cx='94' cy='75' r='3' fill='%23f43f5e'/><circle cx='106' cy='75' r='3' fill='%23f43f5e'/></svg>");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  filter: drop-shadow(0 0 35px rgba(244, 63, 94, 0.5));
+  animation: hamahakkiTarina 0.15s ease-in-out infinite alternate;
+}
+
+@keyframes hamahakkiTarina {
+  0% { transform: scale(1) rotate(-1.5deg); }
+  100% { transform: scale(1.05) rotate(1.5deg); filter: drop-shadow(0 0 45px rgba(244, 63, 94, 0.8)); }
+}
+
+/* Nollataan HTML-divit */
+.hamahakki-scare .monster-eye,
+.hamahakki-scare .monster-brow,
+.hamahakki-scare .monster-mouth {
+  display: none;
+}
+
+/* Areena */
+.monster-box-hamahakki {
+  background: transparent;
+  border-left: 4px solid #f43f5e;
+  padding: 20px;
+  color: #ffe4e6;
+  text-shadow: 0 0 12px #f43f5e;
+}
+
+
+/* ==========================================================================
+   7. METSÄJÄTTILÄINEN (Level 7) - KORJATTU: JÄRKÄLEMÄISET HARTIAT JA KOLOSSI
+   ========================================================================== */
+.metsajattilainen-scare { 
+  background: radial-gradient(circle, #271c11 10%, #000000 90%); 
+}
+
+/* 🗿 JÄTTILÄISEN VALTAVAT HARTIAT, NISKA JA KASVOT SAMASSA VEKTORISSA */
+.metsajattilainen-scare .monster-jumpscare-face::before {
+  content: '';
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  width: 100%; /* Täytetään koko ruutu, jotta hartiat näyttävät valtavilta */
+  height: 100%;
+  /* Piirretty massiivinen ylävartalo/hartialinja (M0,200...), paksu niska ja lohkaremainen pää */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><path d='M0,200 Q20,130 60,120 L65,95 Q50,90 55,40 Q55,15 100,15 Q145,15 145,40 Q150,90 135,95 L140,120 Q180,130 200,200 Z' fill='%23110b06' stroke='%23d97706' stroke-width='2'/><path d='M65,42 L95,46 M135,42 L105,46' fill='none' stroke='%23000' stroke-width='5' stroke-linecap='round'/><circle cx='80' cy='58' r='9' fill='%23d97706'/><circle cx='82' cy='56' r='2' fill='%23fff'/><circle cx='120' cy='58' r='9' fill='%23d97706'/><circle cx='118' cy='56' r='2' fill='%23fff'/><path d='M93,52 L100,75 L107,52' fill='%23000'/><path d='M75,90 Q100,105 125,90' fill='none' stroke='%23000' stroke-width='7' stroke-linecap='round'/><path d='M82,92 L86,100 M118,92 L114,100 M100,94 L100,103' fill='none' stroke='%23fef3c7' stroke-width='3.5' stroke-linecap='round'/></svg>");
+  background-repeat: no-repeat;
+  background-position: bottom center;
+  background-size: contain;
+  filter: drop-shadow(0 0 40px rgba(217, 119, 6, 0.5));
+  animation: jattilainenTarina 0.2s ease-in-out infinite alternate;
+}
+
+@keyframes jattilainenTarina {
+  0% { transform: scale(1) translate(-1px, 2px); }
+  100% { transform: scale(1.04) translate(1px, -2px); filter: drop-shadow(0 0 55px rgba(217, 119, 6, 0.75)); }
+}
+
+/* Nollataan HTML-divit */
+.metsajattilainen-scare .monster-eye,
+.metsajattilainen-scare .monster-brow,
+.metsajattilainen-scare .monster-mouth {
+  display: none;
+}
+
+/* Areena */
+.monster-box-metsajattilainen {
+  background: transparent;
+  border-left: 4px solid #d97706;
+  padding: 20px;
+  color: #fef3c7;
+  text-shadow: 0 0 12px #d97706;
+}
+
+/* ==========================================================================
+   8. RYPEVÄ ZOMBIE (Level 8) - TÄYDELLISESTI KOHDISTETTU MÄTÄ LEUKA JA SUU
+   ========================================================================== */
+.zombie-scare { 
+  background: radial-gradient(circle, #1c1917 10%, #000000 90%); 
+}
+
+/* 🧟 MÄDÄNTYVÄ KALLO TÄYNNÄ VERTA – SUU JA LEUKA NOSTETTU KOHTIIN */
+.zombie-scare .monster-jumpscare-face::before {
+  content: '';
+  position: absolute;
+  top: 5%;
+  left: 5%;
+  width: 90%;
+  height: 90%;
+  /* Kasvatettu pään korkeutta (height:130) ja nostettu suuonkalo (top:85) ja alaleuka (top:120) tiukasti pään sisälle */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><path d='M60,30 C45,45 40,80 55,120 C60,135 70,145 80,145 L120,145 C130,145 140,135 145,120 C160,80 155,45 140,30 C125,10 112,5 100,7 C88,5 75,10 60,30 Z' fill='%231c1917' stroke='%23800000' stroke-width='3'/><circle cx='78' cy='55' r='16' fill='%23000'/><circle cx='122' cy='55' r='14' fill='%23000'/><circle cx='76' cy='55' r='7' fill='%23e2e8f0'/><circle cx='77' cy='54' r='2' fill='%23fff'/><path d='M116,50 L128,60 M128,50 L116,60' fill='none' stroke='%23800000' stroke-width='3' opacity='0.7'/><circle cx='58' cy='85' r='6' fill='%23000'/><circle cx='138' cy='90' r='5' fill='%23000'/><path d='M68,85 L132,85 L125,125 L75,125 Z' fill='%23450a0a'/><path d='M75,125 C75,145 90,150 100,150 C110,150 125,145 125,125 Z' fill='%231c1917' stroke='%23800000' stroke-width='2.5'/><path d='M70,85 L74,95 M128,85 L124,95 M95,85 L95,96 M105,85 L105,96' fill='none' stroke='%23f5f5f4' stroke-width='4' stroke-linecap='round'/><path d='M82,125 L85,115 M118,125 L115,115' fill='none' stroke='%23f5f5f4' stroke-width='3' stroke-linecap='round'/><path d='M65,85 Q100,95 135,85 M70,125 Q100,118 130,125' fill='none' stroke='%23ef4444' stroke-width='3.5' opacity='0.85'/></svg>");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  filter: drop-shadow(0 0 40px rgba(239, 68, 68, 0.45));
+  animation: zombieTarina 0.22s step-end infinite alternate;
+}
+
+@keyframes zombieTarina {
+  0% { transform: scale(1) rotate(-1.5deg) translate(-2px, 0); }
+  50% { transform: scale(1.04) rotate(1deg) translate(3px, 2px); }
+  100% { transform: scale(0.98) rotate(0deg) translate(-1px, -3px); filter: drop-shadow(0 0 50px rgba(239, 68, 68, 0.65)); }
+}
+
+/* Nollataan HTML-divit */
+.zombie-scare .monster-eye,
+.zombie-scare .monster-brow,
+.zombie-scare .monster-mouth {
+  display: none;
+}
+
+/* Areena */
+.monster-box-zombie {
+  background: transparent;
+  border-left: 4px solid #a8a29e;
+  padding: 20px;
+  color: #f5f5f4;
+  text-shadow: 0 0 12px #a8a29e;
+}
+
+/* ==========================================================================
+   9. IHMISSUSI (Level 9) - TÄYDELLINEN PETOMAINEN KUONO JA TERÄVÄT KORVAT
+   ========================================================================== */
+.ihmissusi-scare { 
+  background: radial-gradient(circle, #450a0a 10%, #000000 90%); 
+}
+
+/* 🐺 IHMISSUDEN TERÄVÄT KORVAT, PITKÄ KUONO JA TAPPOSILMÄT SAMASSA VEKTORISSA */
+.ihmissusi-scare .monster-jumpscare-face::before {
+  content: '';
+  position: absolute;
+  top: 5%;
+  left: 5%;
+  width: 90%;
+  height: 90%;
+  /* Piirretty: Pystyt isot korvat (M35,60... ja M165,60...), siksak-turkki sivuille, pitkä kuonolinja keskelle ja raastavat hampaat */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><path d='M35,60 L20,10 L55,40 Z M165,60 L180,10 L145,40 Z' fill='%23140303' stroke='%23ef4444' stroke-width='1.5'/><path d='M40,50 L20,80 L40,95 L15,120 L50,135 L100,185 L150,135 L185,120 L160,95 L180,80 L160,50 C160,30 140,25 100,25 C60,25 40,30 40,50 Z' fill='%23140303' stroke='%23ef4444' stroke-width='1.5'/><path d='M62,60 L85,68 M138,60 L115,68' fill='none' stroke='%23000' stroke-width='5' stroke-linecap='round'/><path d='M65,70 Q78,60 88,72' fill='none' stroke='%23ef4444' stroke-width='3' stroke-linecap='round'/><path d='M135,70 Q122,60 112,72' fill='none' stroke='%23ef4444' stroke-width='3' stroke-linecap='round'/><circle cx='76' cy='73' r='4' fill='%23fff'/><circle cx='124' cy='73' r='4' fill='%23fff'/><path d='M85,75 L100,125 L115,75 Z' fill='%230b0202'/><path d='M90,120 L100,132 L110,120 Z' fill='%23000'/><path d='M75,135 Q100,155 125,135 L120,165 Q100,175 80,165 Z' fill='%23000'/><path d='M78,136 L84,146 M86,138 L90,148 M122,136 L116,146 M114,138 L110,148 M94,139 L97,150 M106,139 L103,150' fill='none' stroke='%23fee2e2' stroke-width='3' stroke-linecap='round'/><path d='M84,163 L88,153 M116,163 L112,153' fill='none' stroke='%23fee2e2' stroke-width='2.5' stroke-linecap='round'/></svg>");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  /* Annetaan ihmissudelle raivoisa punainen hehku */
+  filter: drop-shadow(0 0 40px rgba(239, 68, 68, 0.5));
+  animation: susiTarina 0.16s ease-in-out infinite alternate;
+}
+
+@keyframes susiTarina {
+  0% { transform: scale(1) translate(-2px, 1px); }
+  100% { transform: scale(1.05) translate(2px, -1px); filter: drop-shadow(0 0 55px rgba(239, 68, 68, 0.75)); }
+}
+
+/* Nollataan HTML-divit, jotta ne eivät häiritse uutta tarkkaa anatomiaa */
+.ihmissusi-scare .monster-eye,
+.ihmissusi-scare .monster-brow,
+.ihmissusi-scare .monster-mouth {
+  display: none;
+}
+
+/* Areena */
+.monster-box-ihmissusi {
+  background: transparent;
+  border-left: 4px solid #ef4444;
+  padding: 20px;
+  color: #fee2e2;
+  text-shadow: 0 0 12px #ef4444;
+}
+
+
+/* ==========================================================================
+   10. KIROTTUJEN VELHO (BOSS) - KORJATTU: HARMAA SULAUTUVA PARTA
+   ========================================================================== */
+.velho-scare { 
+  background: radial-gradient(circle, #3b0764 10%, #000000 90%); 
+}
+
+/* 🧙‍♂️ VELHON KORJATTU VEKTORI: Kolmio muutettu synkäksi harmaaksi parraksi */
+.velho-scare .monster-jumpscare-face::before {
+  content: '';
+  position: absolute;
+  top: 5%;
+  left: 10%;
+  width: 80%;
+  height: 90%;
+  /* Muutettu parran väri ja stroke harmaaksi (%234b5563 ja %231f2937), jotta se istuu kasvoihin */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><path d='M100,5 C50,20 40,70 45,130 L155,130 C160,70 150,20 100,5 Z' fill='%23090212' stroke='%23a855f7' stroke-width='2'/><path d='M100,15 C65,30 55,70 60,120 C70,135 85,140 100,140 C115,140 130,135 140,120 C145,70 135,30 100,15 Z' fill='%23130d1c'/><path d='M70,120 L100,195 L130,120 Q100,135 70,120 Z' fill='%234b5563' stroke='%231f2937' stroke-width='2'/><path d='M65,45 Q100,30 135,45' fill='none' stroke='%2305020a' stroke-width='10' stroke-linecap='round'/><path d='M72,60 L92,63 M128,60 L108,63' fill='none' stroke='%23000' stroke-width='4' stroke-linecap='round'/><circle cx='80' cy='72' r='8' fill='%23a855f7'/><circle cx='80' cy='72' r='4' fill='%23c084fc'/><circle cx='81' cy='71' r='1.5' fill='%23fff'/><circle cx='120' cy='72' r='8' fill='%23a855f7'/><circle cx='120' cy='72' r='4' fill='%23c084fc'/><circle cx='121' cy='71' r='1.5' fill='%23fff'/><path d='M90,70 L100,95 L110,70' fill='none' stroke='%23000' stroke-width='2'/><path d='M68,52 Q100,68 132,52' fill='none' stroke='%232e104d' stroke-width='2'/><path d='M85,108 Q100,118 115,108' fill='none' stroke='%23000' stroke-width='3' stroke-linecap='round'/></svg>");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  filter: drop-shadow(0 0 45px rgba(168, 85, 247, 0.6));
+  animation: velhoTarina 0.2s ease-in-out infinite alternate;
+}
+
+@keyframes velhoTarina {
+  0% { transform: scale(1) translate(0, -2px); filter: drop-shadow(0 0 40px rgba(168, 85, 247, 0.55)); }
+  100% { transform: scale(1.04) translate(0, 2px); filter: drop-shadow(0 0 60px rgba(168, 85, 247, 0.85)); }
+}
+
+/* Nollataan HTML-divit */
+.velho-scare .monster-eye,
+.velho-scare .monster-brow,
+.velho-scare .monster-mouth {
+  display: none;
+}
+
+/* Areena */
+.monster-box-velho {
+  background: transparent;
+  border-left: 4px solid #a855f7;
+  padding: 20px;
+  color: #f3e8ff;
+  text-shadow: 0 0 15px #a855f7;
+}
+
+
+/* ==========================================================================
+   RAUHOITTUNUT / KUOLLUT TILANNE
+   ========================================================================== */
+.monster-box.dead {
+  border-left: 4px dashed #334155;
+  color: #64748b;
+  text-shadow: none;
+}

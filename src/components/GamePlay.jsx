@@ -1,5 +1,6 @@
 import React from 'react';
-import { useEffect, useState, useRef } from 'react'; // 🌟 Tuotu useRef mukaan automaattista skrollausta varten
+import { useEffect, useState, useRef } from 'react'; 
+import './MonsterStyles.css'; // 🌟 Tuodaan monsterin tyylit erillisestä CSS-tiedostosta
 
 export default function GamePlay({
   activeSession,
@@ -17,7 +18,7 @@ export default function GamePlay({
 
   useEffect(() => {
     setShowMonsterReveal(true);
-    const revealTimer = setTimeout(() => setShowMonsterReveal(false), 850);
+    const revealTimer = setTimeout(() => setShowMonsterReveal(false), 2550);
 
     return () => clearTimeout(revealTimer);
   }, [activeSession?.currentMonsterName, activeSession?.currentMonsterCssClass]);
