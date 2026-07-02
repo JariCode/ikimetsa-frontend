@@ -18,7 +18,7 @@ export default function App() {
   const [combatInitiative, setCombatInitiative] = useState(null);
   const [currentTurn, setCurrentTurn] = useState(null);
 
-  const testUserId = "660d1a2b3c456e687a9b7c0d"; 
+  const testUserId = "660d1a2b3c487e687a9b8c0d"; 
 
   // Haetaan hahmoluokat aidosti backendistä
   useEffect(() => {
@@ -59,7 +59,7 @@ export default function App() {
   const handleRepairWeapon = async () => {
     setError('');
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/game/repair-weapon`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/combat/repair-weapon`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId: testUserId })
@@ -69,6 +69,9 @@ export default function App() {
       if (!response.ok) throw new Error(data.message || 'Korjaus epäonnistui.');
       
       setActiveSession(data.session);
+
+      setCombatLogs(prev => [...prev, `🔧 Kipunoita ja kolketta! Korjasit aseesi takaisin huippukuntoon.`]);
+
     } catch (err) {
       setError(err.message);
     }
@@ -80,8 +83,7 @@ export default function App() {
 
     setIsRolling(true);
     setDiceResult(null);
-    setCombatLogs([]); 
-
+   
     // 🎲 Noppa pyörii visuaalisesti frontissa odottaessaan backendin vastausta
     const interval = setInterval(() => {
       setDiceResult(Math.floor(Math.random() * 20) + 1);
