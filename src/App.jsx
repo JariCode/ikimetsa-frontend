@@ -6,6 +6,7 @@ import AuthScreen from './components/AuthScreen';
 import IntroScreen from './components/IntroScreen';
 import CharacterSelection from './components/CharacterSelection';
 import GamePlay from './components/GamePlay';
+import ProfileSettings from './components/ProfileSettings';
 
 export default function App() {
   const [sessionId, setSessionId] = useState(sessionStorage.getItem('ikimetsa_session_id') || null);
@@ -18,6 +19,8 @@ export default function App() {
   const [passwordInput, setPasswordInput] = useState('');
   const [loggedInUser, setLoggedInUser] = useState(null);
   const [savedGameSession, setSavedGameSession] = useState(null);
+  const [showProfile, setShowProfile] = useState(sessionStorage.getItem('ikimetsa_show_profile') === 'true');
+  const [successMessage, setSuccessMessage] = useState('');
 
   const [gameStarted, setGameStarted] = useState(false);
   const [characterClasses, setCharacterClasses] = useState([]); 
@@ -44,6 +47,7 @@ export default function App() {
     }
 
     sessionStorage.removeItem('ikimetsa_session_id');
+    sessionStorage.removeItem('ikimetsa_show_profile');
     setSessionId(null);
     setShouldRestoreSession(false);
     setLoggedInUser(null);
@@ -57,6 +61,7 @@ export default function App() {
     setMonsterHp(25);
     setUsernameInput('');
     setPasswordInput('');
+    setShowProfile(false);
   };
 
   useEffect(() => {
@@ -70,6 +75,7 @@ export default function App() {
           return res.json();
         })
         .then(data => {
+          setLoggedInUser(data.username || null);
           if (data.session) {
             setSavedGameSession(data.session);
             setActiveSession(data.session);
@@ -96,6 +102,14 @@ export default function App() {
         });
     }
   }, [sessionId, shouldRestoreSession]);
+
+  useEffect(() => {
+    if (showProfile) {
+      sessionStorage.setItem('ikimetsa_show_profile', 'true');
+    } else {
+      sessionStorage.removeItem('ikimetsa_show_profile');
+    }
+  }, [showProfile]);
 
   useEffect(() => {
     if (gameStarted && characterClasses.length === 0 && sessionId) {
@@ -208,6 +222,75 @@ export default function App() {
     } catch (err) { setError(err.message); }
   };
 
+  // --- KÄYTTÄJÄTUNNUKSEN VAIHTO ---
+  const handleChangeUsername = async (newUsername, currentPassword) => {
+    setError('');
+    setSuccessMessage('');
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/username`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ newUsername, currentPassword }),
+        credentials: 'include'
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || 'Käyttäjätunnuksen vaihto epäonnistui.');
+      setLoggedInUser(data.username);
+      setSuccessMessage('Käyttäjätunnus vaihdettu onnistuneesti.');
+      setTimeout(() => setSuccessMessage(''), 3000);
+      return true;
+    } catch (err) {
+      setError(err.message);
+      return false;
+    }
+  };
+
+  // --- SALASANAN VAIHTO ---
+  const handleChangePassword = async (currentPassword, newPassword) => {
+    setError('');
+    setSuccessMessage('');
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/password`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ currentPassword, newPassword }),
+        credentials: 'include'
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || 'Salasanan vaihto epäonnistui.');
+      setSuccessMessage('Salasana vaihdettu onnistuneesti.');
+      setTimeout(() => setSuccessMessage(''), 3000);
+      return true;
+    } catch (err) {
+      setError(err.message);
+      return false;
+    }
+  };
+
+  // --- TILIN POISTO (poistaa myös pelitiedot ja ohjaa kirjautumissivulle) ---
+  const handleDeleteAccount = async (currentPassword) => {
+    setError('');
+    setSuccessMessage('');
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/account`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ currentPassword }),
+        credentials: 'include'
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || 'Tilin poisto epäonnistui.');
+
+      setShowProfile(false);
+      // Tili on jo poistettu palvelimella - nollataan paikallinen tila samalla logiikalla kuin uloskirjautumisessa
+      await handleLogout();
+      return true;
+    } catch (err) {
+      setError(err.message);
+      return false;
+    }
+  };
+
   const handleCombatTurn = async () => {
     if (isRolling || monsterHp <= 0) return;
     setIsRolling(true);
@@ -301,9 +384,17 @@ export default function App() {
       ) : (
         <>
           {error && <div className="global-error-popup">⚠️ {error}</div>}
+          {successMessage && <div className="global-success-popup">✅ {successMessage}</div>}
 
-          {sessionId && (
-            <button className="logout-top-btn" onClick={handleLogout}>Kirjaudu ulos</button>
+          {sessionId && (showProfile || (gameStarted && activeSession)) && (
+            <div className="top-right-buttons">
+              {showProfile ? (
+                <button className="profile-top-btn" onClick={() => setShowProfile(false)}>Takaisin peliin</button>
+              ) : (
+                <button className="profile-top-btn" onClick={() => setShowProfile(true)}>Profiili</button>
+              )}
+              <button className="logout-top-btn" onClick={handleLogout}>Kirjaudu ulos</button>
+            </div>
           )}
 
           {!sessionId ? (
@@ -312,6 +403,13 @@ export default function App() {
               usernameInput={usernameInput} setUsernameInput={setUsernameInput}
               passwordInput={passwordInput} setPasswordInput={setPasswordInput}
               handleAuthSubmit={handleAuthSubmit}
+            />
+          ) : showProfile ? (
+            <ProfileSettings
+              currentUsername={loggedInUser}
+              onChangeUsername={handleChangeUsername}
+              onChangePassword={handleChangePassword}
+              onDeleteAccount={handleDeleteAccount}
             />
           ) : !gameStarted && !activeSession ? (
             <IntroScreen

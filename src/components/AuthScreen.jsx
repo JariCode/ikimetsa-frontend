@@ -1,4 +1,5 @@
 import React from 'react';
+import PasswordInput from './PasswordInput';
 
 export default function AuthScreen({ 
   authMode, 
@@ -21,12 +22,11 @@ export default function AuthScreen({
           onChange={e => setUsernameInput(e.target.value)} 
           required 
         />
-        <input 
-          type="password" 
-          placeholder="Salasana" 
-          value={passwordInput} 
-          onChange={e => setPasswordInput(e.target.value)} 
-          required 
+        <PasswordInput
+          placeholder="Salasana"
+          value={passwordInput}
+          onChange={e => setPasswordInput(e.target.value)}
+          required
         />
         <button type="submit" className="auth-submit-btn">
           {authMode === 'login' ? 'Astu sisään' : 'Luo tunnus'}

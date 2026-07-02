@@ -28,7 +28,8 @@ body {
 .auth-screen,
 .intro-screen,
 .character-selection-screen,
-.game-play-screen {
+.game-play-screen,
+.profile-screen {
   position: relative;
   z-index: 10;
 }
@@ -108,11 +109,51 @@ body {
   text-underline-offset: 3px;
 }
 
-.logout-top-btn {
+.top-right-buttons {
   position: fixed;
   top: 18px;
   right: 18px;
   z-index: 50;
+  display: flex;
+  gap: 10px;
+}
+
+/* --- SALASANAN NÄYTÄ/PIILOTA-KENTTÄ (käytössä kaikissa sovelluksen salasanakentissä) --- */
+.password-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.password-input-wrapper input {
+  width: 100%;
+  box-sizing: border-box;
+  padding-right: 44px;
+}
+
+.password-toggle-btn {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.05rem;
+  line-height: 1;
+  padding: 6px;
+  color: #9ca3af;
+}
+
+.password-toggle-btn:hover {
+  color: #4ade80;
+}
+
+.password-toggle-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.logout-top-btn {
   background: linear-gradient(180deg, #2b0f0f 0%, #120606 100%);
   border: 1px solid #ef4444;
   color: #fecaca;
@@ -130,6 +171,25 @@ body {
   background: linear-gradient(180deg, #4c1616 0%, #220909 100%);
   color: #ffffff;
   border-color: #f87171;
+}
+
+.profile-top-btn {
+  background: linear-gradient(180deg, #091209 0%, #040804 100%);
+  border: 1px solid #4ade80;
+  color: #00ff66;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+}
+
+.profile-top-btn:hover {
+  border-color: #00ff66;
+  color: #ffffff;
 }
 
 .session-loading-screen {
@@ -621,4 +681,206 @@ div.game-play-screen .player-status-bar {
   background: #4ade80;
   color: #000;
   box-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
+}
+
+/* --- PROFIILINÄKYMÄ --- */
+.profile-screen {
+  text-align: center;
+  max-width: 480px;
+  width: 100%;
+  padding: 24px;
+  box-sizing: border-box;
+  align-self: flex-start;
+  margin-top: 6vh;
+  max-height: 88vh;
+  overflow-y: auto;
+}
+
+.profile-current-user {
+  color: #d1d5db;
+  margin-bottom: 10px;
+}
+
+.profile-tabs {
+  display: flex;
+  gap: 6px;
+  margin-top: 26px;
+  border-bottom: 1px solid #1e3a1e;
+}
+
+.profile-tab-btn {
+  flex: 1;
+  background: transparent;
+  border: 1px solid #1e3a1e;
+  border-bottom: none;
+  color: #9ca3af;
+  padding: 10px 8px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  border-radius: 6px 6px 0 0;
+  transition: all 0.2s ease-in-out;
+}
+
+.profile-tab-btn:hover {
+  color: #d1d5db;
+}
+
+.profile-tab-btn.active {
+  color: #4ade80;
+  border-color: #4ade80;
+  background: rgba(74, 222, 128, 0.08);
+}
+
+.profile-tab-btn.danger-tab.active {
+  color: #ef4444;
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-top: 20px;
+  text-align: left;
+}
+
+.profile-form h2 {
+  margin: 0 0 4px;
+  color: #4ade80;
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+.profile-form input {
+  background: rgba(4, 8, 4, 0.9);
+  border: 1px solid #1e3a1e;
+  color: #f3f4f6;
+  padding: 14px 16px;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 1rem;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.profile-form input::placeholder {
+  color: #9ca3af;
+}
+
+.profile-form input:focus {
+  border-color: #4ade80;
+  box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.18);
+}
+
+.profile-field-error {
+  color: #fecaca;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.profile-confirm-box {
+  background: rgba(74, 222, 128, 0.06);
+  border: 1px solid #4ade80;
+  border-radius: 6px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.profile-confirm-box-danger {
+  background: rgba(239, 68, 68, 0.08);
+  border-color: #ef4444;
+}
+
+.profile-confirm-text {
+  margin: 0;
+  color: #d1d5db;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.profile-confirm-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.profile-confirm-buttons .auth-submit-btn,
+.profile-confirm-buttons .danger-btn {
+  flex: 1;
+}
+
+.profile-cancel-btn {
+  flex: 1;
+  background: transparent;
+  border: 1px solid #1e3a1e;
+  color: #d1d5db;
+  padding: 14px 22px;
+  font-size: 1rem;
+  font-family: inherit;
+  font-weight: bold;
+  letter-spacing: 1px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s ease-in-out;
+}
+
+.profile-cancel-btn:hover {
+  border-color: #9ca3af;
+  color: #ffffff;
+}
+
+.profile-danger-zone h2 {
+  color: #ef4444;
+}
+
+.profile-danger-text {
+  color: #fecaca;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.danger-btn {
+  background: linear-gradient(180deg, #2b0f0f 0%, #120606 100%);
+  border: 1px solid #ef4444;
+  color: #fecaca;
+  padding: 14px 22px;
+  font-size: 1rem;
+  font-family: inherit;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s ease-in-out;
+}
+
+.danger-btn:hover {
+  background: linear-gradient(180deg, #4c1616 0%, #220909 100%);
+  color: #ffffff;
+  border-color: #f87171;
+}
+
+.profile-back-btn {
+  margin-top: 30px;
+  background: transparent;
+  border: 1px solid #1e3a1e;
+  color: #d1d5db;
+  padding: 12px 24px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  letter-spacing: 1px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s ease-in-out;
+}
+
+.profile-back-btn:hover {
+  border-color: #4ade80;
+  color: #4ade80;
 }
