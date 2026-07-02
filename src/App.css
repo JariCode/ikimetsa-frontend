@@ -226,29 +226,41 @@ div.character-selection-screen .character-cards {
 
 /* --- PELIRUUTU JA TILAPALKKI --- */
 .game-play-screen {
-  width: 90%;
+  width: 100%;
   max-width: 800px;
   display: flex;
   flex-direction: column;
   background: rgba(4, 8, 4, 0.95);
   border: 1px solid #1a331a;
-  padding: 30px;
+  padding: 25px;
   z-index: 10;
   border-radius: 4px;
+  box-sizing: border-box;
 }
 
 div.game-play-screen .player-status-bar {
   display: flex;
+  flex-wrap: wrap; /* Sallii elementtien rivittyä siististi allekkain jos leveys loppuu */
   justify-content: space-between;
   align-items: center;
   background: rgba(10, 25, 10, 0.75);
   border: 1px solid #1e3a1e;
-  padding: 15px 25px;
+  padding: 15px 20px;
   margin-bottom: 30px;
   border-radius: 4px;
+  gap: 15px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.status-item { display: flex; align-items: center; gap: 8px; font-size: 1rem; }
+.status-item { 
+  display: flex; 
+  align-items: center; 
+  gap: 8px; 
+  font-size: 1rem;
+  flex-shrink: 0; /* Estää laatikoiden puristumisen liian pieneksi */
+}
+
 .status-item span { color: #9ca3af; }
 .status-item strong { color: #4ade80; }
 
@@ -372,4 +384,40 @@ div.game-play-screen .player-status-bar {
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(3px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+.global-error-popup {
+  position: absolute;
+  top: 20px;
+  background: rgba(139, 0, 0, 0.9);
+  border: 1px solid #ff3333;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 4px;
+  z-index: 100;
+  font-weight: bold;
+  box-shadow: 0 0 15px rgba(255,0,0,0.5);
+}
+
+.repair-mini-btn {
+  background: #112611;
+  border: 1px solid #4ade80;
+  color: #4ade80;
+  padding: 6px 12px;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: bold;
+  cursor: pointer;
+  margin-left: 10px;
+  border-radius: 3px;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+}
+
+.repair-mini-btn:hover {
+  background: #4ade80;
+  color: #000;
+  box-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
 }
