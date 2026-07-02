@@ -13,6 +13,7 @@ body {
   height: 100vh;
   width: 100vw;
   position: relative;
+  isolation: isolate;
 }
 
 /* 🌙 ELÄVÄ TAUSTA: Verikuu ja liikkuva vihreä usva */
@@ -20,8 +21,91 @@ body {
   position: absolute;
   top: 0; left: 0; width: 100%; height: 100%;
   background: #040704;
-  z-index: 1;
+  z-index: 0;
   overflow: hidden;
+}
+
+.auth-screen,
+.intro-screen,
+.character-selection-screen,
+.game-play-screen {
+  position: relative;
+  z-index: 10;
+}
+
+.auth-screen {
+  text-align: center;
+  max-width: 520px;
+  width: 100%;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.auth-form h2 {
+  margin: 0 0 4px;
+  color: #4ade80;
+  letter-spacing: 1px;
+}
+
+.auth-form input {
+  background: rgba(4, 8, 4, 0.9);
+  border: 1px solid #1e3a1e;
+  color: #f3f4f6;
+  padding: 14px 16px;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 1rem;
+  outline: none;
+}
+
+.auth-form input::placeholder {
+  color: #9ca3af;
+}
+
+.auth-form input:focus {
+  border-color: #4ade80;
+  box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.18);
+}
+
+.auth-submit-btn {
+  background: linear-gradient(180deg, #091209 0%, #040804 100%);
+  border: 1px solid #4ade80;
+  color: #00ff66;
+  padding: 14px 22px;
+  font-size: 1rem;
+  font-family: inherit;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s ease-in-out;
+}
+
+.auth-submit-btn:hover {
+  border-color: #00ff66;
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+.auth-toggle-text {
+  margin-top: 18px;
+  color: #d1d5db;
+  line-height: 1.5;
+}
+
+.auth-toggle-text span {
+  color: #4ade80;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .blood-moon {
