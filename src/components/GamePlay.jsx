@@ -16,9 +16,15 @@ export default function GamePlay({
   const [showMonsterReveal, setShowMonsterReveal] = useState(false);
   const logEndRef = useRef(null); // 🌟 Luodaan ankkuri lokilaatikon pohjalle
 
-  // 💥 KORJATTU: Ei enää sessionStorage-lukituksia! Jumpscare pamahtaa aina uuden taistelun alussa.
+  // 💥 Jumpscare pamahtaa uuden taistelun alussa, mutta ei enää sivun päivityksessä (F5)!
   useEffect(() => {
     if (monsterHp <= 0) {
+      setShowMonsterReveal(false);
+      return;
+    }
+
+    // 🛡️ TARKISTUS: Jos taistelu on jo käynnissä (lokeja löytyy tai aloite määritetty), kyseessä on F5-päivitys.
+    if (combatLogs.length > 0 || combatInitiative) {
       setShowMonsterReveal(false);
       return;
     }
