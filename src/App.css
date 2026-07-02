@@ -213,8 +213,10 @@ body {
 /* --- ALKURUUTU TEKSTIT --- */
 .intro-screen {
   text-align: center;
-  max-width: 600px;
+  max-width: 760px;
+  width: 100%;
   padding: 20px;
+  box-sizing: border-box;
   z-index: 10;
   animation: screenShake 0.8s ease-in-out;
 }
@@ -228,18 +230,49 @@ body {
   animation: fadeIn 3s ease-in-out forwards;
 }
 
-.intro-text {
-  font-size: 1.15rem;
-  line-height: 1.6;
-  opacity: 0;
-  margin: 18px 0;
-  color: #ffffff; 
-  text-shadow: 0 2px 4px #000000, 0 0 10px #000000; 
+/* --- TARINAN RULLAUSIKKUNA: näyttää aina 3 riviä, loput rullaavat läpi --- */
+.intro-scroll-window {
+  position: relative;
+  height: 7.8rem; /* 3 riviä x 2.6rem */
+  max-width: 720px;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 30px auto;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%);
 }
 
-.animate-text-1 { animation: fadeIn 2s ease-in-out 1.5s forwards; }
-.animate-text-2 { animation: fadeIn 2s ease-in-out 3s forwards; }
-.animate-text-3 { animation: fadeIn 2s ease-in-out 4.5s forwards; }
+.intro-scroll-content {
+  display: flex;
+  flex-direction: column;
+  animation: introScroll 29s linear 1.2s 1 both;
+}
+
+.intro-scroll-content .intro-text {
+  height: 2.6rem;
+  line-height: 2.6rem;
+  margin: 0;
+  padding: 0 10px;
+  opacity: 1;
+  font-size: 1.05rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #ffffff;
+  text-shadow: 0 2px 4px #000000, 0 0 10px #000000;
+}
+
+@keyframes introScroll {
+  from { transform: translateY(7.8rem); }
+  to   { transform: translateY(-39rem); }
+}
+
+@media (max-width: 480px) {
+  .intro-scroll-content .intro-text {
+    font-size: 0.85rem;
+  }
+}
 
 /* --- UUSITTU GOOTTILAINEN ALOITUSPAINIKE --- */
 .start-btn {
@@ -258,7 +291,7 @@ body {
   border-radius: 6px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.8), 0 0 15px rgba(74, 222, 128, 0.2);
   transition: all 0.3s ease-in-out;
-  animation: fadeIn 2s ease-in-out 6s forwards;
+  animation: fadeIn 2s ease-in-out 30s forwards;
 }
 
 .start-btn:hover {
