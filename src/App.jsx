@@ -242,18 +242,33 @@ export default function App() {
         setActiveSession(prev => ({
           ...prev,
           repairPoints: data.repairPoints !== undefined ? data.repairPoints : prev.repairPoints,
-          stats: { ...prev.stats, hp: data.playerHp },
+          stats: { 
+            ...prev.stats, 
+            hp: data.playerHp,
+            maxHp: data.playerMaxHp !== undefined ? data.playerMaxHp : prev.stats.maxHp,
+            level: data.playerLevel !== undefined ? data.playerLevel : prev.stats.level,
+            xp: data.playerXp !== undefined ? data.playerXp : prev.stats.xp
+          },
           inventory: [{ ...prev.inventory[0], durability: data.weaponDurability }],
           combatLogs: fullCombatLogs,
           currentMonsterHp: nextMonsterHp,
+          currentMonsterLevel: prev ? prev.currentMonsterLevel : 1, // 👈 LISÄTTY: Estää tason katoamisen taisteluvuoron aikana!
           combatInitiative: data.initiativeWinner,
           currentTurn: data.nextTurn
         }));
 
         setSavedGameSession(prev => ({
           ...prev,
+          stats: prev ? {
+            ...prev.stats,
+            hp: data.playerHp,
+            maxHp: data.playerMaxHp !== undefined ? data.playerMaxHp : prev.stats.maxHp,
+            level: data.playerLevel !== undefined ? data.playerLevel : prev.stats.level,
+            xp: data.playerXp !== undefined ? data.playerXp : prev.stats.xp
+          } : null,
           combatLogs: fullCombatLogs,
           currentMonsterHp: nextMonsterHp,
+          currentMonsterLevel: prev ? prev.currentMonsterLevel : 1, // 👈 LISÄTTY: Pitää välimuistitallennuksen tasoissa mukana!
           combatInitiative: data.initiativeWinner,
           currentTurn: data.nextTurn
         }));
