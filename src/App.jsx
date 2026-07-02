@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 
-// Poistettu .jsx päätteet jotta kääntäjä ei kaadu tiedostojen etsintään
 import AuthScreen from './components/AuthScreen';
 import IntroScreen from './components/IntroScreen';
 import CharacterSelection from './components/CharacterSelection';
 import GamePlay from './components/GamePlay';
 import ProfileSettings from './components/ProfileSettings';
+import MovementScreen from './components/MovementScreen';
 
 export default function App() {
   const [sessionId, setSessionId] = useState(sessionStorage.getItem('ikimetsa_session_id') || null);
@@ -36,6 +36,8 @@ export default function App() {
   const [combatInitiative, setCombatInitiative] = useState(null);
   const [currentTurn, setCurrentTurn] = useState(null);
 
+  const [isNavigating, setIsNavigating] = useState(false);
+
   const handleLogout = async () => {
     try {
       await fetch(`${import.meta.env.VITE_API_URL}/api/auth/logout`, {
@@ -63,6 +65,7 @@ export default function App() {
     setUsernameInput('');
     setPasswordInput('');
     setShowProfile(false);
+    setIsNavigating(false);
   };
 
   useEffect(() => {
@@ -140,36 +143,19 @@ export default function App() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || 'Kirjautumisvirhe.');
 
-      if (authMode === 'register') {
-        sessionStorage.setItem('ikimetsa_session_id', data.gameSessionId || 'logged_in');
-        setSessionId(data.gameSessionId || 'logged_in');
-        setShouldRestoreSession(false);
-        setIsHydratingSession(false);
-        setLoggedInUser(data.username);
-        setSavedGameSession(data.session || null);
-        setActiveSession(null);
-        setGameStarted(false);
-        setCharacterClasses([]);
-        setCombatLogs(data.session?.combatLogs || []);
-        setCombatInitiative(null);
-        setCurrentTurn(null);
-        setMonsterHp(data.session?.currentMonsterHp ?? 25);
-        setPasswordInput('');
-      } else {
-        sessionStorage.setItem('ikimetsa_session_id', data.gameSessionId || 'logged_in');
-        setSessionId(data.gameSessionId || 'logged_in');
-        setShouldRestoreSession(false);
-        setIsHydratingSession(false);
-        setLoggedInUser(data.username);
-        setSavedGameSession(data.session || null);
-        setActiveSession(null);
-        setGameStarted(false);
-        setCharacterClasses([]);
-        setCombatLogs(data.session?.combatLogs || []);
-        setCombatInitiative(null);
-        setCurrentTurn(null);
-        setMonsterHp(data.session?.currentMonsterHp ?? 25);
-      }
+      sessionStorage.setItem('ikimetsa_session_id', data.gameSessionId || 'logged_in');
+      setSessionId(data.gameSessionId || 'logged_in');
+      setShouldRestoreSession(false);
+      setIsHydratingSession(false);
+      setLoggedInUser(data.username);
+      setSavedGameSession(data.session || null);
+      setActiveSession(null);
+      setGameStarted(false);
+      setCharacterClasses([]);
+      setCombatLogs(data.session?.combatLogs || []);
+      setCombatInitiative(null);
+      setCurrentTurn(null);
+      setMonsterHp(data.session?.currentMonsterHp ?? 25);
     } catch (err) { setError(err.message); }
   };
 
@@ -197,15 +183,26 @@ export default function App() {
       if (!response.ok) throw new Error(data.message || 'Hahmon valinta epäonnistui.');
       
       sessionStorage.setItem('ikimetsa_session_id', data._id);
-      sessionStorage.removeItem('ikimetsa_revealed_monster'); // uusi peli = uusi hirviö, animaatio saa näkyä
       setSessionId(data._id);
       setSavedGameSession(data);
       setActiveSession(data);
+      
+      setIsNavigating(true);
+      
       setCombatInitiative(null);
       setCurrentTurn(null);
       setMonsterHp(data.currentMonsterHp ?? 25);
-      setCombatLogs(data.combatLogs || []);
+      setCombatLogs([]);
     } catch (err) { setError(err.message); }
+  };
+
+  const handleEnterCombat = () => {
+    if (activeSession) {
+      setMonsterHp(activeSession.currentMonsterHp ?? 25);
+    } else {
+      setMonsterHp(25);
+    }
+    setIsNavigating(false);
   };
 
   const handleRepairWeapon = async () => {
@@ -224,7 +221,6 @@ export default function App() {
     } catch (err) { setError(err.message); }
   };
 
-  // --- KÄYTTÄJÄTUNNUKSEN VAIHTO ---
   const handleChangeUsername = async (newUsername, currentPassword) => {
     setError('');
     setSuccessMessage('');
@@ -241,13 +237,9 @@ export default function App() {
       setSuccessMessage('Käyttäjätunnus vaihdettu onnistuneesti.');
       setTimeout(() => setSuccessMessage(''), 3000);
       return true;
-    } catch (err) {
-      setError(err.message);
-      return false;
-    }
+    } catch (err) { setError(err.message); return false; }
   };
 
-  // --- SALASANAN VAIHTO ---
   const handleChangePassword = async (currentPassword, newPassword) => {
     setError('');
     setSuccessMessage('');
@@ -263,13 +255,9 @@ export default function App() {
       setSuccessMessage('Salasana vaihdettu onnistuneesti.');
       setTimeout(() => setSuccessMessage(''), 3000);
       return true;
-    } catch (err) {
-      setError(err.message);
-      return false;
-    }
+    } catch (err) { setError(err.message); return false; }
   };
 
-  // --- TILIN POISTO (poistaa myös pelitiedot ja ohjaa kirjautumissivulle) ---
   const handleDeleteAccount = async (currentPassword) => {
     setError('');
     setSuccessMessage('');
@@ -284,13 +272,9 @@ export default function App() {
       if (!response.ok) throw new Error(data.message || 'Tilin poisto epäonnistui.');
 
       setShowProfile(false);
-      // Tili on jo poistettu palvelimella - nollataan paikallinen tila samalla logiikalla kuin uloskirjautumisessa
       await handleLogout();
       return true;
-    } catch (err) {
-      setError(err.message);
-      return false;
-    }
+    } catch (err) { setError(err.message); return false; }
   };
 
   const handleCombatTurn = async () => {
@@ -336,7 +320,7 @@ export default function App() {
           inventory: [{ ...prev.inventory[0], durability: data.weaponDurability }],
           combatLogs: fullCombatLogs,
           currentMonsterHp: nextMonsterHp,
-          currentMonsterLevel: prev ? prev.currentMonsterLevel : 1, // 👈 LISÄTTY: Estää tason katoamisen taisteluvuoron aikana!
+          currentMonsterLevel: prev ? prev.currentMonsterLevel : 1, 
           combatInitiative: data.initiativeWinner,
           currentTurn: data.nextTurn
         }));
@@ -352,7 +336,7 @@ export default function App() {
           } : null,
           combatLogs: fullCombatLogs,
           currentMonsterHp: nextMonsterHp,
-          currentMonsterLevel: prev ? prev.currentMonsterLevel : 1, // 👈 LISÄTTY: Pitää välimuistitallennuksen tasoissa mukana!
+          currentMonsterLevel: prev ? prev.currentMonsterLevel : 1, 
           combatInitiative: data.initiativeWinner,
           currentTurn: data.nextTurn
         }));
@@ -407,6 +391,7 @@ export default function App() {
               handleAuthSubmit={handleAuthSubmit}
             />
           ) : showProfile ? (
+            /* 🌟 KORJAUS: Profiili tarkistetaan nyt IHAN ENSIMMÄISENÄ, jotta se aukeaa aina! */
             <ProfileSettings
               currentUsername={loggedInUser}
               onChangeUsername={handleChangeUsername}
@@ -420,6 +405,11 @@ export default function App() {
             />
           ) : gameStarted && !activeSession ? (
             <CharacterSelection characterClasses={characterClasses} selectCharacter={selectCharacter} />
+          ) : isNavigating ? (
+            <MovementScreen
+              activeSession={activeSession}
+              handleEnterCombat={handleEnterCombat}
+            />
           ) : (
             <GamePlay 
               activeSession={activeSession} monsterHp={monsterHp} diceResult={diceResult}

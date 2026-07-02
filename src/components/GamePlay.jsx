@@ -16,25 +16,18 @@ export default function GamePlay({
   const [showMonsterReveal, setShowMonsterReveal] = useState(false);
   const logEndRef = useRef(null); // 🌟 Luodaan ankkuri lokilaatikon pohjalle
 
-  // Näytä paljastusanimaatio vain kun TÄTÄ nimenomaista hirviötä ei ole vielä
-  // paljastettu tässä selainistunnossa - ei siis enää joka sivun päivityksellä.
-  // Kun peliin lisätään liikkuminen/tarina, uusi hirviö saa oman nimen/luokan,
-  // jolloin animaatio käynnistyy taas normaalisti.
+  // 💥 KORJATTU: Ei enää sessionStorage-lukituksia! Jumpscare pamahtaa aina uuden taistelun alussa.
   useEffect(() => {
-    const monsterKey = activeSession?.currentMonsterName || 'Varjohahmo';
-    const alreadyRevealed = sessionStorage.getItem('ikimetsa_revealed_monster');
-
-    if (alreadyRevealed === monsterKey) {
+    if (monsterHp <= 0) {
       setShowMonsterReveal(false);
       return;
     }
 
     setShowMonsterReveal(true);
-    sessionStorage.setItem('ikimetsa_revealed_monster', monsterKey);
     const revealTimer = setTimeout(() => setShowMonsterReveal(false), 2550);
 
     return () => clearTimeout(revealTimer);
-  }, [activeSession?.currentMonsterName, activeSession?.currentMonsterCssClass]);
+  }, [activeSession?.currentMonsterName]); // Käynnistyy heti kun uusi hirviö ladataan ruudulle
 
   // 🌟 Automaattinen skrollaus: aina kun uusia lokeja tulee, hypätään pehmeästi pohjaan
   useEffect(() => {
@@ -84,7 +77,6 @@ export default function GamePlay({
             </button>
           )}
         </div>
-        {/* 🌟 PÄIVITETTY: "Pisteet" on nyt "Korjauspisteet" */}
         <div className="status-item"><span>Korjauspisteet:</span> <strong>{activeSession.repairPoints || 0} Pts</strong></div>
       </div>
 
@@ -115,7 +107,6 @@ export default function GamePlay({
           ) : (
             combatLogs.map((log, index) => <p key={index} className="log-line">{log}</p>)
           )}
-          {/* 🌟 TÄMÄ ANKKURI VETÄÄ SKROLLAUKSEN AINA TÄHÄN ALAREUNAAN */}
           <div ref={logEndRef} />
         </div>
 

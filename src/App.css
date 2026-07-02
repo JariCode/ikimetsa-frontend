@@ -118,7 +118,7 @@ body {
   gap: 10px;
 }
 
-/* --- SALASANAN NÄYTÄ/PIILOTA-KENTTÄ (käytössä kaikissa sovelluksen salasanakentissä) --- */
+/* --- SALASANAN NÄYTÄ/PIILOTA-KENTTÄ --- */
 .password-input-wrapper {
   position: relative;
   width: 100%;
@@ -290,7 +290,7 @@ body {
   animation: fadeIn 3s ease-in-out forwards;
 }
 
-/* --- TARINAN RULLAUSIKKUNA: näyttää aina 3 riviä, loput rullaavat läpi --- */
+/* --- TARINAN RULLAUSIKKUNA --- */
 .intro-scroll-window {
   position: relative;
   height: 7.8rem; /* 3 riviä x 2.6rem */
@@ -301,6 +301,10 @@ body {
   overflow: hidden;
   -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%);
   mask-image: linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%);
+}
+
+.movement-scroll-window {
+  margin: 40px auto;
 }
 
 .intro-scroll-content {
@@ -325,7 +329,7 @@ body {
 
 @keyframes introScroll {
   from { transform: translateY(7.8rem); }
-  to   { transform: translateY(-36.4rem); } /* 2.6rem x (17 riviä - 3 näkyvää) */
+  to   { transform: translateY(-36.4rem); }
 }
 
 @media (max-width: 480px) {
@@ -334,7 +338,6 @@ body {
   }
 }
 
-/* Jatkava pelaaja: lyhyt staattinen tervehdys pitkän tarinan sijaan */
 .intro-welcome-back {
   font-size: 1.15rem;
   line-height: 1.6;
@@ -346,7 +349,7 @@ body {
   animation: fadeIn 2s ease-in-out 1.2s forwards;
 }
 
-/* --- UUSITTU GOOTTILAINEN ALOITUSPAINIKE --- */
+/* --- GOOTTILAINEN ALOITUSPAINIKE --- */
 .start-btn {
   background: linear-gradient(180deg, #091209 0%, #040804 100%);
   border: 1px solid #4ade80;
@@ -365,12 +368,10 @@ body {
   transition: all 0.3s ease-in-out;
 }
 
-/* Uusi pelaaja: nappi odottaa koko tarinan rullauksen loppuun (1.2s viive + 29s rullaus) */
 .start-btn-story {
   animation: fadeIn 2s ease-in-out 30s forwards;
 }
 
-/* Jatkava pelaaja: ei pitkää tarinaa, nappi näkyy heti tervehdyksen jälkeen */
 .start-btn-continue {
   animation: fadeIn 2s ease-in-out 1s forwards;
 }
@@ -387,7 +388,7 @@ body {
   box-shadow: 0 0 10px rgba(0, 255, 102, 0.3);
 }
 
-/* --- HAHMON VALINTA (UPEA TYYLI VIEREKKÄIN) --- */
+/* --- HAHMON VALINTA --- */
 .character-selection-screen {
   text-align: center;
   z-index: 10;
@@ -519,6 +520,22 @@ div.game-play-screen .player-status-bar {
   border-radius: 4px;
 }
 
+/* Erillinen vihreä asettelu liikkumislaatikolle inline-tyylien poiston jälkeen */
+.movement-box {
+  background: rgba(10, 35, 10, 0.1);
+  border: 1px solid #1e3a1e;
+  padding: 25px;
+  text-align: center;
+  border-radius: 4px;
+}
+
+.movement-title {
+  color: #4ade80;
+  margin: 0 0 10px 0;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
 .monster-title {
   color: #ef4444;
   margin: 0 0 10px 0;
@@ -532,7 +549,7 @@ div.game-play-screen .player-status-bar {
   color: #4ade80;
 }
 
-/* 🎲 VISUAALINEN PYÖRIVÄ D20 NOPPA */
+/* 🎲 VISUAALINEN PYÖRIVÄ D20 NOPPA --- */
 .dice-row {
   display: flex;
   justify-content: center;
@@ -609,7 +626,6 @@ div.game-play-screen .player-status-bar {
 
 .attack-btn:active { transform: scale(0.98); }
 
-/* Ketjutettu specificity-fix matalan HP:n tekstille */
 .status-item strong.low-hp { 
   color: #ef4444; 
 }
@@ -883,4 +899,78 @@ div.game-play-screen .player-status-bar {
 .profile-back-btn:hover {
   border-color: #4ade80;
   color: #4ade80;
+}
+
+/* ==========================================================================
+   🌲 PUHDAS KOKO RUUDUN TAUSTA JA LIIKKUMISTYYLIT (App.css)
+   ========================================================================== */
+
+.traveling-background {
+  position: fixed; 
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1; /* Nousee perustaustan (0) päälle, mutta jää korttien (10) alle */
+  overflow: hidden;
+  background: linear-gradient(180deg, #010401 0%, #050f05 100%);
+  pointer-events: none;
+}
+
+/* Puut vilistävät taustalla koko näytön leveydeltä */
+.traveling-background::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 200%; height: 100%;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'><polygon points='5,100 15,10 25,100' fill='%23000000'/><polygon points='35,100 45,30 55,100' fill='%23020902'/><polygon points='65,100 75,5 85,100' fill='%23000000'/></svg>");
+  background-repeat: repeat-x;
+  background-size: 50% 100%;
+  opacity: 0.2;
+  animation: walkTreesBg 3s linear infinite;
+}
+
+/* Sumu velloo alhaalla koko näytön leveydeltä */
+.traveling-background::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; width: 200%; height: 75%;
+  background: linear-gradient(90deg, rgba(74,222,128,0) 0%, rgba(22,101,52,0.35) 50%, rgba(74,222,128,0) 100%);
+  animation: walkFogBg 2s ease-in-out infinite alternate;
+}
+
+@keyframes walkTreesBg {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes walkFogBg {
+  0% { transform: translateX(-30px); opacity: 0.4; }
+  100% { transform: translateX(30px); opacity: 0.9; }
+}
+
+/* 🎲 D6-NELIÖ (Sama punainen loiste ja asettelu ilman d20-leikkauksia) */
+.d6-movement-dice {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #7a0000;
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 1.3rem;
+  margin: 0 auto;
+  border-radius: 4px;
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+  border: 1px solid #ff4d4d;
+}
+
+.d6-movement-dice.spinning {
+  animation: d6MoveSpin 0.12s infinite linear;
+  background-color: #400000;
+}
+
+@keyframes d6MoveSpin {
+  0% { transform: rotate(0deg) scale(0.95); }
+  100% { transform: rotate(360deg) scale(1.05); }
 }
