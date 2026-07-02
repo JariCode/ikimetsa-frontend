@@ -12,16 +12,17 @@ export default function App() {
   const [shouldRestoreSession, setShouldRestoreSession] = useState(
     Boolean(sessionStorage.getItem('ikimetsa_session_id') && sessionStorage.getItem('ikimetsa_session_id') !== 'logged_in')
   );
+  const [isHydratingSession, setIsHydratingSession] = useState(Boolean(sessionStorage.getItem('ikimetsa_session_id') && sessionStorage.getItem('ikimetsa_session_id') !== 'logged_in'));
   const [authMode, setAuthMode] = useState('login');
   const [usernameInput, setUsernameInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
   const [loggedInUser, setLoggedInUser] = useState(null);
+  const [savedGameSession, setSavedGameSession] = useState(null);
 
   const [gameStarted, setGameStarted] = useState(false);
   const [characterClasses, setCharacterClasses] = useState([]); 
   const [activeSession, setActiveSession] = useState(null);
   const [error, setError] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
   
   const [combatLogs, setCombatLogs] = useState([]);
   const [monsterHp, setMonsterHp] = useState(25);
@@ -46,6 +47,7 @@ export default function App() {
     setSessionId(null);
     setShouldRestoreSession(false);
     setLoggedInUser(null);
+    setSavedGameSession(null);
     setActiveSession(null);
     setGameStarted(false);
     setCharacterClasses([]);
@@ -58,7 +60,8 @@ export default function App() {
   };
 
   useEffect(() => {
-    if (shouldRestoreSession && sessionId && sessionId !== 'logged_in') {
+    if (shouldRestoreSession && sessionId) {
+      setIsHydratingSession(true);
       fetch(`${import.meta.env.VITE_API_URL}/api/auth/me`, {
         credentials: 'include'
       })
@@ -68,13 +71,29 @@ export default function App() {
         })
         .then(data => {
           if (data.session) {
+            setSavedGameSession(data.session);
             setActiveSession(data.session);
             setGameStarted(true);
-            setMonsterHp(data.session.monsterHp || 25);
+            setMonsterHp(data.session.currentMonsterHp ?? 25);
+            setCombatInitiative(data.session.combatInitiative ?? null);
+            setCurrentTurn(data.session.currentTurn ?? null);
+            setCombatLogs(data.session.combatLogs || []);
+          } else {
+            setSavedGameSession(null);
+            setActiveSession(null);
+            setGameStarted(false);
+            setCombatInitiative(null);
+            setCurrentTurn(null);
+            setMonsterHp(25);
+            setCombatLogs([]);
           }
           setShouldRestoreSession(false);
+          setIsHydratingSession(false);
         })
-        .catch(() => handleLogout());
+        .catch(() => {
+          setIsHydratingSession(false);
+          handleLogout();
+        });
     }
   }, [sessionId, shouldRestoreSession]);
 
@@ -95,7 +114,6 @@ export default function App() {
   const handleAuthSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    setSuccessMessage('');
     const endpoint = authMode === 'login' ? 'login' : 'register';
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/${endpoint}`, {
@@ -111,30 +129,44 @@ export default function App() {
         sessionStorage.setItem('ikimetsa_session_id', data.gameSessionId || 'logged_in');
         setSessionId(data.gameSessionId || 'logged_in');
         setShouldRestoreSession(false);
+        setIsHydratingSession(false);
         setLoggedInUser(data.username);
+        setSavedGameSession(data.session || null);
         setActiveSession(null);
         setGameStarted(false);
         setCharacterClasses([]);
-        setCombatLogs([]);
+        setCombatLogs(data.session?.combatLogs || []);
         setCombatInitiative(null);
         setCurrentTurn(null);
-        setMonsterHp(25);
-        setSuccessMessage('Tunnus luotu! Siirryt alkuintrohon.');
+        setMonsterHp(data.session?.currentMonsterHp ?? 25);
         setPasswordInput('');
       } else {
         sessionStorage.setItem('ikimetsa_session_id', data.gameSessionId || 'logged_in');
         setSessionId(data.gameSessionId || 'logged_in');
         setShouldRestoreSession(false);
+        setIsHydratingSession(false);
         setLoggedInUser(data.username);
+        setSavedGameSession(data.session || null);
         setActiveSession(null);
         setGameStarted(false);
         setCharacterClasses([]);
-        setCombatLogs([]);
+        setCombatLogs(data.session?.combatLogs || []);
         setCombatInitiative(null);
         setCurrentTurn(null);
-        setMonsterHp(25);
+        setMonsterHp(data.session?.currentMonsterHp ?? 25);
       }
     } catch (err) { setError(err.message); }
+  };
+
+  const startOrContinueTaival = () => {
+    if (savedGameSession) {
+      setActiveSession(savedGameSession);
+      setMonsterHp(savedGameSession.currentMonsterHp ?? 25);
+      setCombatInitiative(savedGameSession.combatInitiative || null);
+      setCurrentTurn(savedGameSession.currentTurn || null);
+      setCombatLogs(savedGameSession.combatLogs || []);
+    }
+    setGameStarted(true);
   };
 
   const selectCharacter = async (className) => {
@@ -151,11 +183,12 @@ export default function App() {
       
       sessionStorage.setItem('ikimetsa_session_id', data._id);
       setSessionId(data._id);
+      setSavedGameSession(data);
       setActiveSession(data);
       setCombatInitiative(null);
       setCurrentTurn(null);
-      setMonsterHp(25);
-      setCombatLogs([]);
+      setMonsterHp(data.currentMonsterHp ?? 25);
+      setCombatLogs(data.combatLogs || []);
     } catch (err) { setError(err.message); }
   };
 
@@ -170,7 +203,8 @@ export default function App() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || 'Korjaus epäonnistui.');
       setActiveSession(data.session);
-      setCombatLogs(prev => [...prev, `🔧 Kipunoita ja kolketta! Korjasit aseesi takaisin huippukuntoon.`]);
+      setSavedGameSession(data.session);
+      setCombatLogs(data.combatLogs || data.session.combatLogs || []);
     } catch (err) { setError(err.message); }
   };
 
@@ -184,7 +218,7 @@ export default function App() {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/combat/turn`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'hyokkaa', currentMonsterHp: monsterHp, hasInitiative: combatInitiative, currentTurn: currentTurn }),
+        body: JSON.stringify({ action: 'hyokkaa' }),
         credentials: 'include'
       });
       const data = await response.json();
@@ -197,9 +231,10 @@ export default function App() {
       setTimeout(() => {
         clearInterval(interval);
         setIsRolling(false);
-        const foundRoll = data.combatLog.find(l => l.includes('Heitit') || l.includes('heittää'))?.match(/\d+/)?.[0];
+        const fullCombatLogs = data.combatLogs || [];
+        const foundRoll = data.combatLogs?.find(l => l.includes('Heitit') || l.includes('heittää'))?.match(/\d+/)?.[0];
         setDiceResult(foundRoll ? parseInt(foundRoll) : 12);
-        setCombatLogs(data.combatLog);
+        setCombatLogs(fullCombatLogs);
         setMonsterHp(nextMonsterHp);
         setIsShaking(true);
         setTimeout(() => setIsShaking(false), 300);
@@ -208,7 +243,19 @@ export default function App() {
           ...prev,
           repairPoints: data.repairPoints !== undefined ? data.repairPoints : prev.repairPoints,
           stats: { ...prev.stats, hp: data.playerHp },
-          inventory: [{ ...prev.inventory[0], durability: data.weaponDurability }]
+          inventory: [{ ...prev.inventory[0], durability: data.weaponDurability }],
+          combatLogs: fullCombatLogs,
+          currentMonsterHp: nextMonsterHp,
+          combatInitiative: data.initiativeWinner,
+          currentTurn: data.nextTurn
+        }));
+
+        setSavedGameSession(prev => ({
+          ...prev,
+          combatLogs: fullCombatLogs,
+          currentMonsterHp: nextMonsterHp,
+          combatInitiative: data.initiativeWinner,
+          currentTurn: data.nextTurn
         }));
 
         if (nextMonsterHp <= 0) {
@@ -231,30 +278,42 @@ export default function App() {
         <div className="fog-layer layer-2"></div>
       </div>
 
-      {error && <div className="global-error-popup">⚠️ {error}</div>}
-      {successMessage && <div className="global-success-popup">✅ {successMessage}</div>}
-
-      {sessionId && (
-        <button className="logout-top-btn" onClick={handleLogout}>Kirjaudu ulos</button>
-      )}
-
-      {!sessionId ? (
-        <AuthScreen 
-          authMode={authMode} setAuthMode={setAuthMode}
-          usernameInput={usernameInput} setUsernameInput={setUsernameInput}
-          passwordInput={passwordInput} setPasswordInput={setPasswordInput}
-          handleAuthSubmit={handleAuthSubmit}
-        />
-      ) : !gameStarted && !activeSession ? (
-        <IntroScreen setGameStarted={setGameStarted} />
-      ) : gameStarted && !activeSession ? (
-        <CharacterSelection characterClasses={characterClasses} selectCharacter={selectCharacter} />
+      {isHydratingSession ? (
+        <div className="session-loading-screen">
+          <div className="session-loading-card">
+            <div className="session-loading-text">Palautetaan taivalta...</div>
+          </div>
+        </div>
       ) : (
-        <GamePlay 
-          activeSession={activeSession} monsterHp={monsterHp} diceResult={diceResult}
-          isRolling={isRolling} combatLogs={combatLogs} combatInitiative={combatInitiative}
-          currentTurn={currentTurn} handleRepairWeapon={handleRepairWeapon} handleCombatTurn={handleCombatTurn}
-        />
+        <>
+          {error && <div className="global-error-popup">⚠️ {error}</div>}
+
+          {sessionId && (
+            <button className="logout-top-btn" onClick={handleLogout}>Kirjaudu ulos</button>
+          )}
+
+          {!sessionId ? (
+            <AuthScreen 
+              authMode={authMode} setAuthMode={setAuthMode}
+              usernameInput={usernameInput} setUsernameInput={setUsernameInput}
+              passwordInput={passwordInput} setPasswordInput={setPasswordInput}
+              handleAuthSubmit={handleAuthSubmit}
+            />
+          ) : !gameStarted && !activeSession ? (
+            <IntroScreen
+              hasSavedSession={Boolean(savedGameSession)}
+              onStart={startOrContinueTaival}
+            />
+          ) : gameStarted && !activeSession ? (
+            <CharacterSelection characterClasses={characterClasses} selectCharacter={selectCharacter} />
+          ) : (
+            <GamePlay 
+              activeSession={activeSession} monsterHp={monsterHp} diceResult={diceResult}
+              isRolling={isRolling} combatLogs={combatLogs} combatInitiative={combatInitiative}
+              currentTurn={currentTurn} handleRepairWeapon={handleRepairWeapon} handleCombatTurn={handleCombatTurn}
+            />
+          )}
+        </>
       )}
     </div>
   );
