@@ -48,6 +48,7 @@ export default function App() {
 
     sessionStorage.removeItem('ikimetsa_session_id');
     sessionStorage.removeItem('ikimetsa_show_profile');
+    sessionStorage.removeItem('ikimetsa_revealed_monster');
     setSessionId(null);
     setShouldRestoreSession(false);
     setLoggedInUser(null);
@@ -196,6 +197,7 @@ export default function App() {
       if (!response.ok) throw new Error(data.message || 'Hahmon valinta epäonnistui.');
       
       sessionStorage.setItem('ikimetsa_session_id', data._id);
+      sessionStorage.removeItem('ikimetsa_revealed_monster'); // uusi peli = uusi hirviö, animaatio saa näkyä
       setSessionId(data._id);
       setSavedGameSession(data);
       setActiveSession(data);

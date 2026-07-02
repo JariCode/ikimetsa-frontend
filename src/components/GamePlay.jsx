@@ -13,11 +13,24 @@ export default function GamePlay({
   handleRepairWeapon,
   handleCombatTurn
 }) {
-  const [showMonsterReveal, setShowMonsterReveal] = useState(true);
+  const [showMonsterReveal, setShowMonsterReveal] = useState(false);
   const logEndRef = useRef(null); // 🌟 Luodaan ankkuri lokilaatikon pohjalle
 
+  // Näytä paljastusanimaatio vain kun TÄTÄ nimenomaista hirviötä ei ole vielä
+  // paljastettu tässä selainistunnossa - ei siis enää joka sivun päivityksellä.
+  // Kun peliin lisätään liikkuminen/tarina, uusi hirviö saa oman nimen/luokan,
+  // jolloin animaatio käynnistyy taas normaalisti.
   useEffect(() => {
+    const monsterKey = activeSession?.currentMonsterName || 'Varjohahmo';
+    const alreadyRevealed = sessionStorage.getItem('ikimetsa_revealed_monster');
+
+    if (alreadyRevealed === monsterKey) {
+      setShowMonsterReveal(false);
+      return;
+    }
+
     setShowMonsterReveal(true);
+    sessionStorage.setItem('ikimetsa_revealed_monster', monsterKey);
     const revealTimer = setTimeout(() => setShowMonsterReveal(false), 2550);
 
     return () => clearTimeout(revealTimer);
