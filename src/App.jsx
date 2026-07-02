@@ -232,8 +232,7 @@ export default function App() {
         clearInterval(interval);
         setIsRolling(false);
         const fullCombatLogs = data.combatLogs || [];
-        const foundRoll = data.combatLogs?.find(l => l.includes('Heitit') || l.includes('heittää'))?.match(/\d+/)?.[0];
-        setDiceResult(foundRoll ? parseInt(foundRoll) : 12);
+        setDiceResult(typeof data.diceRoll === 'number' ? data.diceRoll : 12);
         setCombatLogs(fullCombatLogs);
         setMonsterHp(nextMonsterHp);
         setIsShaking(true);
