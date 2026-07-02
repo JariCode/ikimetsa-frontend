@@ -265,13 +265,25 @@ body {
 
 @keyframes introScroll {
   from { transform: translateY(7.8rem); }
-  to   { transform: translateY(-39rem); }
+  to   { transform: translateY(-36.4rem); } /* 2.6rem x (17 riviä - 3 näkyvää) */
 }
 
 @media (max-width: 480px) {
   .intro-scroll-content .intro-text {
     font-size: 0.85rem;
   }
+}
+
+/* Jatkava pelaaja: lyhyt staattinen tervehdys pitkän tarinan sijaan */
+.intro-welcome-back {
+  font-size: 1.15rem;
+  line-height: 1.6;
+  margin: 30px auto;
+  max-width: 500px;
+  color: #ffffff;
+  text-shadow: 0 2px 4px #000000, 0 0 10px #000000;
+  opacity: 0;
+  animation: fadeIn 2s ease-in-out 1.2s forwards;
 }
 
 /* --- UUSITTU GOOTTILAINEN ALOITUSPAINIKE --- */
@@ -291,7 +303,16 @@ body {
   border-radius: 6px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.8), 0 0 15px rgba(74, 222, 128, 0.2);
   transition: all 0.3s ease-in-out;
+}
+
+/* Uusi pelaaja: nappi odottaa koko tarinan rullauksen loppuun (1.2s viive + 29s rullaus) */
+.start-btn-story {
   animation: fadeIn 2s ease-in-out 30s forwards;
+}
+
+/* Jatkava pelaaja: ei pitkää tarinaa, nappi näkyy heti tervehdyksen jälkeen */
+.start-btn-continue {
+  animation: fadeIn 2s ease-in-out 1s forwards;
 }
 
 .start-btn:hover {
@@ -405,7 +426,7 @@ div.character-selection-screen .character-cards {
 
 div.game-play-screen .player-status-bar {
   display: flex;
-  flex-wrap: wrap; /* Sallii elementtien rivittyä siististi allekkain jos leveys loppuu */
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   background: rgba(10, 25, 10, 0.75);
@@ -423,7 +444,7 @@ div.game-play-screen .player-status-bar {
   align-items: center; 
   gap: 8px; 
   font-size: 1rem;
-  flex-shrink: 0; /* Estää laatikoiden puristumisen liian pieneksi */
+  flex-shrink: 0;
 }
 
 .status-item span { color: #9ca3af; }
@@ -601,4 +622,3 @@ div.game-play-screen .player-status-bar {
   color: #000;
   box-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
 }
-

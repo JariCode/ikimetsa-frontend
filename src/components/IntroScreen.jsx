@@ -4,7 +4,7 @@ import React from 'react';
 // joka näyttää aina vain kolme riviä kerrallaan - vanhat rivit
 // katoavat ylös ja uudet ilmestyvät alhaalta, kuten lopputekstit.
 const STORY_LINES = [
- 'Kaikki alkoi, kun Kirottujen Velho nousi valtaan pimeydessä.',
+  'Kaikki alkoi, kun Kirottujen Velho nousi valtaan pimeydessä.',
   'Hän kadehti elävien valoa ja himoitsi ikuista elämää.',
   'Sielu kerrallaan hän kirosi maan ja kutsui pimeän esiin.',
   'Viime yönä kotikyläsi paloi purppuraisessa loitsutulessa.',
@@ -28,15 +28,26 @@ export default function IntroScreen({ hasSavedSession, onStart }) {
     <div className="intro-screen">
       <h1 className="game-title">IKIMETSÄ</h1>
 
-      <div className="intro-scroll-window">
-        <div className="intro-scroll-content">
-          {STORY_LINES.map((line, index) => (
-            <p key={index} className="intro-text">{line}</p>
-          ))}
+      {hasSavedSession ? (
+        // Jatkava pelaaja: ei pitkää tarinaa uudelleen, vain lyhyt tervehdys
+        <p className="intro-welcome-back">
+          Metsä muistaa askeleesi. Taipaleesi jatkuu siitä, mihin se jäi.
+        </p>
+      ) : (
+        // Uusi pelaaja: koko tarina rullaa 3 rivin ikkunassa
+        <div className="intro-scroll-window">
+          <div className="intro-scroll-content">
+            {STORY_LINES.map((line, index) => (
+              <p key={index} className="intro-text">{line}</p>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
-      <button className="start-btn" onClick={onStart}>
+      <button
+        className={hasSavedSession ? 'start-btn start-btn-continue' : 'start-btn start-btn-story'}
+        onClick={onStart}
+      >
         {hasSavedSession ? 'Jatka taivalta' : 'Aloita Taival'}
       </button>
     </div>
