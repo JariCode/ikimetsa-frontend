@@ -139,7 +139,16 @@ export default function MovementScreen({
         </div>
       </div>
 
-      <div className="traveling-background" />
+      <div className={currentArea?.backgroundClass || 'traveling-background'}>
+        {currentArea?.backgroundClass === 'traveling-background-suo' && (
+          <>
+            <div className="swamp-bubble b1"></div>
+            <div className="swamp-bubble b2"></div>
+            <div className="swamp-bubble b3"></div>
+            <div className="swamp-bubble b4"></div>
+          </>
+        )}
+      </div>
     </>
   );
 }

@@ -88,3 +88,96 @@
   0% { transform: rotate(0deg) scale(0.95); }
   100% { transform: rotate(360deg) scale(1.05); }
 }
+
+/* ==========================================================================
+   🟫 SUO-ALUEEN TAUSTA-ANIMAATIO - muta-sävyinen, huojuu hitaasti kuin
+   epävakaa maaperä, kuolleita puita/ruokoja kaukana, kuplia nousee liejusta
+   ========================================================================== */
+
+.traveling-background-suo {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  overflow: hidden;
+  background: linear-gradient(180deg, #2e2f18 0%, #3f3d1e 55%, #4a4420 100%);
+  pointer-events: none;
+  animation: swampSway 4.5s ease-in-out infinite;
+}
+
+/* Kaukaiset kuolleet puut/ruo'ot - ohuita, hitaasti liikkuvia siluetteja */
+.traveling-background-suo::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 200%; height: 75%;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 100' preserveAspectRatio='none'><path d='M20,100 L22,50 M22,60 L15,45 M22,55 L29,42' stroke='%23161708' stroke-width='2' fill='none'/><path d='M60,100 L58,35 M58,50 L48,32 M58,45 L68,30 M58,60 L50,50' stroke='%23161708' stroke-width='2.5' fill='none'/><path d='M110,100 L112,55 M112,65 L104,50' stroke='%23161708' stroke-width='2' fill='none'/><path d='M160,100 L157,40 M157,55 L146,38 M157,50 L168,36' stroke='%23161708' stroke-width='2.5' fill='none'/><path d='M210,100 L212,52' stroke='%23161708' stroke-width='2' fill='none'/><path d='M250,100 L248,38 M248,52 L238,35 M248,48 L258,33' stroke='%23161708' stroke-width='2.5' fill='none'/></svg>");
+  background-repeat: repeat-x;
+  background-size: 32% 100%;
+  background-position: bottom;
+  opacity: 0.85;
+  animation: swampTreesFar 14s linear infinite;
+}
+
+/* Liejun kimallus + tummuva pohja edessä - liikkuu vaakasuunnassa samaan tapaan
+   kuin metsän lähikuuset, jotta koko näkymä tuntuu elävältä kävellessä */
+.traveling-background-suo::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; width: 200%; height: 55%;
+  background-image:
+    radial-gradient(ellipse 18px 8px at 8% 92%, rgba(90,110,40,0.55), transparent 70%),
+    radial-gradient(ellipse 12px 6px at 22% 85%, rgba(90,110,40,0.45), transparent 70%),
+    radial-gradient(ellipse 22px 9px at 38% 95%, rgba(90,110,40,0.5), transparent 70%),
+    radial-gradient(ellipse 14px 6px at 55% 88%, rgba(90,110,40,0.4), transparent 70%),
+    radial-gradient(ellipse 20px 8px at 70% 93%, rgba(90,110,40,0.5), transparent 70%),
+    radial-gradient(ellipse 12px 6px at 85% 87%, rgba(90,110,40,0.45), transparent 70%),
+    radial-gradient(ellipse 16px 7px at 95% 92%, rgba(90,110,40,0.5), transparent 70%),
+    linear-gradient(180deg, rgba(20,25,10,0) 0%, rgba(20,25,10,0.5) 100%);
+  background-repeat: repeat-x, repeat-x, repeat-x, repeat-x, repeat-x, repeat-x, repeat-x, no-repeat;
+  animation: swampMudScroll 6s linear infinite, swampMudShimmer 3s ease-in-out infinite alternate;
+}
+
+/* Liejusta nousevat kuplat - staattisesti sijoitetut divit, animoitu erikseen JS:ttä tarvitsematta */
+.swamp-bubble {
+  position: absolute;
+  bottom: 8%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, rgba(180,200,120,0.9), rgba(70,80,30,0.3) 70%, transparent);
+  animation: swampBubbleRise 3.5s ease-in infinite;
+  z-index: 2;
+}
+.swamp-bubble.b1 { left: 15%; animation-delay: 0s; }
+.swamp-bubble.b2 { left: 40%; animation-delay: 1.1s; width: 6px; height: 6px; }
+.swamp-bubble.b3 { left: 65%; animation-delay: 2.1s; width: 10px; height: 10px; }
+.swamp-bubble.b4 { left: 85%; animation-delay: 0.6s; width: 5px; height: 5px; }
+
+@keyframes swampSway {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(4px) rotate(0.3deg); }
+}
+
+@keyframes swampTreesFar {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes swampMudScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes swampMudShimmer {
+  0% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
+@keyframes swampBubbleRise {
+  0% { transform: translateY(0) scale(0.6); opacity: 0; }
+  15% { opacity: 0.9; }
+  85% { opacity: 0.6; }
+  100% { transform: translateY(-140px) scale(1.1); opacity: 0; }
+}
