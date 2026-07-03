@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import './MovementStyles.css';
 
 export default function MovementScreen({
   activeSession,
-  handleEnterCombat
+  handleEnterCombat,
+  phase,
+  setPhase
 }) {
-  const [phase, setPhase] = useState('intro');
   const [currentRoll, setCurrentRoll] = useState(null);
   const [isRolling, setIsRolling] = useState(false);
   const [storyText, setStoryText] = useState('Polku erkanee synkkään pöheikköön. Heitä noppaa kulkeaksesi syvemmälle...');

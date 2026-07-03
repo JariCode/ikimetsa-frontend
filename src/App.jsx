@@ -37,6 +37,7 @@ export default function App() {
   const [currentTurn, setCurrentTurn] = useState(null);
 
   const [isNavigating, setIsNavigating] = useState(false);
+  const [movementPhase, setMovementPhase] = useState('intro');
 
   const handleLogout = async () => {
     try {
@@ -66,6 +67,7 @@ export default function App() {
     setPasswordInput('');
     setShowProfile(false);
     setIsNavigating(false);
+    setMovementPhase('intro');
   };
 
   useEffect(() => {
@@ -188,6 +190,7 @@ export default function App() {
       setActiveSession(data);
       
       setIsNavigating(true);
+      setMovementPhase('intro');
       
       setCombatInitiative(null);
       setCurrentTurn(null);
@@ -409,6 +412,8 @@ export default function App() {
             <MovementScreen
               activeSession={activeSession}
               handleEnterCombat={handleEnterCombat}
+              phase={movementPhase}
+              setPhase={setMovementPhase}
             />
           ) : (
             <GamePlay 
