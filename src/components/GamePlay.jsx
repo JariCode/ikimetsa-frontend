@@ -15,29 +15,30 @@ export default function GamePlay({
   handleRepairWeapon,
   handleCombatTurn
 }) {
+  const monsterKeyForReveal = activeSession?.currentMonsterName || 'Varjohahmo';
+
+  // 🛡️ Päätetään VAIN KERRAN komponentin alustuksen yhteydessä pitääkö jumpscare näyttää.
+  // Tämä on turvallista Reactin StrictMode-kaksoisajossa (kehitystila) koska se on pelkkä
+  // luku eikä kirjoitus - toisin kuin aiempi versio joka sekä luki että kirjoitti saman
+  // sessionStorage-avaimen useEffectin sisällä, jolloin toinen ajokerta näki ensimmäisen
+  // jäljen ja perui itsensä ennen kuin animaatio ehti näkyä.
+  const [shouldRevealMonster] = useState(() => {
+    if (monsterHp <= 0 || combatInitiative) return false;
+    const alreadyShown = sessionStorage.getItem('ikimetsa_monster_reveal_shown');
+    return alreadyShown !== monsterKeyForReveal;
+  });
+
   const [showMonsterReveal, setShowMonsterReveal] = useState(false);
 
   useEffect(() => {
-    if (monsterHp <= 0) {
-      setShowMonsterReveal(false);
-      return;
-    }
+    if (!shouldRevealMonster) return;
 
-    // 🛡️ TARKISTUS: sama per-hirviö sessionStorage-periaate kuin veriroiskeessa/kuolemaefektissä.
-    // gameLogs ei enää käy tähän, koska se on jaettu koko pelin läpi eikä nollaudu taistelun alkaessa.
-    const monsterKey = activeSession?.currentMonsterName || 'Varjohahmo';
-    const alreadyShown = sessionStorage.getItem('ikimetsa_monster_reveal_shown');
-    if (alreadyShown === monsterKey || combatInitiative) {
-      setShowMonsterReveal(false);
-      return;
-    }
-
+    sessionStorage.setItem('ikimetsa_monster_reveal_shown', monsterKeyForReveal);
     setShowMonsterReveal(true);
-    sessionStorage.setItem('ikimetsa_monster_reveal_shown', monsterKey);
     const revealTimer = setTimeout(() => setShowMonsterReveal(false), 2550);
 
     return () => clearTimeout(revealTimer);
-  }, [activeSession?.currentMonsterName]);
+  }, [shouldRevealMonster, monsterKeyForReveal]);
 
   const monsterName = activeSession.currentMonsterName || 'Varjohahmo';
   const monsterCssClass = activeSession.currentMonsterCssClass || 'varjohahmo';

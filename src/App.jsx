@@ -158,28 +158,42 @@ export default function App() {
     }
   }, [movementPhase, isNavigating]);
 
+  // 🛡️ Sama korjaus kuin GamePlay.jsx:n jumpscaressa: "onko jo käsitelty tässä komponentissa"
+  // -tieto pidetään useRefissä (ei laukaise renderöintiä), jotta Reactin StrictMode-kaksoisajo
+  // (kehitystila) ei näe ensimmäisen ajokerran omaa sessionStorage-kirjoitusta ja peru itseään.
+  const victorySplashHandledRef = React.useRef(null);
+
   useEffect(() => {
     if (monsterHp > 0 || !activeSession) return;
 
     const monsterKey = activeSession?.currentMonsterName || 'Varjohahmo';
+    if (victorySplashHandledRef.current === monsterKey) return; // jo käsitelty tälle hirviölle
+
+    victorySplashHandledRef.current = monsterKey;
+
     const splashShownFor = sessionStorage.getItem('ikimetsa_victory_splash_shown');
     if (splashShownFor === monsterKey) return;
 
-    setShowVictorySplash(true);
     sessionStorage.setItem('ikimetsa_victory_splash_shown', monsterKey);
+    setShowVictorySplash(true);
     const splashTimer = setTimeout(() => setShowVictorySplash(false), 1700);
 
     return () => clearTimeout(splashTimer);
   }, [monsterHp, activeSession?.currentMonsterName]);
 
+  const deathFadeHandledRef = React.useRef(false);
+
   useEffect(() => {
     if (!activeSession || activeSession.stats.hp > 0) return;
+    if (deathFadeHandledRef.current) return; // jo käsitelty tässä komponentissa
+
+    deathFadeHandledRef.current = true;
 
     const alreadyShown = sessionStorage.getItem('ikimetsa_death_fade_shown');
     if (alreadyShown === 'true') return;
 
-    setShowDeathFade(true);
     sessionStorage.setItem('ikimetsa_death_fade_shown', 'true');
+    setShowDeathFade(true);
     const fadeTimer = setTimeout(() => setShowDeathFade(false), 1700);
 
     return () => clearTimeout(fadeTimer);
@@ -365,6 +379,7 @@ export default function App() {
       if (!response.ok) throw new Error(data.message || 'Tallennuspisteeseen palaaminen epäonnistui.');
 
       sessionStorage.removeItem('ikimetsa_death_fade_shown');
+      sessionStorage.removeItem('ikimetsa_monster_reveal_shown');
       setActiveSession(data);
       setSavedGameSession(data);
       setMonsterHp(data.currentMonsterHp ?? 25);
