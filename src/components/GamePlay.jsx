@@ -14,7 +14,6 @@ export default function GamePlay({
   handleCombatTurn
 }) {
   const [showMonsterReveal, setShowMonsterReveal] = useState(false);
-  const [showVictorySplash, setShowVictorySplash] = useState(false);
   const logEndRef = useRef(null); // 🌟 Luodaan ankkuri lokilaatikon pohjalle
 
   // 💥 Jumpscare pamahtaa uuden taistelun alussa, mutta ei enää sivun päivityksessä (F5)!
@@ -35,21 +34,6 @@ export default function GamePlay({
 
     return () => clearTimeout(revealTimer);
   }, [activeSession?.currentMonsterName]); // Käynnistyy heti kun uusi hirviö ladataan ruudulle
-
-  // 🩸 Veriroiske pamahtaa kun hirviö kaatuu, mutta ei enää sivun päivityksessä (F5)
-  useEffect(() => {
-    if (monsterHp > 0) return;
-
-    const monsterKey = activeSession?.currentMonsterName || 'Varjohahmo';
-    const splashShownFor = sessionStorage.getItem('ikimetsa_victory_splash_shown');
-    if (splashShownFor === monsterKey) return; // jo näytetty - kyseessä on F5-päivitys
-
-    setShowVictorySplash(true);
-    sessionStorage.setItem('ikimetsa_victory_splash_shown', monsterKey);
-    const splashTimer = setTimeout(() => setShowVictorySplash(false), 1700);
-
-    return () => clearTimeout(splashTimer);
-  }, [monsterHp, activeSession?.currentMonsterName]);
 
   // 🌟 Automaattinen skrollaus: aina kun uusia lokeja tulee, hypätään pehmeästi pohjaan
   useEffect(() => {
@@ -80,8 +64,6 @@ export default function GamePlay({
         </div>
       )}
 
-      {showVictorySplash && <div className="victory-blood-splash" />}
-
       {/* YLÄPALKKI */}
       <div className="player-status-bar">
         <div className="status-item">
@@ -105,16 +87,10 @@ export default function GamePlay({
       </div>
 
       <div className="combat-arena">
-        {monsterHp > 0 ? (
-          <div className={`monster-box monster-box-${monsterCssClass}`}>
-            <h3 className="monster-title">Vastustaja: {monsterName} (Taso {activeSession.currentMonsterLevel || 1})</h3>
-            <p>Hirviön kunto: <strong>{monsterHp} HP</strong></p>
-          </div>
-        ) : (
-          <div className={`monster-box dead monster-box-${monsterCssClass}`}>
-            <h3>{monsterName} on voitettu!</h3>
-          </div>
-        )}
+        <div className={`monster-box monster-box-${monsterCssClass}`}>
+          <h3 className="monster-title">Vastustaja: {monsterName} (Taso {activeSession.currentMonsterLevel || 1})</h3>
+          <p>Hirviön kunto: <strong>{monsterHp} HP</strong></p>
+        </div>
 
         {diceResult !== null && (
           <div className="dice-row">
@@ -134,15 +110,13 @@ export default function GamePlay({
           <div ref={logEndRef} />
         </div>
 
-        {monsterHp > 0 && activeSession.stats.hp > 0 && (
-          <div className="action-buttons">
-            <button className="attack-btn" onClick={handleCombatTurn} disabled={isRolling}>
-              {isRolling ? 'Heitetään...' : 
-               !combatInitiative ? 'Määritä aloite ja aloita taistelu' : 
-               currentTurn === 'pelaaja' ? 'Sinun vuorosi: Hyökkää!' : 'Hirviön vuoro: Odota iskua...'}
-            </button>
-          </div>
-        )}
+        <div className="action-buttons">
+          <button className="attack-btn" onClick={handleCombatTurn} disabled={isRolling}>
+            {isRolling ? 'Heitetään...' : 
+             !combatInitiative ? 'Määritä aloite ja aloita taistelu' : 
+             currentTurn === 'pelaaja' ? 'Sinun vuorosi: Hyökkää!' : 'Hirviön vuoro: Odota iskua...'}
+          </button>
+        </div>
       </div>
     </div>
   );

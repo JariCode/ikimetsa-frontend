@@ -7,6 +7,8 @@ import CharacterSelection from './components/CharacterSelection';
 import GamePlay from './components/GamePlay';
 import ProfileSettings from './components/ProfileSettings';
 import MovementScreen from './components/MovementScreen';
+import CampfireScreen from './components/CampfireScreen';
+import GraveScreen from './components/GraveScreen';
 
 export default function App() {
   const [sessionId, setSessionId] = useState(sessionStorage.getItem('ikimetsa_session_id') || null);
@@ -38,6 +40,8 @@ export default function App() {
 
   const [isNavigating, setIsNavigating] = useState(sessionStorage.getItem('ikimetsa_is_navigating') === 'true');
   const [movementPhase, setMovementPhase] = useState(sessionStorage.getItem('ikimetsa_movement_phase') || 'intro');
+  const [showVictorySplash, setShowVictorySplash] = useState(false);
+  const [showDeathFade, setShowDeathFade] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -52,6 +56,7 @@ export default function App() {
     sessionStorage.removeItem('ikimetsa_session_id');
     sessionStorage.removeItem('ikimetsa_show_profile');
     sessionStorage.removeItem('ikimetsa_victory_splash_shown');
+    sessionStorage.removeItem('ikimetsa_death_fade_shown');
     setSessionId(null);
     setShouldRestoreSession(false);
     setLoggedInUser(null);
@@ -134,6 +139,38 @@ export default function App() {
     }
   }, [movementPhase, isNavigating]);
 
+  // 🩸 Veriroiske pamahtaa kun hirviö kaatuu - pidetään App-tasolla jotta se säilyy
+  // näkyvissä myös silloin kun näkymä vaihtuu taistelusta nuotiolle kesken animaation.
+  useEffect(() => {
+    if (monsterHp > 0 || !activeSession) return;
+
+    const monsterKey = activeSession?.currentMonsterName || 'Varjohahmo';
+    const splashShownFor = sessionStorage.getItem('ikimetsa_victory_splash_shown');
+    if (splashShownFor === monsterKey) return; // jo näytetty - kyseessä on F5-päivitys
+
+    setShowVictorySplash(true);
+    sessionStorage.setItem('ikimetsa_victory_splash_shown', monsterKey);
+    const splashTimer = setTimeout(() => setShowVictorySplash(false), 1700);
+
+    return () => clearTimeout(splashTimer);
+  }, [monsterHp, activeSession?.currentMonsterName]);
+
+  // 💀 Multaa roiskuu kun hahmo kuolee - sama App-tason periaate ja tekniikka kuin veriroiskeessa,
+  // vain ruskealla/multaisella värityksellä. Ei tarvitse viivästää ruudunvaihtoa, koska tämä on
+  // burst-tyylinen efekti (ei "sulkeutuva ympyrä"), joten se toimii kummankin ruudun päällä sellaisenaan.
+  useEffect(() => {
+    if (!activeSession || activeSession.stats.hp > 0) return;
+
+    const alreadyShown = sessionStorage.getItem('ikimetsa_death_fade_shown');
+    if (alreadyShown === 'true') return; // jo näytetty - kyseessä on F5-päivitys
+
+    setShowDeathFade(true);
+    sessionStorage.setItem('ikimetsa_death_fade_shown', 'true');
+    const fadeTimer = setTimeout(() => setShowDeathFade(false), 1700);
+
+    return () => clearTimeout(fadeTimer);
+  }, [activeSession?.stats?.hp]);
+
   useEffect(() => {
     if (gameStarted && characterClasses.length === 0 && sessionId) {
       fetch(`${import.meta.env.VITE_API_URL}/api/game/classes`, {
@@ -212,6 +249,7 @@ export default function App() {
       setIsNavigating(true);
       setMovementPhase('intro');
       sessionStorage.removeItem('ikimetsa_victory_splash_shown'); // uusi peli - roiske saa näkyä taas
+      sessionStorage.removeItem('ikimetsa_death_fade_shown'); // uusi peli - kuolemaefekti saa näkyä taas
       
       setCombatInitiative(null);
       setCurrentTurn(null);
@@ -267,6 +305,51 @@ export default function App() {
       setActiveSession(data.session);
       setSavedGameSession(data.session);
       setCombatLogs(data.combatLogs || data.session.combatLogs || []);
+    } catch (err) { setError(err.message); }
+  };
+
+  // 🔥 Kuolema: palataan viimeisimpään tallennuspisteeseen ja jatketaan liikkumisesta
+  const handleRespawn = async () => {
+    setError('');
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/game/respawn`, {
+        method: 'POST',
+        credentials: 'include'
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || 'Tallennuspisteeseen palaaminen epäonnistui.');
+
+      sessionStorage.removeItem('ikimetsa_death_fade_shown'); // seuraava kuolema saa näkyä taas
+      setActiveSession(data);
+      setSavedGameSession(data);
+      setMonsterHp(data.currentMonsterHp ?? 25);
+      setCombatInitiative(null);
+      setCurrentTurn(null);
+      setCombatLogs(data.combatLogs || []);
+      setIsNavigating(true);
+      setMovementPhase('walking'); // ei tarvitse alkutarinaa uudelleen, hahmo on jo tuttu
+    } catch (err) { setError(err.message); }
+  };
+
+  // 🔥 Voitto: nuotiolta jatketaan seuraavaan liikkumisruutuun
+  const handleContinueJourney = async () => {
+    setError('');
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/game/continue-journey`, {
+        method: 'POST',
+        credentials: 'include'
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || 'Matkan jatkaminen epäonnistui.');
+
+      setActiveSession(data);
+      setSavedGameSession(data);
+      setMonsterHp(data.currentMonsterHp ?? 25);
+      setCombatInitiative(null);
+      setCurrentTurn(null);
+      setCombatLogs([]);
+      setIsNavigating(true);
+      setMovementPhase('walking');
     } catch (err) { setError(err.message); }
   };
 
@@ -420,6 +503,8 @@ export default function App() {
         <>
           {error && <div className="global-error-popup">⚠️ {error}</div>}
           {successMessage && <div className="global-success-popup">✅ {successMessage}</div>}
+          {showVictorySplash && <div className="victory-blood-splash" />}
+          {showDeathFade && <div className="death-fade-overlay" />}
 
           {sessionId && (showProfile || (gameStarted && activeSession)) && (
             <div className="top-right-buttons">
@@ -461,6 +546,10 @@ export default function App() {
               setPhase={setMovementPhase}
               handleRepairWeapon={handleRepairWeapon}
             />
+          ) : activeSession.stats.hp <= 0 ? (
+            <GraveScreen activeSession={activeSession} onContinue={handleRespawn} />
+          ) : monsterHp <= 0 ? (
+            <CampfireScreen onContinue={handleContinueJourney} />
           ) : (
             <GamePlay 
               activeSession={activeSession} monsterHp={monsterHp} diceResult={diceResult}
