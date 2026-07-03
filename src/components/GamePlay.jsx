@@ -23,12 +23,17 @@ export default function GamePlay({
       return;
     }
 
-    if (gameLogs.length > 0 || combatInitiative) {
+    // 🛡️ TARKISTUS: sama per-hirviö sessionStorage-periaate kuin veriroiskeessa/kuolemaefektissä.
+    // gameLogs ei enää käy tähän, koska se on jaettu koko pelin läpi eikä nollaudu taistelun alkaessa.
+    const monsterKey = activeSession?.currentMonsterName || 'Varjohahmo';
+    const alreadyShown = sessionStorage.getItem('ikimetsa_monster_reveal_shown');
+    if (alreadyShown === monsterKey || combatInitiative) {
       setShowMonsterReveal(false);
       return;
     }
 
     setShowMonsterReveal(true);
+    sessionStorage.setItem('ikimetsa_monster_reveal_shown', monsterKey);
     const revealTimer = setTimeout(() => setShowMonsterReveal(false), 2550);
 
     return () => clearTimeout(revealTimer);

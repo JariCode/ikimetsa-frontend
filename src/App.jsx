@@ -66,6 +66,7 @@ export default function App() {
     sessionStorage.removeItem('ikimetsa_show_profile');
     sessionStorage.removeItem('ikimetsa_victory_splash_shown');
     sessionStorage.removeItem('ikimetsa_death_fade_shown');
+    sessionStorage.removeItem('ikimetsa_monster_reveal_shown');
     setSessionId(null);
     setShouldRestoreSession(false);
     setLoggedInUser(null);
@@ -281,6 +282,7 @@ export default function App() {
       setMovementPhase('intro');
       sessionStorage.removeItem('ikimetsa_victory_splash_shown');
       sessionStorage.removeItem('ikimetsa_death_fade_shown');
+      sessionStorage.removeItem('ikimetsa_monster_reveal_shown');
       
       setCombatInitiative(null);
       setCurrentTurn(null);

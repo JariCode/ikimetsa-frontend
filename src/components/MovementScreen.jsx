@@ -25,6 +25,15 @@ export default function MovementScreen({
     }
   }, [phase]);
 
+  const currentArea = activeSession?.currentArea;
+  const locationLabel = currentArea?.locationLabel || 'SIJAINTI: METSÄN POLKU';
+
+  // 🎲 Arpoo satunnaisen rivin annetusta listasta - varalla geneerinen teksti jos aluetta ei löydy
+  const pickRandom = (list, fallback) => {
+    if (!list || list.length === 0) return fallback;
+    return list[Math.floor(Math.random() * list.length)];
+  };
+
   const handleD6Roll = () => {
     if (isRolling) return;
     setIsRolling(true);
@@ -41,22 +50,22 @@ export default function MovementScreen({
       setIsRolling(false);
 
       if (roll === 6) {
-        const msg = `Heitit [${roll}]! Äkillinen kylmyys jähmettää askeleesi. Pimeys tiivistyy suoraan silmiesi edessä...`;
+        const encounterText = currentArea?.encounterText || 'Äkillinen kylmyys jähmettää askeleesi. Pimeys tiivistyy suoraan silmiesi edessä...';
+        const msg = `Heitit [${roll}]! ${encounterText}`;
         setStoryText(msg);
-        // Lisätty 🎲-kuvake nopanheiton ilmoitukseen
         onAddLog(`🎲 ${msg}`, 'movement');
         setTimeout(() => {
           handleEnterCombat();
         }, 1500); 
       } else if (roll <= 2) {
-        const msg = `Heitit [${roll}]. Oksat raapivat kasvojasi ja raskaat askeleet kaikuvat märkien puiden rungoista.`;
+        const badText = pickRandom(currentArea?.badRollTexts, 'Oksat raapivat kasvojasi ja raskaat askeleet kaikuvat märkien puiden rungoista.');
+        const msg = `Heitit [${roll}]. ${badText}`;
         setStoryText(msg);
-        // Lisätty 🥾-kuvake raskaalle korpivaellukselle
         onAddLog(`🥾 ${msg}`, 'movement');
       } else {
-        const msg = `Heitit [${roll}]. Etenet sakean sumun seassa. Metsä tuntuu tarkkailevan jokaista hengitystäsi.`;
+        const goodText = pickRandom(currentArea?.goodRollTexts, 'Etenet sakean sumun seassa. Metsä tuntuu tarkkailevan jokaista hengitystäsi.');
+        const msg = `Heitit [${roll}]. ${goodText}`;
         setStoryText(msg);
-        // Lisätty 🥾-kuvake tavalliselle etenemiselle
         onAddLog(`🥾 ${msg}`, 'movement');
       }
     }, 1000);
@@ -106,7 +115,7 @@ export default function MovementScreen({
 
         <div className="combat-arena">
           <div className="movement-box">
-            <h3 className="movement-title">SIJAINTI: METSÄN POLKU</h3>
+            <h3 className="movement-title">{locationLabel}</h3>
             <p className="log-line">{storyText}</p>
           </div>
 
