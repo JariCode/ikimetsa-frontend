@@ -36,8 +36,8 @@ export default function App() {
   const [combatInitiative, setCombatInitiative] = useState(null);
   const [currentTurn, setCurrentTurn] = useState(null);
 
-  const [isNavigating, setIsNavigating] = useState(false);
-  const [movementPhase, setMovementPhase] = useState('intro');
+  const [isNavigating, setIsNavigating] = useState(sessionStorage.getItem('ikimetsa_is_navigating') === 'true');
+  const [movementPhase, setMovementPhase] = useState(sessionStorage.getItem('ikimetsa_movement_phase') || 'intro');
 
   const handleLogout = async () => {
     try {
@@ -51,7 +51,7 @@ export default function App() {
 
     sessionStorage.removeItem('ikimetsa_session_id');
     sessionStorage.removeItem('ikimetsa_show_profile');
-    sessionStorage.removeItem('ikimetsa_revealed_monster');
+     sessionStorage.removeItem('ikimetsa_victory_splash_shown');
     setSessionId(null);
     setShouldRestoreSession(false);
     setLoggedInUser(null);
@@ -90,6 +90,7 @@ export default function App() {
             setCombatInitiative(data.session.combatInitiative ?? null);
             setCurrentTurn(data.session.currentTurn ?? null);
             setCombatLogs(data.session.combatLogs || []);
+            setIsNavigating(!data.session.hasEnteredCombat);
           } else {
             setSavedGameSession(null);
             setActiveSession(null);
@@ -116,6 +117,22 @@ export default function App() {
       sessionStorage.removeItem('ikimetsa_show_profile');
     }
   }, [showProfile]);
+
+  useEffect(() => {
+    if (isNavigating) {
+      sessionStorage.setItem('ikimetsa_is_navigating', 'true');
+    } else {
+      sessionStorage.removeItem('ikimetsa_is_navigating');
+    }
+  }, [isNavigating]);
+
+  useEffect(() => {
+    if (isNavigating) {
+      sessionStorage.setItem('ikimetsa_movement_phase', movementPhase);
+    } else {
+      sessionStorage.removeItem('ikimetsa_movement_phase');
+    }
+  }, [movementPhase, isNavigating]);
 
   useEffect(() => {
     if (gameStarted && characterClasses.length === 0 && sessionId) {
@@ -158,6 +175,7 @@ export default function App() {
       setCombatInitiative(null);
       setCurrentTurn(null);
       setMonsterHp(data.session?.currentMonsterHp ?? 25);
+      setIsNavigating(data.session ? !data.session.hasEnteredCombat : false);
     } catch (err) { setError(err.message); }
   };
 
@@ -168,6 +186,8 @@ export default function App() {
       setCombatInitiative(savedGameSession.combatInitiative || null);
       setCurrentTurn(savedGameSession.currentTurn || null);
       setCombatLogs(savedGameSession.combatLogs || []);
+      setIsNavigating(!savedGameSession.hasEnteredCombat);
+      setMovementPhase('walking'); // jatkava pelaaja ei tarvitse enää alkutarinaa uudelleen
     }
     setGameStarted(true);
   };
@@ -191,6 +211,7 @@ export default function App() {
       
       setIsNavigating(true);
       setMovementPhase('intro');
+      sessionStorage.removeItem('ikimetsa_victory_splash_shown'); // uusi peli - roiske saa näkyä taas
       
       setCombatInitiative(null);
       setCurrentTurn(null);
@@ -199,12 +220,22 @@ export default function App() {
     } catch (err) { setError(err.message); }
   };
 
-  const handleEnterCombat = () => {
+  const handleEnterCombat = async () => {
     if (activeSession) {
       setMonsterHp(activeSession.currentMonsterHp ?? 25);
     } else {
       setMonsterHp(25);
     }
+    try {
+      await fetch(`${import.meta.env.VITE_API_URL}/api/game/enter-combat`, {
+        method: 'POST',
+        credentials: 'include'
+      });
+    } catch (e) {
+      console.error("Taisteluun siirtymisen tallennus epäonnistui:", e);
+    }
+    setActiveSession(prev => prev ? { ...prev, hasEnteredCombat: true } : prev);
+    setSavedGameSession(prev => prev ? { ...prev, hasEnteredCombat: true } : prev);
     setIsNavigating(false);
   };
 
@@ -394,7 +425,6 @@ export default function App() {
               handleAuthSubmit={handleAuthSubmit}
             />
           ) : showProfile ? (
-            /* 🌟 KORJAUS: Profiili tarkistetaan nyt IHAN ENSIMMÄISENÄ, jotta se aukeaa aina! */
             <ProfileSettings
               currentUsername={loggedInUser}
               onChangeUsername={handleChangeUsername}

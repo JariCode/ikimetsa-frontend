@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './MovementStyles.css';
 
 export default function MovementScreen({
   activeSession,
