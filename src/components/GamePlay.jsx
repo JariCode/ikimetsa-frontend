@@ -14,6 +14,7 @@ export default function GamePlay({
   handleCombatTurn
 }) {
   const [showMonsterReveal, setShowMonsterReveal] = useState(false);
+  const [showVictorySplash, setShowVictorySplash] = useState(false);
   const logEndRef = useRef(null); // 🌟 Luodaan ankkuri lokilaatikon pohjalle
 
   // 💥 Jumpscare pamahtaa uuden taistelun alussa, mutta ei enää sivun päivityksessä (F5)!
@@ -34,6 +35,21 @@ export default function GamePlay({
 
     return () => clearTimeout(revealTimer);
   }, [activeSession?.currentMonsterName]); // Käynnistyy heti kun uusi hirviö ladataan ruudulle
+
+  // 🩸 Veriroiske pamahtaa kun hirviö kaatuu, mutta ei enää sivun päivityksessä (F5)
+  useEffect(() => {
+    if (monsterHp > 0) return;
+
+    const monsterKey = activeSession?.currentMonsterName || 'Varjohahmo';
+    const splashShownFor = sessionStorage.getItem('ikimetsa_victory_splash_shown');
+    if (splashShownFor === monsterKey) return; // jo näytetty - kyseessä on F5-päivitys
+
+    setShowVictorySplash(true);
+    sessionStorage.setItem('ikimetsa_victory_splash_shown', monsterKey);
+    const splashTimer = setTimeout(() => setShowVictorySplash(false), 1700);
+
+    return () => clearTimeout(splashTimer);
+  }, [monsterHp, activeSession?.currentMonsterName]);
 
   // 🌟 Automaattinen skrollaus: aina kun uusia lokeja tulee, hypätään pehmeästi pohjaan
   useEffect(() => {
@@ -63,6 +79,8 @@ export default function GamePlay({
           </div>
         </div>
       )}
+
+      {showVictorySplash && <div className="victory-blood-splash" />}
 
       {/* YLÄPALKKI */}
       <div className="player-status-bar">
