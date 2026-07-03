@@ -1,30 +1,29 @@
 import React from 'react';
-import { useEffect, useState, useRef } from 'react'; 
-import './MonsterStyles.css'; // 🌟 Tuodaan monsterin tyylit erillisestä CSS-tiedostosta
+import { useEffect, useState } from 'react'; 
+import './MonsterStyles.css';
+import GameLogComponent from './GameLogComponent';
 
 export default function GamePlay({
   activeSession,
   monsterHp,
   diceResult,
   isRolling,
-  combatLogs,
+  gameLogs,
+  onAddLog,
   combatInitiative,
   currentTurn,
   handleRepairWeapon,
   handleCombatTurn
 }) {
   const [showMonsterReveal, setShowMonsterReveal] = useState(false);
-  const logEndRef = useRef(null); // 🌟 Luodaan ankkuri lokilaatikon pohjalle
 
-  // 💥 Jumpscare pamahtaa uuden taistelun alussa, mutta ei enää sivun päivityksessä (F5)!
   useEffect(() => {
     if (monsterHp <= 0) {
       setShowMonsterReveal(false);
       return;
     }
 
-    // 🛡️ TARKISTUS: Jos taistelu on jo käynnissä (lokeja löytyy tai aloite määritetty), kyseessä on F5-päivitys.
-    if (combatLogs.length > 0 || combatInitiative) {
+    if (gameLogs.length > 0 || combatInitiative) {
       setShowMonsterReveal(false);
       return;
     }
@@ -33,12 +32,7 @@ export default function GamePlay({
     const revealTimer = setTimeout(() => setShowMonsterReveal(false), 2550);
 
     return () => clearTimeout(revealTimer);
-  }, [activeSession?.currentMonsterName]); // Käynnistyy heti kun uusi hirviö ladataan ruudulle
-
-  // 🌟 Automaattinen skrollaus: aina kun uusia lokeja tulee, hypätään pehmeästi pohjaan
-  useEffect(() => {
-    logEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [combatLogs]);
+  }, [activeSession?.currentMonsterName]);
 
   const monsterName = activeSession.currentMonsterName || 'Varjohahmo';
   const monsterCssClass = activeSession.currentMonsterCssClass || 'varjohahmo';
@@ -100,15 +94,8 @@ export default function GamePlay({
           </div>
         )}
 
-        {/* TAPAHTUMALOKI */}
-        <div className="log-box">
-          {combatLogs.length === 0 && !isRolling ? (
-            <p className="story-text-small">Polku katkeaa edessäsi risteyskohtaan. Puista kuuluu outoa korahtelua...</p>
-          ) : (
-            combatLogs.map((log, index) => <p key={index} className="log-line">{log}</p>)
-          )}
-          <div ref={logEndRef} />
-        </div>
+        {/* JAETTU TAPAHTUMALOKI LAATIKKO */}
+        <GameLogComponent logs={gameLogs} />
 
         <div className="action-buttons">
           <button className="attack-btn" onClick={handleCombatTurn} disabled={isRolling}>

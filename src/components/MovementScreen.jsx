@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import './MovementStyles.css';
+import GameLogComponent from './GameLogComponent';
 
 export default function MovementScreen({
   activeSession,
   handleEnterCombat,
   phase,
   setPhase,
-  handleRepairWeapon
+  handleRepairWeapon,
+  gameLogs,
+  onAddLog
 }) {
   const [currentRoll, setCurrentRoll] = useState(null);
   const [isRolling, setIsRolling] = useState(false);
   const [storyText, setStoryText] = useState('Polku erkanee synkkään pöheikköön. Heitä noppaa kulkeaksesi syvemmälle...');
 
-  // 🕒 Synkronoidun siirtymän kello
   useEffect(() => {
     if (phase === 'intro') {
       const autoTimer = setTimeout(() => {
@@ -39,19 +41,27 @@ export default function MovementScreen({
       setIsRolling(false);
 
       if (roll === 6) {
-        setStoryText(`Heitit [${roll}]! Äkillinen kylmyys jähmettää askeleesi. Pimeys tiivistyy suoraan silmiesi edessä...`);
+        const msg = `Heitit [${roll}]! Äkillinen kylmyys jähmettää askeleesi. Pimeys tiivistyy suoraan silmiesi edessä...`;
+        setStoryText(msg);
+        // Lisätty 🎲-kuvake nopanheiton ilmoitukseen
+        onAddLog(`🎲 ${msg}`, 'movement');
         setTimeout(() => {
           handleEnterCombat();
         }, 1500); 
       } else if (roll <= 2) {
-        setStoryText(`Heitit [${roll}]. Oksat raapivat kasvojasi ja raskaat askeleet kaikuvat märkien puiden rungoista.`);
+        const msg = `Heitit [${roll}]. Oksat raapivat kasvojasi ja raskaat askeleet kaikuvat märkien puiden rungoista.`;
+        setStoryText(msg);
+        // Lisätty 🥾-kuvake raskaalle korpivaellukselle
+        onAddLog(`🥾 ${msg}`, 'movement');
       } else {
-        setStoryText(`Heitit [${roll}]. Etenet sakean sumun seassa. Metsä tuntuu tarkkailevan jokaista hengitystäsi.`);
+        const msg = `Heitit [${roll}]. Etenet sakean sumun seassa. Metsä tuntuu tarkkailevan jokaista hengitystäsi.`;
+        setStoryText(msg);
+        // Lisätty 🥾-kuvake tavalliselle etenemiselle
+        onAddLog(`🥾 ${msg}`, 'movement');
       }
     }, 1000);
   };
 
-  // 📜 VAIHE 1: Alkutarina
   if (phase === 'intro') {
     return (
       <div className="intro-screen">
@@ -69,7 +79,6 @@ export default function MovementScreen({
     );
   }
 
- // 🚶 VAIHE 2: Liikkumisruutu
   return (
     <>
       <div className="game-play-screen">
@@ -109,6 +118,10 @@ export default function MovementScreen({
             </div>
           )}
 
+          {/* LOKILAATIKKO NOSTETTU PAINIKKEEN YLÄPUOLELLE */}
+          <GameLogComponent logs={gameLogs} />
+
+          {/* PAINIKE SIIRRETTY ALIMMAISEKSI */}
           <div className="action-buttons">
             <button className="attack-btn" onClick={handleD6Roll} disabled={isRolling}>
               {isRolling ? 'Kävellään...' : 'HEITÄ NOPPAA JA ETENE METSÄSSÄ'}
@@ -117,7 +130,6 @@ export default function MovementScreen({
         </div>
       </div>
 
-      {/* 🌲 Tausta-animaatio siirretty kortin JÄLKEEN, jolloin se ei työnnä yläreunaa karkuun */}
       <div className="traveling-background" />
     </>
   );

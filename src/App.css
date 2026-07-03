@@ -295,7 +295,7 @@ body {
 /* --- TARINAN RULLAUSIKKUNA --- */
 .intro-scroll-window {
   position: relative;
-  height: 7.8rem; /* 3 riviä x 2.6rem */
+  height: 7.8rem;
   max-width: 720px;
   width: 100%;
   box-sizing: border-box;
@@ -521,6 +521,7 @@ div.game-play-screen .player-status-bar {
   from { opacity: 0; transform: translateY(40px) scale(0.98); }
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
+
 /* --- HIRVIÖBOXI --- */
 .monster-box {
   background: rgba(139, 0, 0, 0.1);
@@ -530,7 +531,6 @@ div.game-play-screen .player-status-bar {
   border-radius: 4px;
 }
 
-/* Erillinen vihreä asettelu liikkumislaatikolle inline-tyylien poiston jälkeen */
 .movement-box {
   background: rgba(10, 35, 10, 0.1);
   border: 1px solid #1e3a1e;
@@ -559,7 +559,7 @@ div.game-play-screen .player-status-bar {
   color: #4ade80;
 }
 
-/* 🔥 LEIRINUOTIORUUTU (voitto) - CampfireScreen.jsx. Sama "suoraan taustalla" -tyyli kuin .intro-screen */
+/* 🔥 LEIRINUOTIORUUTU */
 .campfire-screen {
   text-align: center;
   max-width: 760px;
@@ -588,7 +588,7 @@ div.game-play-screen .player-status-bar {
 
 @keyframes campfireScroll {
   from { transform: translateY(7.8rem); }
-  to   { transform: translateY(-7.8rem); } /* 2.6rem x (6 riviä - 3 näkyvää) */
+  to   { transform: translateY(-7.8rem); }
 }
 
 .campfire-visual {
@@ -657,7 +657,7 @@ div.game-play-screen .player-status-bar {
   100% { opacity: 1; transform: translateX(-50%) scale(1.08); }
 }
 
-/* 💀 HAUTAKIVIRUUTU (kuolema) - GraveScreen.jsx. Sama "suoraan taustalla" -tyyli kuin .intro-screen */
+/* 💀 HAUTAKIVIRUUTU */
 .grave-screen {
   text-align: center;
   max-width: 760px;
@@ -686,7 +686,7 @@ div.game-play-screen .player-status-bar {
 
 @keyframes graveScroll {
   from { transform: translateY(7.8rem); }
-  to   { transform: translateY(-7.8rem); } /* 2.6rem x (6 riviä - 3 näkyvää) */
+  to   { transform: translateY(-7.8rem); }
 }
 
 .grave-btn {
@@ -746,7 +746,7 @@ div.game-play-screen .player-status-bar {
   100% { opacity: 0.9; transform: translateX(-45%); }
 }
 
-/* 🎲 VISUAALINEN PYÖRIVÄ D20 NOPPA --- */
+/* 🎲 PYÖRIVÄ D20 NOPPA */
 .dice-row {
   display: flex;
   justify-content: center;
@@ -778,20 +778,55 @@ div.game-play-screen .player-status-bar {
   100% { transform: rotate(360deg) scale(1.05); }
 }
 
-/* LOKILAATIKKO */
-.log-box {
-  background: #000;
+/* --- LISÄTTY: YHTENÄISEN JAETUN LOKIN CSS-TYYLIT --- */
+.unified-log-box {
+  background: rgba(2, 4, 2, 0.9);
   border: 1px solid #1e3a1e;
-  padding: 20px;
-  height: 180px;
+  border-radius: 4px;
+  margin-top: 20px;
+  width: 100%;
+  box-sizing: border-box;
+  box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.75);
+}
+
+.unified-log-header {
+  background: #091209;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  color: #4ade80;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px solid #1e3a1e;
+  font-weight: bold;
+}
+
+.unified-log-content {
+  padding: 12px;
+  height: 160px;
   overflow-y: auto;
   text-align: left;
 }
 
-.log-line { margin: 6px 0; font-size: 0.95rem; color: #a7f3d0; }
+.unified-log-line {
+  margin: 6px 0;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  word-wrap: break-word;
+}
+
+.log-timestamp {
+  color: #4b5563;
+  font-size: 0.85rem;
+  margin-right: 6px;
+}
+
+.unified-log-line.type-general { color: #d1d5db; }
+.unified-log-line.type-movement { color: #38bdf8; } /* Sinertävä matkustukselle */
+.unified-log-line.type-combat { color: #a7f3d0; }   /* Alkuperäinen siisti a7f3d0 taistelulle */
+.unified-log-line.type-system { color: #fbbf24; }   /* Keltainen korjauksille */
 .story-text-small { color: #9ca3af; font-style: italic; margin: 0; }
 
-/* --- ISO PUNAINEN HYÖKKÄYSNAPPI --- */
+/* NÄPPÄIMET */
 .action-buttons {
   display: flex;
   justify-content: center;

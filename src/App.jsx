@@ -29,7 +29,7 @@ export default function App() {
   const [activeSession, setActiveSession] = useState(null);
   const [error, setError] = useState('');
   
-  const [combatLogs, setCombatLogs] = useState([]);
+  const [gameLogs, setGameLogs] = useState([]);
   const [monsterHp, setMonsterHp] = useState(25);
   const [isShaking, setIsShaking] = useState(false);
   const [isRolling, setIsRolling] = useState(false);
@@ -42,6 +42,15 @@ export default function App() {
   const [movementPhase, setMovementPhase] = useState(sessionStorage.getItem('ikimetsa_movement_phase') || 'intro');
   const [showVictorySplash, setShowVictorySplash] = useState(false);
   const [showDeathFade, setShowDeathFade] = useState(false);
+
+  const addGameLog = (message, type = 'general') => {
+    const newLog = {
+      message,
+      type,
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+    };
+    setGameLogs(prevLogs => [...prevLogs, newLog]);
+  };
 
   const handleLogout = async () => {
     try {
@@ -64,7 +73,7 @@ export default function App() {
     setActiveSession(null);
     setGameStarted(false);
     setCharacterClasses([]);
-    setCombatLogs([]);
+    setGameLogs([]);
     setCombatInitiative(null);
     setCurrentTurn(null);
     setMonsterHp(25);
@@ -94,7 +103,16 @@ export default function App() {
             setMonsterHp(data.session.currentMonsterHp ?? 25);
             setCombatInitiative(data.session.combatInitiative ?? null);
             setCurrentTurn(data.session.currentTurn ?? null);
-            setCombatLogs(data.session.combatLogs || []);
+            if (data.session.combatLogs) {
+              const restored = data.session.combatLogs.map(msg => ({
+                message: msg,
+                type: 'combat',
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+              }));
+              setGameLogs(restored);
+            } else {
+              setGameLogs([]);
+            }
             setIsNavigating(!data.session.hasEnteredCombat);
           } else {
             setSavedGameSession(null);
@@ -103,7 +121,7 @@ export default function App() {
             setCombatInitiative(null);
             setCurrentTurn(null);
             setMonsterHp(25);
-            setCombatLogs([]);
+            setGameLogs([]);
           }
           setShouldRestoreSession(false);
           setIsHydratingSession(false);
@@ -139,14 +157,12 @@ export default function App() {
     }
   }, [movementPhase, isNavigating]);
 
-  // 🩸 Veriroiske pamahtaa kun hirviö kaatuu - pidetään App-tasolla jotta se säilyy
-  // näkyvissä myös silloin kun näkymä vaihtuu taistelusta nuotiolle kesken animaation.
   useEffect(() => {
     if (monsterHp > 0 || !activeSession) return;
 
     const monsterKey = activeSession?.currentMonsterName || 'Varjohahmo';
     const splashShownFor = sessionStorage.getItem('ikimetsa_victory_splash_shown');
-    if (splashShownFor === monsterKey) return; // jo näytetty - kyseessä on F5-päivitys
+    if (splashShownFor === monsterKey) return;
 
     setShowVictorySplash(true);
     sessionStorage.setItem('ikimetsa_victory_splash_shown', monsterKey);
@@ -155,14 +171,11 @@ export default function App() {
     return () => clearTimeout(splashTimer);
   }, [monsterHp, activeSession?.currentMonsterName]);
 
-  // 💀 Multaa roiskuu kun hahmo kuolee - sama App-tason periaate ja tekniikka kuin veriroiskeessa,
-  // vain ruskealla/multaisella värityksellä. Ei tarvitse viivästää ruudunvaihtoa, koska tämä on
-  // burst-tyylinen efekti (ei "sulkeutuva ympyrä"), joten se toimii kummankin ruudun päällä sellaisenaan.
   useEffect(() => {
     if (!activeSession || activeSession.stats.hp > 0) return;
 
     const alreadyShown = sessionStorage.getItem('ikimetsa_death_fade_shown');
-    if (alreadyShown === 'true') return; // jo näytetty - kyseessä on F5-päivitys
+    if (alreadyShown === 'true') return;
 
     setShowDeathFade(true);
     sessionStorage.setItem('ikimetsa_death_fade_shown', 'true');
@@ -208,7 +221,16 @@ export default function App() {
       setActiveSession(null);
       setGameStarted(false);
       setCharacterClasses([]);
-      setCombatLogs(data.session?.combatLogs || []);
+      if (data.session?.combatLogs) {
+        const restored = data.session.combatLogs.map(msg => ({
+          message: msg,
+          type: 'combat',
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+        }));
+        setGameLogs(restored);
+      } else {
+        setGameLogs([]);
+      }
       setCombatInitiative(null);
       setCurrentTurn(null);
       setMonsterHp(data.session?.currentMonsterHp ?? 25);
@@ -222,9 +244,18 @@ export default function App() {
       setMonsterHp(savedGameSession.currentMonsterHp ?? 25);
       setCombatInitiative(savedGameSession.combatInitiative || null);
       setCurrentTurn(savedGameSession.currentTurn || null);
-      setCombatLogs(savedGameSession.combatLogs || []);
+      if (savedGameSession.combatLogs) {
+        const restored = savedGameSession.combatLogs.map(msg => ({
+          message: msg,
+          type: 'combat',
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+        }));
+        setGameLogs(restored);
+      } else {
+        setGameLogs([]);
+      }
       setIsNavigating(!savedGameSession.hasEnteredCombat);
-      setMovementPhase('walking'); // jatkava pelaaja ei tarvitse enää alkutarinaa uudelleen
+      setMovementPhase('walking');
     }
     setGameStarted(true);
   };
@@ -248,19 +279,21 @@ export default function App() {
       
       setIsNavigating(true);
       setMovementPhase('intro');
-      sessionStorage.removeItem('ikimetsa_victory_splash_shown'); // uusi peli - roiske saa näkyä taas
-      sessionStorage.removeItem('ikimetsa_death_fade_shown'); // uusi peli - kuolemaefekti saa näkyä taas
+      sessionStorage.removeItem('ikimetsa_victory_splash_shown');
+      sessionStorage.removeItem('ikimetsa_death_fade_shown');
       
       setCombatInitiative(null);
       setCurrentTurn(null);
       setMonsterHp(data.currentMonsterHp ?? 25);
-      setCombatLogs([]);
+      setGameLogs([]);
     } catch (err) { setError(err.message); }
   };
 
   const handleEnterCombat = async () => {
+    let currentMonster = 'Varjohahmo';
     if (activeSession) {
       setMonsterHp(activeSession.currentMonsterHp ?? 25);
+      currentMonster = activeSession.currentMonsterName || 'Varjohahmo';
     } else {
       setMonsterHp(25);
     }
@@ -279,7 +312,14 @@ export default function App() {
         };
         setActiveSession(prev => prev ? { ...prev, hasEnteredCombat: true, stats: { ...prev.stats, ...updatedStats } } : prev);
         setSavedGameSession(prev => prev ? { ...prev, hasEnteredCombat: true, stats: { ...prev.stats, ...updatedStats } } : prev);
-        setCombatLogs(data.combatLogs || []);
+        
+        // Lisätään hieno goottilainen aloitusviesti taistelulokin alkuun
+        addGameLog(`⚔️ Varjoista astuu esiin raivoisa ${currentMonster}! Valmistaudu taisteluun.`, 'combat');
+
+        if (data.combatLogs && data.combatLogs.length > 0) {
+          const latestMsg = data.combatLogs[data.combatLogs.length - 1];
+          addGameLog(latestMsg, 'combat');
+        }
       } else {
         setActiveSession(prev => prev ? { ...prev, hasEnteredCombat: true } : prev);
         setSavedGameSession(prev => prev ? { ...prev, hasEnteredCombat: true } : prev);
@@ -304,11 +344,14 @@ export default function App() {
       if (!response.ok) throw new Error(data.message || 'Korjaus epäonnistui.');
       setActiveSession(data.session);
       setSavedGameSession(data.session);
-      setCombatLogs(data.combatLogs || data.session.combatLogs || []);
+      
+      const sourceLogs = data.combatLogs || data.session.combatLogs || [];
+      if (sourceLogs.length > 0) {
+        addGameLog(sourceLogs[sourceLogs.length - 1], 'system');
+      }
     } catch (err) { setError(err.message); }
   };
 
-  // 🔥 Kuolema: palataan viimeisimpään tallennuspisteeseen ja jatketaan liikkumisesta
   const handleRespawn = async () => {
     setError('');
     try {
@@ -319,19 +362,20 @@ export default function App() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || 'Tallennuspisteeseen palaaminen epäonnistui.');
 
-      sessionStorage.removeItem('ikimetsa_death_fade_shown'); // seuraava kuolema saa näkyä taas
+      sessionStorage.removeItem('ikimetsa_death_fade_shown');
       setActiveSession(data);
       setSavedGameSession(data);
       setMonsterHp(data.currentMonsterHp ?? 25);
       setCombatInitiative(null);
       setCurrentTurn(null);
-      setCombatLogs(data.combatLogs || []);
+      
+      addGameLog("Heräät uudelleen tallennuspisteeltä. Pimeys korjaa veronsa...", "system");
+      
       setIsNavigating(true);
-      setMovementPhase('walking'); // ei tarvitse alkutarinaa uudelleen, hahmo on jo tuttu
+      setMovementPhase('walking');
     } catch (err) { setError(err.message); }
   };
 
-  // 🔥 Voitto: nuotiolta jatketaan seuraavaan liikkumisruutuun
   const handleContinueJourney = async () => {
     setError('');
     try {
@@ -347,7 +391,9 @@ export default function App() {
       setMonsterHp(data.currentMonsterHp ?? 25);
       setCombatInitiative(null);
       setCurrentTurn(null);
-      setCombatLogs([]);
+      
+      addGameLog("Jatkat matkaasi syvemmälle Ikimetsän varjoihin.", "movement");
+      
       setIsNavigating(true);
       setMovementPhase('walking');
     } catch (err) { setError(err.message); }
@@ -434,7 +480,14 @@ export default function App() {
         setIsRolling(false);
         const fullCombatLogs = data.combatLogs || [];
         setDiceResult(typeof data.diceRoll === 'number' ? data.diceRoll : 12);
-        setCombatLogs(fullCombatLogs);
+        
+        if (fullCombatLogs.length > 0) {
+          const latestLogs = fullCombatLogs.slice(-2); 
+          latestLogs.forEach(msg => {
+            addGameLog(msg, 'combat');
+          });
+        }
+        
         setMonsterHp(nextMonsterHp);
         setIsShaking(true);
         setTimeout(() => setIsShaking(false), 300);
@@ -545,6 +598,8 @@ export default function App() {
               phase={movementPhase}
               setPhase={setMovementPhase}
               handleRepairWeapon={handleRepairWeapon}
+              gameLogs={gameLogs}
+              onAddLog={addGameLog}
             />
           ) : activeSession.stats.hp <= 0 ? (
             <GraveScreen activeSession={activeSession} onContinue={handleRespawn} />
@@ -553,7 +608,7 @@ export default function App() {
           ) : (
             <GamePlay 
               activeSession={activeSession} monsterHp={monsterHp} diceResult={diceResult}
-              isRolling={isRolling} combatLogs={combatLogs} combatInitiative={combatInitiative}
+              isRolling={isRolling} gameLogs={gameLogs} onAddLog={addGameLog} combatInitiative={combatInitiative}
               currentTurn={currentTurn} handleRepairWeapon={handleRepairWeapon} handleCombatTurn={handleCombatTurn}
             />
           )}
