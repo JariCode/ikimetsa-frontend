@@ -51,7 +51,7 @@ export default function App() {
 
     sessionStorage.removeItem('ikimetsa_session_id');
     sessionStorage.removeItem('ikimetsa_show_profile');
-     sessionStorage.removeItem('ikimetsa_victory_splash_shown');
+    sessionStorage.removeItem('ikimetsa_victory_splash_shown');
     setSessionId(null);
     setShouldRestoreSession(false);
     setLoggedInUser(null);
@@ -227,15 +227,30 @@ export default function App() {
       setMonsterHp(25);
     }
     try {
-      await fetch(`${import.meta.env.VITE_API_URL}/api/game/enter-combat`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/game/enter-combat`, {
         method: 'POST',
         credentials: 'include'
       });
+      const data = await response.json();
+      if (response.ok) {
+        const updatedStats = {
+          hp: data.playerHp,
+          maxHp: data.playerMaxHp,
+          level: data.playerLevel,
+          xp: data.playerXp
+        };
+        setActiveSession(prev => prev ? { ...prev, hasEnteredCombat: true, stats: { ...prev.stats, ...updatedStats } } : prev);
+        setSavedGameSession(prev => prev ? { ...prev, hasEnteredCombat: true, stats: { ...prev.stats, ...updatedStats } } : prev);
+        setCombatLogs(data.combatLogs || []);
+      } else {
+        setActiveSession(prev => prev ? { ...prev, hasEnteredCombat: true } : prev);
+        setSavedGameSession(prev => prev ? { ...prev, hasEnteredCombat: true } : prev);
+      }
     } catch (e) {
       console.error("Taisteluun siirtymisen tallennus epäonnistui:", e);
+      setActiveSession(prev => prev ? { ...prev, hasEnteredCombat: true } : prev);
+      setSavedGameSession(prev => prev ? { ...prev, hasEnteredCombat: true } : prev);
     }
-    setActiveSession(prev => prev ? { ...prev, hasEnteredCombat: true } : prev);
-    setSavedGameSession(prev => prev ? { ...prev, hasEnteredCombat: true } : prev);
     setIsNavigating(false);
   };
 
@@ -444,6 +459,7 @@ export default function App() {
               handleEnterCombat={handleEnterCombat}
               phase={movementPhase}
               setPhase={setMovementPhase}
+              handleRepairWeapon={handleRepairWeapon}
             />
           ) : (
             <GamePlay 

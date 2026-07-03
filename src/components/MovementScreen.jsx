@@ -5,7 +5,8 @@ export default function MovementScreen({
   activeSession,
   handleEnterCombat,
   phase,
-  setPhase
+  setPhase,
+  handleRepairWeapon
 }) {
   const [currentRoll, setCurrentRoll] = useState(null);
   const [isRolling, setIsRolling] = useState(false);
@@ -78,14 +79,20 @@ export default function MovementScreen({
             <span>Hahmo:</span> <strong>{activeSession.characterType} (Taso {activeSession.stats.level || 1})</strong>
           </div>
           <div className="status-item">
-            <span>Kunto:</span> <strong>{activeSession.stats.hp} / {activeSession.stats.maxHp} HP</strong>
+            <span>Kunto:</span> <strong className={activeSession.stats.hp < 15 ? 'low-hp' : ''}>{activeSession.stats.hp} / {activeSession.stats.maxHp} HP</strong>
           </div>
           <div className="status-item">
-            <span>Ase:</span> <strong>{activeSession.inventory[0]?.name}</strong>
+            <span>Kokemus:</span> <strong>{activeSession.stats.xp || 0} / {(activeSession.stats.level || 1) * 100} XP</strong>
           </div>
           <div className="status-item">
-            <span>Alue:</span> <strong>Ikimetsä</strong>
+            <span>Ase:</span> <strong>{activeSession.inventory[0]?.name} ({activeSession.inventory[0]?.durability}/{activeSession.inventory[0]?.maxDurability})</strong>
+            {activeSession.inventory[0]?.durability < activeSession.inventory[0]?.maxDurability && (activeSession.repairPoints >= 2) && (
+              <button className="repair-mini-btn" onClick={handleRepairWeapon}>
+                🔧 Korjaa (2pts)
+              </button>
+            )}
           </div>
+          <div className="status-item"><span>Korjauspisteet:</span> <strong>{activeSession.repairPoints || 0} Pts</strong></div>
         </div>
 
         <div className="combat-arena">
