@@ -498,9 +498,8 @@ export default function App() {
         const fullCombatLogs = data.combatLogs || [];
         setDiceResult(typeof data.diceRoll === 'number' ? data.diceRoll : 12);
         
-        if (fullCombatLogs.length > 0) {
-          const latestLogs = fullCombatLogs.slice(-2); 
-          latestLogs.forEach(msg => {
+        if (data.newLogs && data.newLogs.length > 0) {
+          data.newLogs.forEach(msg => {
             addGameLog(msg, 'combat');
           });
         }
@@ -558,9 +557,13 @@ export default function App() {
   return (
     <div className={`game-container ${isShaking ? 'screen-hit-shake' : ''}`}>
       <div className="dark-forest-bg">
-        <div className="blood-moon"></div>
-        <div className="fog-layer layer-1"></div>
-        <div className="fog-layer layer-2"></div>
+        {(!activeSession || activeSession.currentAreaIndex === 1) && (
+          <>
+            <div className="blood-moon"></div>
+            <div className="fog-layer layer-1"></div>
+            <div className="fog-layer layer-2"></div>
+          </>
+        )}
       </div>
 
       {isHydratingSession ? (
