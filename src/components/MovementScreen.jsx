@@ -176,6 +176,16 @@ export default function MovementScreen({
             <div className="cave-drip d3"></div>
           </>
         )}
+        {currentArea?.backgroundClass === 'traveling-background-metsa' && (
+          <>
+            <div className="forest-leaf l1"></div>
+            <div className="forest-leaf l2"></div>
+            <div className="forest-leaf l3"></div>
+            <div className="forest-leaf l4"></div>
+            <div className="forest-leaf l5"></div>
+            <div className="forest-leaf l6"></div>
+          </>
+        )}
       </div>
     </>
   );

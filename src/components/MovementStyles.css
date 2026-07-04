@@ -427,3 +427,83 @@
   90%  { opacity: 0.6; }
   100% { top: 85%; opacity: 0; }
 }
+
+/* ==========================================================================
+   🌲 SYVÄN METSÄN TAUSTA-ANIMAATIO - paksuja puunrunkoja lähellä, hyvin tumma
+   ja ahdas verrattuna alueen 1 metsään, ajoittainen tärinä (Metsäjättiläisen
+   askeleet kaukana), ja hitaasti putoavia lehtiä.
+   ========================================================================== */
+
+.traveling-background-metsa {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  overflow: hidden;
+  background: linear-gradient(180deg, #050f06 0%, #0a1a0c 55%, #0d2410 100%);
+  pointer-events: none;
+  animation: giantTremor 5.5s ease-in-out infinite;
+}
+
+/* Paksut, lähellä olevat puunrungot - tummia pylväitä koko korkeudelta */
+.traveling-background-metsa::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 200%; height: 100%;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 150' preserveAspectRatio='none'><rect x='10' y='0' width='22' height='150' fill='%23020a03'/><rect x='70' y='0' width='30' height='150' fill='%23030c04'/><rect x='140' y='0' width='24' height='150' fill='%23020a03'/><rect x='210' y='0' width='34' height='150' fill='%23030c04'/><rect x='270' y='0' width='20' height='150' fill='%23020a03'/></svg>");
+  background-repeat: repeat-x;
+  background-size: 50% 100%;
+  background-position: bottom;
+  opacity: 0.95;
+  animation: deepTreesFar 20s linear infinite;
+}
+
+/* Tumma varjostus ylä- ja alareunassa - ahdas, painostava tunnelma */
+.traveling-background-metsa::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.75) 85%);
+}
+
+@keyframes deepTreesFar {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* Ajoittainen tärinä - Metsäjättiläisen raskaat askeleet kaukana */
+@keyframes giantTremor {
+  0%, 85%, 100% { transform: translate(0, 0) scale(1); }
+  86%           { transform: translate(-10px, 8px) scale(1.015); }
+  87.5%         { transform: translate(12px, -8px) scale(0.985); }
+  89%           { transform: translate(-8px, 6px) scale(1.01); }
+  90.5%         { transform: translate(6px, -4px) scale(0.99); }
+  92%           { transform: translate(-3px, 2px) scale(1); }
+}
+
+/* Hitaasti putoavat lehdet - isompia ja useampia kuin ennen */
+.forest-leaf {
+  position: absolute;
+  top: -5%;
+  width: 14px;
+  height: 20px;
+  background: rgba(110, 150, 70, 0.8);
+  border-radius: 60% 0;
+  z-index: 2;
+  animation: leafFall 9s linear infinite;
+}
+.forest-leaf.l1 { left: 10%; animation-delay: 0s; }
+.forest-leaf.l2 { left: 28%; animation-delay: 1.5s; }
+.forest-leaf.l3 { left: 46%; animation-delay: 3s; }
+.forest-leaf.l4 { left: 62%; animation-delay: 4.5s; }
+.forest-leaf.l5 { left: 78%; animation-delay: 6s; }
+.forest-leaf.l6 { left: 92%; animation-delay: 7.5s; }
+
+@keyframes leafFall {
+  0%   { top: -5%; opacity: 0; transform: rotate(0deg); }
+  10%  { opacity: 0.9; }
+  90%  { opacity: 0.7; }
+  100% { top: 95%; opacity: 0; transform: rotate(200deg) translateX(20px); }
+}
