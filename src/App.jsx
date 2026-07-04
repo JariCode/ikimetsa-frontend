@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 
 import AuthScreen from './components/AuthScreen';
@@ -28,6 +28,14 @@ export default function App() {
   const [characterClasses, setCharacterClasses] = useState([]); 
   const [activeSession, setActiveSession] = useState(null);
   const [error, setError] = useState('');
+
+  // 🕒 Virheviesti häviää automaattisesti - ilman tätä se jäi näkyviin pysyvästi
+  // seuraaville ruuduille asti, koska mikään ei koskaan nollannut sitä ajastetusti.
+  useEffect(() => {
+    if (!error) return;
+    const errorTimer = setTimeout(() => setError(''), 4000);
+    return () => clearTimeout(errorTimer);
+  }, [error]);
   
   const [gameLogs, setGameLogs] = useState([]);
   const [monsterHp, setMonsterHp] = useState(25);
@@ -42,6 +50,7 @@ export default function App() {
   const [movementPhase, setMovementPhase] = useState(sessionStorage.getItem('ikimetsa_movement_phase') || 'intro');
   const [showVictorySplash, setShowVictorySplash] = useState(false);
   const [showDeathFade, setShowDeathFade] = useState(false);
+  const campfireActionInProgressRef = useRef(false); // 🛡️ Estää "Jatka taivalta"/"Nouse haudastasi" -napin tuplaklikkauksen aiheuttaman kilpajuoksun
 
   const addGameLog = (message, type = 'general') => {
     const newLog = {
@@ -369,6 +378,8 @@ export default function App() {
   };
 
   const handleRespawn = async () => {
+    if (campfireActionInProgressRef.current) return;
+    campfireActionInProgressRef.current = true;
     setError('');
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/game/respawn`, {
@@ -390,10 +401,15 @@ export default function App() {
       
       setIsNavigating(true);
       setMovementPhase('walking');
-    } catch (err) { setError(err.message); }
+    } catch (err) { 
+      setError(err.message); 
+      campfireActionInProgressRef.current = false; // sallitaan uusi yritys jos tämä epäonnistui
+    }
   };
 
   const handleContinueJourney = async () => {
+    if (campfireActionInProgressRef.current) return;
+    campfireActionInProgressRef.current = true;
     setError('');
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/game/continue-journey`, {
@@ -413,7 +429,10 @@ export default function App() {
       
       setIsNavigating(true);
       setMovementPhase('walking');
-    } catch (err) { setError(err.message); }
+    } catch (err) { 
+      setError(err.message); 
+      campfireActionInProgressRef.current = false; // sallitaan uusi yritys jos tämä epäonnistui
+    }
   };
 
   const handleChangeUsername = async (newUsername, currentPassword) => {

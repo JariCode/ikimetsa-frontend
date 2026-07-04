@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './MovementStyles.css';
 import GameLogComponent from './GameLogComponent';
 
@@ -13,6 +13,7 @@ export default function MovementScreen({
 }) {
   const [currentRoll, setCurrentRoll] = useState(null);
   const [isRolling, setIsRolling] = useState(false);
+  const isRollingRef = useRef(false); // 🛡️ Sama arvo kuin isRolling, mutta päivittyy VÄLITTÖMÄSTI ilman renderöintiviivettä
   const [storyText, setStoryText] = useState('Polku erkanee synkkään pöheikköön. Heitä noppaa kulkeaksesi syvemmälle...');
 
   useEffect(() => {
@@ -35,7 +36,8 @@ export default function MovementScreen({
   };
 
   const handleD6Roll = () => {
-    if (isRolling) return;
+    if (isRollingRef.current) return;
+    isRollingRef.current = true;
     setIsRolling(true);
     setCurrentRoll(null);
 
@@ -47,9 +49,12 @@ export default function MovementScreen({
       clearInterval(interval);
       const roll = Math.floor(Math.random() * 6) + 1;
       setCurrentRoll(roll);
-      setIsRolling(false);
 
       if (roll === 6) {
+        // 🛡️ EI vapauteta isRolling-tilaa tässä - nappi pysyy lukittuna kunnes
+        // taisteluun siirtyminen (handleEnterCombat) oikeasti tapahtuu 1500ms päästä.
+        // Ilman tätä nappia ehti painaa uudelleen kesken siirtymän, mikä käynnisti
+        // toisen kierroksen päällekkäin ja tuplasi taisteluun-astumisviestin.
         const encounterText = currentArea?.encounterText || 'Äkillinen kylmyys jähmettää askeleesi. Pimeys tiivistyy suoraan silmiesi edessä...';
         const msg = `Heitit [${roll}]! ${encounterText}`;
         setStoryText(msg);
@@ -57,16 +62,20 @@ export default function MovementScreen({
         setTimeout(() => {
           handleEnterCombat();
         }, 1500); 
-      } else if (roll <= 2) {
-        const badText = pickRandom(currentArea?.badRollTexts, 'Oksat raapivat kasvojasi ja raskaat askeleet kaikuvat märkien puiden rungoista.');
-        const msg = `Heitit [${roll}]. ${badText}`;
-        setStoryText(msg);
-        onAddLog(`🥾 ${msg}`, 'movement');
       } else {
-        const goodText = pickRandom(currentArea?.goodRollTexts, 'Etenet sakean sumun seassa. Metsä tuntuu tarkkailevan jokaista hengitystäsi.');
-        const msg = `Heitit [${roll}]. ${goodText}`;
-        setStoryText(msg);
-        onAddLog(`🥾 ${msg}`, 'movement');
+        isRollingRef.current = false;
+        setIsRolling(false);
+        if (roll <= 2) {
+          const badText = pickRandom(currentArea?.badRollTexts, 'Oksat raapivat kasvojasi ja raskaat askeleet kaikuvat märkien puiden rungoista.');
+          const msg = `Heitit [${roll}]. ${badText}`;
+          setStoryText(msg);
+          onAddLog(`🥾 ${msg}`, 'movement');
+        } else {
+          const goodText = pickRandom(currentArea?.goodRollTexts, 'Etenet sakean sumun seassa. Metsä tuntuu tarkkailevan jokaista hengitystäsi.');
+          const msg = `Heitit [${roll}]. ${goodText}`;
+          setStoryText(msg);
+          onAddLog(`🥾 ${msg}`, 'movement');
+        }
       }
     }, 1000);
   };
@@ -133,7 +142,7 @@ export default function MovementScreen({
           {/* PAINIKE SIIRRETTY ALIMMAISEKSI */}
           <div className="action-buttons">
             <button className="attack-btn" onClick={handleD6Roll} disabled={isRolling}>
-              {isRolling ? 'Kävellään...' : 'HEITÄ NOPPAA JA ETENE'}
+              {isRolling ? 'Kävellään...' : 'HEITÄ NOPPAA JA ETENE METSÄSSÄ'}
             </button>
           </div>
         </div>
