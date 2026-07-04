@@ -16,7 +16,7 @@
   z-index: 1; /* Nousee perustaustan (0) päälle, mutta jää korttien (10) alle */
   overflow: hidden;
   /* Selvästi vaaleampi kuin puut - muuten siluetit eivät erotu pimeässä */
-  background: linear-gradient(180deg, #1f5c2e 0%, #2a7a3a 60%, #317e3d 100%);
+  background: linear-gradient(180deg, #1f5c2e 0%, #0f2b15 60%, #19391e 100%);
   pointer-events: none;
 }
 
@@ -29,7 +29,7 @@
   background-repeat: repeat-x;
   background-size: 32% 100%;
   background-position: bottom;
-  opacity: 0.9;
+  opacity: 0.1;
   animation: walkTreesFar 10s linear infinite;
 }
 
@@ -264,7 +264,7 @@
   height: 100vh;
   z-index: 1;
   overflow: hidden;
-  background: linear-gradient(180deg, #1b2b38 0%, #24404f 55%, #2d5468 100%);
+  background: linear-gradient(180deg, #1b2b38 0%, #24404f 55%, #0c181d 100%);
   pointer-events: none;
 }
 

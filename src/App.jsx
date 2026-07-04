@@ -62,6 +62,28 @@ export default function App() {
     setGameLogs(prevLogs => [...prevLogs, newLog]);
   };
 
+  // 📝 Lähettää lokirivin palvelimelle tallennettavaksi - käytetään VAIN sellaiselle
+  // tekstille jota backend ei muuten koskaan tallenna itse (esim. liikkumisen
+  // nopanheittotekstit). Ei koskaan kutsuta viesteille jotka backend on jo
+  // tallentanut omassa vastauksessaan - se tuplaisi rivin tietokannassa.
+  const persistLogToServer = async (message) => {
+    try {
+      await fetch(`${import.meta.env.VITE_API_URL}/api/game/log-message`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message }),
+        credentials: 'include'
+      });
+    } catch (e) {
+      console.error('Lokin tallennus palvelimelle epäonnistui:', e);
+    }
+  };
+
+  const addPersistentGameLog = (message, type = 'general') => {
+    addGameLog(message, type);
+    persistLogToServer(message);
+  };
+
   // 🔥 Uloskirjautuminen: pelkkä /api/auth/logout riittää, koska se reitti hoitaa
   // jo itse mahdollisen läpäistyn pelin tallennuksen siivouksen palvelimella.
   const handleLogout = async () => {
@@ -357,7 +379,7 @@ export default function App() {
         setActiveSession(prev => prev ? { ...prev, hasEnteredCombat: true, stats: { ...prev.stats, ...updatedStats } } : prev);
         setSavedGameSession(prev => prev ? { ...prev, hasEnteredCombat: true, stats: { ...prev.stats, ...updatedStats } } : prev);
         
-        addGameLog(`⚔️ Varjoista astuu esiin raivoisa ${currentMonster}! Valmistaudu taisteluun.`, 'combat');
+        addPersistentGameLog(`⚔️ Varjoista astuu esiin raivoisa ${currentMonster}! Valmistaudu taisteluun.`, 'combat');
 
         if (data.combatLogs && data.combatLogs.length > 0) {
           const latestMsg = data.combatLogs[data.combatLogs.length - 1];
@@ -695,7 +717,7 @@ export default function App() {
               setPhase={setMovementPhase}
               handleRepairWeapon={handleRepairWeapon}
               gameLogs={gameLogs}
-              onAddLog={addGameLog}
+              onAddLog={addPersistentGameLog}
             />
           ) : monsterHp <= 0 ? (
             <CampfireScreen onContinue={handleContinueJourney} />

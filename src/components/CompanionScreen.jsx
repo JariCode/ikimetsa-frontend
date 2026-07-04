@@ -6,6 +6,14 @@ export default function CompanionScreen({ activeSession, onContinue }) {
   const discoveryText = activeSession?.currentArea?.companionEvent?.discoveryText
     || 'Löydät jonkun eksyneen vaeltajan seitin peitosta. Hän on yhä elossa.';
 
+  // 📖 Pilkotaan backendistä tuleva teksti lauseiksi, koska sen pituutta ei
+  // voi hallita etukäteen - jokainen lause omana rivinään mahtuu aina samaan
+  // liukuvaan tekstinauhaan kuin muissakin tarinaruuduissa (nuotio, hauta).
+  const discoverySentences = discoveryText
+    .split(/(?<=[.!?])\s+/)
+    .map(s => s.trim())
+    .filter(Boolean);
+
   return (
     <div className="companion-screen">
       <h1 className="game-title companion-title">IKIMETSÄ</h1>
@@ -24,10 +32,13 @@ export default function CompanionScreen({ activeSession, onContinue }) {
       <h3 className="companion-heading">Löysit matkakumppanin: {companionName}</h3>
 
       <div className="intro-scroll-window companion-scroll-window">
-        <div className="intro-scroll-content" style={{ animationDuration: '18s' }}>
-          <p className="intro-text">{discoveryText}</p>
+        <div className="intro-scroll-content companion-scroll-content">
+          {discoverySentences.map((sentence, i) => (
+            <p className="intro-text" key={i}>{sentence}</p>
+          ))}
           <p className="intro-text">Vapautat {companionName}:n seitistä varovasti.</p>
-          <p className="intro-text">"Kiitos", hän kuiskaa käheästi. "En unohda tätä. Taistelen rinnallasi loppuun asti."</p>
+          <p className="intro-text">"Kiitos", hän kuiskaa käheästi.</p>
+          <p className="intro-text">"En unohda tätä. Taistelen rinnallasi loppuun asti."</p>
         </div>
       </div>
 

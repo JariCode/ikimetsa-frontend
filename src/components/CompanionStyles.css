@@ -5,6 +5,7 @@
   gap: 16px;
   position: relative;
   z-index: 10;
+  text-align: center;
 }
 
 .companion-title {
@@ -88,5 +89,29 @@
 .companion-wrap.w3 { top: 92px; transform: translateX(-50%) rotate(-9deg); }
 
 .companion-scroll-window {
+  height: 14rem;
   margin: 20px auto;
+}
+
+/* 📖 Sallitaan tekstin rivittyä normaalisti - perus .intro-text on tarkoitettu
+   yhden rivin tikkeritekstille (white-space: nowrap), mikä katkaisi pidemmät
+   backendistä tulevat lauseet kesken sanan. Täällä jokainen kappale saa viedä
+   niin monta riviä kuin tarvitsee. */
+.companion-scroll-content .intro-text {
+  height: auto;
+  line-height: 1.6;
+  white-space: normal;
+  overflow: visible;
+  text-align: center;
+  padding: 0 24px;
+  margin-bottom: 0.7rem;
+}
+
+.companion-scroll-content {
+  animation: companionScroll 22s linear 0.5s 1 both;
+}
+
+@keyframes companionScroll {
+  from { transform: translateY(14rem); }
+  to   { transform: translateY(-34rem); }
 }
