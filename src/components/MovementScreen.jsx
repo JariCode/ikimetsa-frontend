@@ -133,7 +133,7 @@ export default function MovementScreen({
           {/* PAINIKE SIIRRETTY ALIMMAISEKSI */}
           <div className="action-buttons">
             <button className="attack-btn" onClick={handleD6Roll} disabled={isRolling}>
-              {isRolling ? 'Kävellään...' : 'HEITÄ NOPPAA JA ETENE METSÄSSÄ'}
+              {isRolling ? 'Kävellään...' : 'HEITÄ NOPPAA JA ETENE'}
             </button>
           </div>
         </div>
@@ -156,6 +156,16 @@ export default function MovementScreen({
             <div className="raft-log"></div>
             <div className="raft-log"></div>
           </div>
+        )}
+        {currentArea?.backgroundClass === 'traveling-background-luolasto' && (
+          <>
+            <div className="torch-glow"></div>
+            <div className="torch-glow t2"></div>
+            <div className="torch-glow t3"></div>
+            <div className="cave-drip d1"></div>
+            <div className="cave-drip d2"></div>
+            <div className="cave-drip d3"></div>
+          </>
         )}
       </div>
     </>
