@@ -192,6 +192,14 @@ export default function MovementScreen({
             <div className="will-o-wisp w2"></div>
           </>
         )}
+        {currentArea?.backgroundClass === 'traveling-background-sydänmetsä' && (
+          <>
+            <div className="shadow-spark s1"></div>
+            <div className="shadow-spark s2"></div>
+            <div className="shadow-spark s3"></div>
+            <div className="shadow-spark s4"></div>
+          </>
+        )}
       </div>
     </>
   );

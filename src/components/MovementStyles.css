@@ -588,3 +588,91 @@
   50%      { transform: translate(-10px, -25px); opacity: 0.7; }
   75%      { transform: translate(15px, -10px); opacity: 0.9; }
 }
+
+/* ==========================================================================
+   🐺 SYNKÄN SYDÄNMETSÄN TAUSTA-ANIMAATIO (.traveling-background-sydänmetsä)
+   Puhdasta painostavaa goottitunnelmaa, verikuun punaa ja kiitäviä varjoja.
+   ========================================================================== */
+
+.traveling-background-sydänmetsä {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  overflow: hidden;
+  /* Verenpunainen ja pikimusta liukuväri */
+  background: linear-gradient(180deg, #1f0505 0%, #3a0a0a 55%, #140202 100%);
+  pointer-events: none;
+  animation: heartForestPulse 4s ease-in-out infinite alternate;
+}
+
+/* Kaukaiset kuuset sydänmetsässä: moniosaiset, tuuheat havupuut alkuperäisen metsän tyyliin, mutta sysimustina */
+.traveling-background-sydänmetsä::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 200%; height: 85%;
+  /* Puvut luotu pinoamalla 3 kolmiota per puu, muodostaen tuuhean havupuun oksiston */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 100' preserveAspectRatio='none'><polygon points='10,100 25,58 40,100' fill='%23050000'/><polygon points='15,72 25,40 35,72' fill='%23050000'/><polygon points='18,48 25,15 32,48' fill='%23050000'/><polygon points='70,100 85,60 100,100' fill='%23000000'/><polygon points='75,74 85,44 95,74' fill='%23000000'/><polygon points='78,50 85,20 92,50' fill='%23000000'/><polygon points='130,100 148,55 166,100' fill='%23050000'/><polygon points='136,70 148,38 160,70' fill='%23050000'/><polygon points='140,45 148,10 156,45' fill='%23050000'/><polygon points='195,100 210,62 225,100' fill='%23000000'/><polygon points='200,75 210,47 220,75' fill='%23000000'/><polygon points='203,52 210,25 217,52' fill='%23000000'/><polygon points='255,100 272,57 289,100' fill='%23050000'/><polygon points='261,71 272,40 283,71' fill='%23050000'/><polygon points='265,47 272,12 279,47' fill='%23050000'/></svg>");
+  background-repeat: repeat-x;
+  background-size: 32% 100%;
+  background-position: bottom;
+  opacity: 0.95;
+  animation: heartTreesFar 7s linear infinite;
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 80%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 0%, black 80%, transparent 100%);
+}
+
+/* Sakea musta sumu ruudun alareunassa */
+.traveling-background-sydänmetsä::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; width: 200%; height: 50%;
+  background-image: radial-gradient(ellipse 110px 35px at 15% 70%, rgba(180, 40, 40, 0.22), transparent 75%),
+                    radial-gradient(ellipse 140px 40px at 50% 60%, rgba(180, 40, 40, 0.18), transparent 75%),
+                    radial-gradient(ellipse 120px 35px at 80% 75%, rgba(180, 40, 40, 0.2), transparent 75%);
+  background-repeat: repeat-x;
+  animation: heartFogScroll 9s linear infinite;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 50%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, black 50%, transparent 100%);
+}
+
+@keyframes heartForestPulse {
+  0% { filter: brightness(0.8) contrast(1); }
+  100% { filter: brightness(1.1) contrast(1.15); }
+}
+
+@keyframes heartTreesFar {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes heartFogScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ⚡ Ilmassa leijuvat punertavat/violetit varjokipinät */
+.shadow-spark {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  z-index: 2;
+  background: radial-gradient(circle, #ff4d4d 0%, #7a0000 70%, transparent 100%);
+  box-shadow: 0 0 12px 3px rgba(239, 68, 68, 0.6);
+  animation: shadowSparkRise 4s ease-in infinite;
+}
+
+.shadow-spark.s1 { left: 20%; bottom: 5%; animation-delay: 0s; }
+.shadow-spark.s2 { left: 45%; bottom: 12%; animation-delay: 1.3s; width: 4px; height: 4px; }
+.shadow-spark.s3 { left: 70%; bottom: 7%; animation-delay: 2.5s; width: 8px; height: 8px; }
+.shadow-spark.s4 { left: 88%; bottom: 15%; animation-delay: 0.7s; width: 5px; height: 5px; }
+
+@keyframes shadowSparkRise {
+  0% { transform: translateY(0) scale(0.6) translateX(0); opacity: 0; }
+  20% { opacity: 1; }
+  80% { opacity: 0.7; }
+  100% { transform: translateY(-240px) scale(1.2) translateX(35px); opacity: 0; }
+}
