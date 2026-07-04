@@ -13,7 +13,7 @@
   justify-content: center;
   align-items: center;
   background: #000;
-  /* Sun loistava taustavälähdys yhdistettynä raskaaseen tärinään */
+  /* Taustavälähdys yhdistettynä raskaaseen tärinään */
   animation: flashScreenRed 0.15s ease-in-out infinite alternate, monster-heavy-jolt 2.5s forwards;
   overflow: hidden;
 }
@@ -113,8 +113,8 @@
 
 /* Kasvojen ja pään yleinen sijoitusalue */
 .monster-reveal-card {
-  width: 600px;
-  height: 700px;
+  width: 800px;
+  height: 900px;
   background: transparent;
   position: relative;
   display: flex;
