@@ -200,6 +200,16 @@ export default function MovementScreen({
             <div className="shadow-spark s4"></div>
           </>
         )}
+        {currentArea?.backgroundClass === 'traveling-background-mökki' && (
+          <>
+            <div className="cursed-glow cg1"></div>
+            <div className="cursed-glow cg2"></div>
+            <div className="spell-spark sp1"></div>
+            <div className="spell-spark sp2"></div>
+            <div className="spell-spark sp3"></div>
+            <div className="spell-spark sp4"></div>
+          </>
+        )}
       </div>
     </>
   );

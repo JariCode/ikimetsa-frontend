@@ -676,3 +676,114 @@
   80% { opacity: 0.7; }
   100% { transform: translateY(-240px) scale(1.2) translateX(35px); opacity: 0; }
 }
+
+/* ==========================================================================
+   🔮 RÄNSISTYNEEN MÖKIN TAUSTA-ANIMAATIO (.traveling-background-mökki)
+   Loppuvastuksen painostava tunnelma, violetti loitsutuli ja lahoava arkkitehtuuri.
+   KORJATTU: Mökki tehty reilusti isommaksi ja se näkyy vain kerran kierroksessa!
+   ========================================================================== */
+
+.traveling-background-mökki {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  overflow: hidden;
+  /* Kylmä epäluonnollinen violetti ja sysimusta hautausmaan harmaa */
+  background: linear-gradient(180deg, #0f0714 0%, #1e112a 55%, #07030a 100%);
+  pointer-events: none;
+  animation: cabinCursedPulse 5s ease-in-out infinite alternate;
+}
+
+/* Kaukainen horisontti: Vinossa nököttävä ränsistynyt mökki, piippu ja kuolleet käppyräpuut */
+.traveling-background-mökki::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 200%; height: 85%;
+  /* SVG:n leveys nostettu arvoon 600. Ensimmäinen mökki tehty jättikokoiseksi ja toinen mökki poistettu. */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 100' preserveAspectRatio='none'><polygon points='20,100 45,45 95,52 120,100' fill='%230b0510'/><rect x='60' y='60' width='14' height='14' fill='%23a855f7' opacity='0.85'/><rect x='35' y='26' width='10' height='22' transform='rotate(-15 35 26)' fill='%23050208'/><path d='M170,100 Q165,60 175,30 T165,5 M175,55 Q190,45 200,40 M170,40 Q155,35 150,25' stroke='%23050208' stroke-width='2.5' fill='none'/><path d='M290,100 Q298,50 285,25 M288,60 Q275,50 268,45 M287,45 Q305,35 310,25' stroke='%230b0510' stroke-width='2' fill='none'/><path d='M410,100 Q405,60 415,30 T405,5' stroke='%23050208' stroke-width='2.5' fill='none'/><path d='M520,100 Q528,50 515,25' stroke='%230b0510' stroke-width='2' fill='none'/></svg>");
+  background-repeat: repeat-x;
+  background-size: 55% 100%; /* Pitää kuvion tarpeeksi leveänä pitkiä välimatkoja varten */
+  background-position: bottom;
+  opacity: 0.95;
+  animation: cabinScrollFar 15s linear infinite;
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 85%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 0%, black 85%, transparent 100%);
+}
+
+/* Lähellä vilisevät rikkoutuneet aidan seipäät ja lahot lankut (luovat vauhdin tuntua) */
+.traveling-background-mökki::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; width: 200%; height: 45%;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 100' preserveAspectRatio='none'><line x1='15' y1='100' x2='10' y2='45' stroke='%23000000' stroke-width='4'/><line x1='10' y1='65' x2='45' y2='75' stroke='%23000000' stroke-width='3'/><line x1='85' y1='100' x2='92' y2='50' stroke='%23000000' stroke-width='3.5'/><line x1='150' y1='100' x2='140' y2='40' stroke='%23000000' stroke-width='4'/></svg>");
+  background-repeat: repeat-x;
+  background-size: 38% 100%;
+  background-position: bottom;
+  animation: cabinScrollNear 4.2s linear infinite;
+}
+
+@keyframes cabinCursedPulse {
+  0% { filter: brightness(0.75) hue-rotate(0deg); }
+  100% { filter: brightness(1.05) hue-rotate(15deg); }
+}
+
+@keyframes cabinScrollFar {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes cabinScrollNear {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* 🔮 Mökin ikkunoista hohtava kirottu velhon valo-aallot */
+.cursed-glow {
+  position: absolute;
+  width: 350px;
+  height: 350px;
+  border-radius: 50%;
+  z-index: 2;
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.25) 0%, rgba(107, 33, 168, 0.08) 50%, transparent 75%);
+  animation: cursedGlowDrift 12s linear infinite, cursedGlowFlicker 2s ease-in-out infinite alternate;
+}
+.cursed-glow.cg1 { top: 20%; left: 15%; }
+.cursed-glow.cg2 { top: 15%; left: 65%; animation-delay: -3s; }
+
+@keyframes cursedGlowDrift {
+  0% { transform: translateX(0) translateY(0); }
+  50% { transform: translateX(30px) translateY(-15px); }
+  100% { transform: translateX(0) translateY(0); }
+}
+
+@keyframes cursedGlowFlicker {
+  0% { opacity: 0.6; transform: scale(0.95); }
+  100% { opacity: 1; transform: scale(1.05); }
+}
+
+/* ✨ Ilmassa leijuvat häiriintyneet violetit ja purppuraiset loitsukipinät */
+.spell-spark {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  z-index: 3;
+  background: radial-gradient(circle, #d8b4fe 0%, #6b21a8 70%, transparent 100%);
+  box-shadow: 0 0 14px 4px rgba(168, 85, 247, 0.7);
+  animation: spellSparkRise 4.5s ease-in infinite;
+}
+
+.spell-spark.sp1 { left: 18%; bottom: 8%; animation-delay: 0s; }
+.spell-spark.sp2 { left: 38%; bottom: 14%; animation-delay: 1.5s; width: 7px; height: 7px; }
+.spell-spark.sp3 { left: 62%; bottom: 6%; animation-delay: 2.8s; width: 4px; height: 4px; }
+.spell-spark.sp4 { left: 82%; bottom: 11%; animation-delay: 0.9s; width: 6px; height: 6px; }
+
+@keyframes spellSparkRise {
+  0% { transform: translateY(0) scale(0.5) rotate(0deg); opacity: 0; }
+  15% { opacity: 1; }
+  85% { opacity: 0.8; }
+  100% { transform: translateY(-280px) scale(1.4) rotate(180deg) translateX(40px); opacity: 0; }
+}
