@@ -9,6 +9,7 @@ import ProfileSettings from './components/ProfileSettings';
 import MovementScreen from './components/MovementScreen';
 import CampfireScreen from './components/CampfireScreen';
 import GraveScreen from './components/GraveScreen';
+import VictoryScreen from './components/VictoryScreen'; // 🔥 LISÄTTY LOPPURUUTU
 
 export default function App() {
   const [sessionId, setSessionId] = useState(sessionStorage.getItem('ikimetsa_session_id') || null);
@@ -29,8 +30,6 @@ export default function App() {
   const [activeSession, setActiveSession] = useState(null);
   const [error, setError] = useState('');
 
-  // 🕒 Virheviesti häviää automaattisesti - ilman tätä se jäi näkyviin pysyvästi
-  // seuraaville ruuduille asti, koska mikään ei koskaan nollannut sitä ajastetusti.
   useEffect(() => {
     if (!error) return;
     const errorTimer = setTimeout(() => setError(''), 4000);
@@ -50,7 +49,7 @@ export default function App() {
   const [movementPhase, setMovementPhase] = useState(sessionStorage.getItem('ikimetsa_movement_phase') || 'intro');
   const [showVictorySplash, setShowVictorySplash] = useState(false);
   const [showDeathFade, setShowDeathFade] = useState(false);
-  const campfireActionInProgressRef = useRef(false); // 🛡️ Estää "Jatka taivalta"/"Nouse haudastasi" -napin tuplaklikkauksen aiheuttaman kilpajuoksun
+  const campfireActionInProgressRef = useRef(false);
 
   const addGameLog = (message, type = 'general') => {
     const newLog = {
@@ -62,6 +61,17 @@ export default function App() {
   };
 
   const handleLogout = async () => {
+    if (activeSession?.isGameCompleted) {
+      try {
+        await fetch(`${import.meta.env.VITE_API_URL}/api/game/session`, {
+          method: 'DELETE',
+          credentials: 'include'
+        });
+      } catch (e) {
+        console.error("Vanhan voittosession poistovirhe:", e);
+      }
+    }
+
     try {
       await fetch(`${import.meta.env.VITE_API_URL}/api/auth/logout`, {
         method: 'POST',
@@ -123,7 +133,11 @@ export default function App() {
             } else {
               setGameLogs([]);
             }
-            setIsNavigating(!data.session.hasEnteredCombat);
+            if (data.session.isGameCompleted) {
+              setIsNavigating(true);
+            } else {
+              setIsNavigating(!data.session.hasEnteredCombat);
+            }
           } else {
             setSavedGameSession(null);
             setActiveSession(null);
@@ -167,37 +181,13 @@ export default function App() {
     }
   }, [movementPhase, isNavigating]);
 
-  // 🛡️ Sama korjaus kuin GamePlay.jsx:n jumpscaressa: "onko jo käsitelty tässä komponentissa"
-  // -tieto pidetään useRefissä (ei laukaise renderöintiä), jotta Reactin StrictMode-kaksoisajo
-  // (kehitystila) ei näe ensimmäisen ajokerran omaa sessionStorage-kirjoitusta ja peru itseään.
-  const victorySplashHandledRef = React.useRef(null);
-
-  useEffect(() => {
-    if (monsterHp > 0 || !activeSession) return;
-
-    const monsterKey = activeSession?.currentMonsterName || 'Varjohahmo';
-    if (victorySplashHandledRef.current === monsterKey) return; // jo käsitelty tälle hirviölle
-
-    victorySplashHandledRef.current = monsterKey;
-
-    const splashShownFor = sessionStorage.getItem('ikimetsa_victory_splash_shown');
-    if (splashShownFor === monsterKey) return;
-
-    sessionStorage.setItem('ikimetsa_victory_splash_shown', monsterKey);
-    setShowVictorySplash(true);
-    const splashTimer = setTimeout(() => setShowVictorySplash(false), 1700);
-
-    return () => clearTimeout(splashTimer);
-  }, [monsterHp, activeSession?.currentMonsterName]);
-
+  // 💀 Kuoleman sumennusefekti
   const deathFadeHandledRef = React.useRef(false);
-
   useEffect(() => {
     if (!activeSession || activeSession.stats.hp > 0) return;
-    if (deathFadeHandledRef.current) return; // jo käsitelty tässä komponentissa
+    if (deathFadeHandledRef.current) return;
 
     deathFadeHandledRef.current = true;
-
     const alreadyShown = sessionStorage.getItem('ikimetsa_death_fade_shown');
     if (alreadyShown === 'true') return;
 
@@ -278,8 +268,12 @@ export default function App() {
       } else {
         setGameLogs([]);
       }
-      setIsNavigating(!savedGameSession.hasEnteredCombat);
-      setMovementPhase('walking');
+      if (savedGameSession.isGameCompleted) {
+        setIsNavigating(true);
+      } else {
+        setIsNavigating(!savedGameSession.hasEnteredCombat);
+        setMovementPhase('walking');
+      }
     }
     setGameStarted(true);
   };
@@ -338,7 +332,6 @@ export default function App() {
         setActiveSession(prev => prev ? { ...prev, hasEnteredCombat: true, stats: { ...prev.stats, ...updatedStats } } : prev);
         setSavedGameSession(prev => prev ? { ...prev, hasEnteredCombat: true, stats: { ...prev.stats, ...updatedStats } } : prev);
         
-        // Lisätään hieno goottilainen aloitusviesti taistelulokin alkuun
         addGameLog(`⚔️ Varjoista astuu esiin raivoisa ${currentMonster}! Valmistaudu taisteluun.`, 'combat');
 
         if (data.combatLogs && data.combatLogs.length > 0) {
@@ -401,9 +394,10 @@ export default function App() {
       
       setIsNavigating(true);
       setMovementPhase('walking');
+      campfireActionInProgressRef.current = false;
     } catch (err) { 
       setError(err.message); 
-      campfireActionInProgressRef.current = false; // sallitaan uusi yritys jos tämä epäonnistui
+      campfireActionInProgressRef.current = false;
     }
   };
 
@@ -425,13 +419,17 @@ export default function App() {
       setCombatInitiative(null);
       setCurrentTurn(null);
       
-      addGameLog("Jatkat matkaasi syvemmälle Ikimetsän varjoihin.", "movement");
-      
-      setIsNavigating(true);
-      setMovementPhase('walking');
+      if (data.isGameCompleted) {
+        setIsNavigating(true);
+      } else {
+        addGameLog("Jatkat matkaasi syvemmälle Ikimetsän varjoihin.", "movement");
+        setIsNavigating(true);
+        setMovementPhase('walking');
+      }
+      campfireActionInProgressRef.current = false;
     } catch (err) { 
       setError(err.message); 
-      campfireActionInProgressRef.current = false; // sallitaan uusi yritys jos tämä epäonnistui
+      campfireActionInProgressRef.current = false;
     }
   };
 
@@ -527,8 +525,15 @@ export default function App() {
         setIsShaking(true);
         setTimeout(() => setIsShaking(false), 300);
 
+        // 🔥 LAUKAISTAAN VERIROISKE TÄSSÄ HETI JOS HIRVIÖ KUOLI
+        if (nextMonsterHp <= 0) {
+          setShowVictorySplash(true);
+          setTimeout(() => setShowVictorySplash(false), 1700);
+        }
+
         setActiveSession(prev => ({
           ...prev,
+          isGameCompleted: data.isGameCompleted !== undefined ? data.isGameCompleted : prev.isGameCompleted,
           repairPoints: data.repairPoints !== undefined ? data.repairPoints : prev.repairPoints,
           stats: { 
             ...prev.stats, 
@@ -547,6 +552,7 @@ export default function App() {
 
         setSavedGameSession(prev => ({
           ...prev,
+          isGameCompleted: data.isGameCompleted !== undefined ? data.isGameCompleted : (prev ? prev.isGameCompleted : false),
           stats: prev ? {
             ...prev.stats,
             hp: data.playerHp,
@@ -560,6 +566,10 @@ export default function App() {
           combatInitiative: data.initiativeWinner,
           currentTurn: data.nextTurn
         }));
+
+        if (data.isGameCompleted) {
+          setIsNavigating(true);
+        }
 
         if (nextMonsterHp <= 0) {
           setCombatInitiative(null);
@@ -576,7 +586,7 @@ export default function App() {
   return (
     <div className={`game-container ${isShaking ? 'screen-hit-shake' : ''}`}>
       <div className="dark-forest-bg">
-        {(!activeSession || activeSession.currentAreaIndex === 1) && (
+        {!activeSession?.isGameCompleted && (
           <>
             <div className="blood-moon"></div>
             <div className="fog-layer layer-1"></div>
@@ -630,6 +640,10 @@ export default function App() {
             />
           ) : gameStarted && !activeSession ? (
             <CharacterSelection characterClasses={characterClasses} selectCharacter={selectCharacter} />
+          ) : activeSession?.isGameCompleted ? (
+            <VictoryScreen activeSession={activeSession} handleLogout={handleLogout} />
+          ) : activeSession.stats.hp <= 0 ? (
+            <GraveScreen activeSession={activeSession} onContinue={handleRespawn} />
           ) : isNavigating ? (
             <MovementScreen
               activeSession={activeSession}
@@ -640,8 +654,6 @@ export default function App() {
               gameLogs={gameLogs}
               onAddLog={addGameLog}
             />
-          ) : activeSession.stats.hp <= 0 ? (
-            <GraveScreen activeSession={activeSession} onContinue={handleRespawn} />
           ) : monsterHp <= 0 ? (
             <CampfireScreen onContinue={handleContinueJourney} />
           ) : (

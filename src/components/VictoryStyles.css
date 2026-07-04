@@ -1,0 +1,150 @@
+/* ==========================================================================
+   ☀️ AURINKOISEN LOPPURUUDUN TYYLIT (VictoryScreen.jsx)
+   ========================================================================== */
+
+.victory-screen-wrapper {
+  position: fixed;
+  inset: 0;
+  z-index: 9999; /* Varmistetaan että nousee aivan kaiken muun päälle */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  background: #0d2410;
+}
+
+/* Kokoaa ikkunan ja napin pystysuoraan nippuun keskelle ruutua */
+.victory-main-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  z-index: 5;
+}
+
+/* Lämmin aurinkoinen metsätausta */
+.sunny-forest-bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, #4ade80 0%, #166534 60%, #052e16 100%);
+  z-index: 1;
+}
+
+/* Loistava aurinko yläkulmassa */
+.bright-sun {
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fef08a 0%, rgba(253, 224, 71, 0.4) 60%, transparent 100%);
+  filter: blur(10px);
+}
+
+/* Lempeät valonsäteet */
+.sun-ray {
+  position: absolute;
+  top: 0; right: 10%;
+  width: 60px;
+  height: 150%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+  transform: rotate(-35deg);
+  animation: rayGlimmer 6s ease-in-out infinite alternate;
+}
+.sun-ray.r2 { right: 40%; animation-delay: -3s; width: 40px; }
+
+@keyframes rayGlimmer {
+  0% { opacity: 0.3; transform: rotate(-33deg) translateX(-10px); }
+  100% { opacity: 0.8; transform: rotate(-37deg) translateX(10px); }
+}
+
+/* Vihreät putoilevat lehdet matkan päätökseen */
+.sunny-leaf {
+  position: absolute;
+  top: -5%;
+  width: 16px;
+  height: 22px;
+  background: rgba(134, 239, 172, 0.85);
+  border-radius: 60% 0;
+  z-index: 2;
+  animation: sunnyLeafFall 8s linear infinite;
+}
+.sunny-leaf.sl1 { left: 15%; animation-delay: 0s; }
+.sunny-leaf.sl2 { left: 50%; animation-delay: 2.5s; }
+.sunny-leaf.sl3 { left: 80%; animation-delay: 4.8s; }
+
+@keyframes sunnyLeafFall {
+  0% { top: -5%; opacity: 0; transform: rotate(0deg); }
+  10% { opacity: 1; }
+  90% { opacity: 0.9; }
+  100% { top: 105%; opacity: 0; transform: rotate(260deg) translateX(30px); }
+}
+
+/* 📜 TARINARULLA (PALAUTETTU ALKUPERÄINEN TYYLISI) */
+.victory-scroll-window {
+  position: relative;
+  width: 600px;
+  height: 70vh;
+  overflow: hidden;
+  background: rgba(5, 46, 22, 0.85);
+  border: 2px solid #4ade80;
+  border-radius: 12px;
+  box-shadow: 0 0 30px rgba(74, 222, 128, 0.4);
+  display: flex;
+  justify-content: center;
+}
+
+.victory-scroll-content {
+  position: absolute;
+  width: 90%;
+  text-align: center;
+  padding: 40px 0;
+  animation: victoryScrollText 25s linear forwards;
+}
+
+.victory-title {
+  font-size: 2.5rem;
+  color: #4ade80;
+  text-shadow: 0 0 15px rgba(74, 222, 128, 0.6);
+  margin-bottom: 50px;
+  letter-spacing: 2px;
+}
+
+.victory-text {
+  font-size: 1.2rem;
+  color: #f0fdf4;
+  line-height: 2;
+  margin-bottom: 30px;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+/* ALKUPERÄINEN EXIT-NAPPI (Vain ylämarginaali poistettu ja korvattu 2px solidilla) */
+.victory-exit-btn {
+  background-color: #166534;
+  color: #ffffff;
+  border: 2px solid #4ade80;
+  padding: 14px 35px;
+  font-size: 1.15rem;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(74, 222, 128, 0.3);
+  transition: all 0.2s ease-in-out;
+}
+
+.victory-exit-btn:hover {
+  background-color: #15803d;
+  box-shadow: 0 0 25px rgba(74, 222, 128, 0.6);
+  transform: scale(1.05);
+}
+
+.victory-exit-btn:active {
+  transform: scale(0.98);
+}
+
+/* ALKUPERÄINEN ANIMAATIO (Palautettu täysin ennalleen) */
+@keyframes victoryScrollText {
+  0% { top: 100%; }
+  100% { top: -20%; } 
+}

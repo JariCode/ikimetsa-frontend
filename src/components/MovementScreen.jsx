@@ -142,7 +142,7 @@ export default function MovementScreen({
           {/* PAINIKE SIIRRETTY ALIMMAISEKSI */}
           <div className="action-buttons">
             <button className="attack-btn" onClick={handleD6Roll} disabled={isRolling}>
-              {isRolling ? 'Kävellään...' : 'HEITÄ NOPPAA JA ETENE METSÄSSÄ'}
+              {isRolling ? 'Edetään...' : 'HEITÄ NOPPAA JA ETENE'}
             </button>
           </div>
         </div>
