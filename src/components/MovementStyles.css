@@ -249,3 +249,92 @@
   0%   { background-position: 0 0; }
   100% { background-position: 23.6px 11px; }
 }
+
+/* ==========================================================================
+   🚣 JÄRVEN TAUSTA-ANIMAATIO - tyyni veden pinta, loivat vaakasuorat aallot
+   (ei turbulenssia niin kuin koskella), kaukainen pehmeä rantaviiva, ja
+   lautta joka keinuu hiljaa jaloissasi kun soudat yli.
+   ========================================================================== */
+
+.traveling-background-jarvi {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  overflow: hidden;
+  background: linear-gradient(180deg, #1b2b38 0%, #24404f 55%, #2d5468 100%);
+  pointer-events: none;
+}
+
+/* Kaukainen pehmeä rantaviiva - loivat kumpuilevat kukkulat, ei teräviä huippuja */
+.traveling-background-jarvi::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 200%; height: 60%;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 100' preserveAspectRatio='none'><path d='M0,100 Q40,58 80,78 T160,72 T240,80 T300,66 L300,100 Z' fill='%23132029'/></svg>");
+  background-repeat: repeat-x;
+  background-size: 50% 100%;
+  background-position: bottom;
+  opacity: 0.85;
+  animation: jarviShoreFar 18s linear infinite;
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 70%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 0%, black 70%, transparent 100%);
+}
+
+/* Tyyni veden pinta - loivat vaakasuuntaiset aallot, saumaton silmukka */
+.traveling-background-jarvi::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    0deg,
+    rgba(255, 255, 255, 0.07) 0px,
+    rgba(255, 255, 255, 0.07) 2px,
+    transparent 2px,
+    transparent 34px
+  );
+  animation: jarviRipple 5s linear infinite;
+}
+
+@keyframes jarviShoreFar {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes jarviRipple {
+  0%   { background-position: 0 0; }
+  100% { background-position: 0 34px; }
+}
+
+/* 🛶 Lautta - purjehtii hitaasti sivusuunnassa, keskikorkeudella. Saa livahtaa
+   liikkumiskortin taakse kesken ajelehtimisen - näkyy silti selvästi kortin
+   molemmin puolin koska kortti ei täytä koko ruudun leveyttä. */
+.lake-raft {
+  position: absolute;
+  top: 70%;
+  left: 0;
+  z-index: 2;
+  display: flex;
+  gap: 4px;
+  animation: raftDrift 22s linear infinite, raftBob 3.2s ease-in-out infinite;
+}
+
+.raft-log {
+  width: 22px;
+  height: 130px;
+  background: linear-gradient(180deg, #6b4423 0%, #4a2f18 100%);
+  border-radius: 8px;
+  box-shadow: inset -3px 0 5px rgba(0, 0, 0, 0.4);
+}
+
+@keyframes raftDrift {
+  0%   { left: -5%; }
+  100% { left: 105%; }
+}
+
+@keyframes raftBob {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(5px) rotate(1.2deg); }
+}

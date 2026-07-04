@@ -148,6 +148,15 @@ export default function MovementScreen({
             <div className="swamp-bubble b4"></div>
           </>
         )}
+        {currentArea?.backgroundClass === 'traveling-background-jarvi' && (
+          <div className="lake-raft">
+            <div className="raft-log"></div>
+            <div className="raft-log"></div>
+            <div className="raft-log"></div>
+            <div className="raft-log"></div>
+            <div className="raft-log"></div>
+          </div>
+        )}
       </div>
     </>
   );
