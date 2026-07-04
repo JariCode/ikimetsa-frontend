@@ -146,5 +146,5 @@
 /* Rullaavat lopputekstit */
 @keyframes victoryScrollText {
   0% { top: 80%; }
-  100% { top: -120%; } 
+  100% { top: -100%; } 
 }

@@ -1,0 +1,92 @@
+.companion-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  position: relative;
+  z-index: 10;
+}
+
+.companion-title {
+  margin-bottom: 0;
+}
+
+.companion-heading {
+  color: #a78bfa;
+  text-shadow: 0 0 12px rgba(167, 139, 250, 0.5);
+  text-align: center;
+}
+
+.companion-visual {
+  position: relative;
+  width: 260px;
+  height: 220px;
+}
+
+/* Hämähäkinseitti - oikeat säteet ja samankeskiset renkaat SVG:llä */
+.companion-web {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><g stroke='%23e5e5f0' stroke-width='1.5' fill='none' opacity='0.75'><line x1='100' y1='100' x2='100' y2='2'/><line x1='100' y1='100' x2='169' y2='31'/><line x1='100' y1='100' x2='198' y2='100'/><line x1='100' y1='100' x2='169' y2='169'/><line x1='100' y1='100' x2='100' y2='198'/><line x1='100' y1='100' x2='31' y2='169'/><line x1='100' y1='100' x2='2' y2='100'/><line x1='100' y1='100' x2='31' y2='31'/><path d='M100,25 L143,40 L160,83 L143,127 L100,142 L57,127 L40,83 L57,40 Z'/><path d='M100,50 L128,60 L138,88 L128,116 L100,126 L72,116 L62,88 L72,60 Z'/><path d='M100,75 L114,80 L119,88 L114,96 L100,101 L86,96 L81,88 L86,80 Z'/></g></svg>");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  animation: webShimmer 4s ease-in-out infinite;
+}
+
+@keyframes webShimmer {
+  0%, 100% { opacity: 0.75; }
+  50% { opacity: 1; }
+}
+
+/* Seittiin sidottu hahmo - pää + vartalo + lankoja niiden päällä */
+.companion-figure {
+  position: absolute;
+  top: 22%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 130px;
+}
+
+.companion-head {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #3a3452, #201c30 80%);
+  box-shadow: 0 0 12px rgba(167, 139, 250, 0.35);
+}
+
+.companion-body {
+  position: absolute;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 42px;
+  height: 100px;
+  background: linear-gradient(180deg, #2a2540 0%, #1a1728 100%);
+  border-radius: 45% 45% 40% 40%;
+  box-shadow: 0 0 18px rgba(167, 139, 250, 0.3);
+}
+
+/* Seittilangat vartalon poikki - vinossa, hieman läpikuultavia */
+.companion-wrap {
+  position: absolute;
+  left: 50%;
+  width: 58px;
+  height: 3px;
+  background: rgba(230, 230, 240, 0.6);
+  border-radius: 2px;
+  box-shadow: 0 0 4px rgba(230, 230, 240, 0.4);
+}
+.companion-wrap.w1 { top: 40px; transform: translateX(-50%) rotate(-14deg); }
+.companion-wrap.w2 { top: 65px; transform: translateX(-50%) rotate(11deg); }
+.companion-wrap.w3 { top: 92px; transform: translateX(-50%) rotate(-9deg); }
+
+.companion-scroll-window {
+  margin: 20px auto;
+}

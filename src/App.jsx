@@ -10,6 +10,7 @@ import MovementScreen from './components/MovementScreen';
 import CampfireScreen from './components/CampfireScreen';
 import GraveScreen from './components/GraveScreen';
 import VictoryScreen from './components/VictoryScreen'; // 🔥 LISÄTTY LOPPURUUTU
+import CompanionScreen from './components/CompanionScreen';
 
 export default function App() {
   const [sessionId, setSessionId] = useState(sessionStorage.getItem('ikimetsa_session_id') || null);
@@ -50,6 +51,7 @@ export default function App() {
   const [showVictorySplash, setShowVictorySplash] = useState(false);
   const [showDeathFade, setShowDeathFade] = useState(false);
   const campfireActionInProgressRef = useRef(false);
+  const [showCompanionReveal, setShowCompanionReveal] = useState(sessionStorage.getItem('ikimetsa_show_companion_reveal') === 'true');
 
   const addGameLog = (message, type = 'general') => {
     const newLog = {
@@ -74,9 +76,9 @@ export default function App() {
 
     sessionStorage.removeItem('ikimetsa_session_id');
     sessionStorage.removeItem('ikimetsa_show_profile');
-    sessionStorage.removeItem('ikimetsa_victory_splash_shown');
     sessionStorage.removeItem('ikimetsa_death_fade_shown');
     sessionStorage.removeItem('ikimetsa_monster_reveal_shown');
+    sessionStorage.removeItem('ikimetsa_show_companion_reveal');
     setSessionId(null);
     setShouldRestoreSession(false);
     setLoggedInUser(null);
@@ -171,6 +173,14 @@ export default function App() {
       sessionStorage.removeItem('ikimetsa_movement_phase');
     }
   }, [movementPhase, isNavigating]);
+
+  useEffect(() => {
+    if (showCompanionReveal) {
+      sessionStorage.setItem('ikimetsa_show_companion_reveal', 'true');
+    } else {
+      sessionStorage.removeItem('ikimetsa_show_companion_reveal');
+    }
+  }, [showCompanionReveal]);
 
   // 💀 Kuoleman sumennusefekti
   const deathFadeHandledRef = React.useRef(false);
@@ -288,15 +298,39 @@ export default function App() {
       
       setIsNavigating(true);
       setMovementPhase('intro');
-      sessionStorage.removeItem('ikimetsa_victory_splash_shown');
       sessionStorage.removeItem('ikimetsa_death_fade_shown');
       sessionStorage.removeItem('ikimetsa_monster_reveal_shown');
+      sessionStorage.removeItem('ikimetsa_show_companion_reveal');
       
       setCombatInitiative(null);
       setCurrentTurn(null);
       setMonsterHp(data.currentMonsterHp ?? 25);
       setGameLogs([]);
     } catch (err) { setError(err.message); }
+  };
+
+  // 🧑‍🤝‍🧑 Kumppanin löytäminen - ei vie taisteluun, näyttää löytöruudun ja
+  // palauttaa sitten samalle liikkumisruudulle jatkamaan matkaa.
+  const handleFindCompanion = async () => {
+    setError('');
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/game/find-companion`, {
+        method: 'POST',
+        credentials: 'include'
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || 'Kumppanin löytäminen epäonnistui.');
+
+      setActiveSession(data);
+      setSavedGameSession(data);
+      addGameLog(`🧑‍🤝‍🧑 ${data.companionName} liittyy seuraasi.`, 'system');
+      setShowCompanionReveal(true);
+    } catch (err) { setError(err.message); }
+  };
+
+  const handleContinueAfterCompanion = () => {
+    sessionStorage.removeItem('ikimetsa_show_companion_reveal');
+    setShowCompanionReveal(false);
   };
 
   const handleEnterCombat = async () => {
@@ -341,12 +375,13 @@ export default function App() {
     setIsNavigating(false);
   };
 
-  const handleRepairWeapon = async () => {
+  const handleRepairWeapon = async (target = 'player') => {
     setError('');
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/combat/repair-weapon`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ target }),
         credentials: 'include'
       });
       const data = await response.json();
@@ -538,7 +573,14 @@ export default function App() {
           currentMonsterHp: nextMonsterHp,
           currentMonsterLevel: prev ? prev.currentMonsterLevel : 1, 
           combatInitiative: data.initiativeWinner,
-          currentTurn: data.nextTurn
+          currentTurn: data.nextTurn,
+          companionActive: data.companionActive !== undefined ? data.companionActive : prev.companionActive,
+          companionHp: data.companionHp !== undefined ? data.companionHp : prev.companionHp,
+          companionMaxHp: data.companionMaxHp !== undefined ? data.companionMaxHp : prev.companionMaxHp,
+          companionName: data.companionName !== undefined ? data.companionName : prev.companionName,
+          companionWeaponName: data.companionWeaponName !== undefined ? data.companionWeaponName : prev.companionWeaponName,
+          companionWeaponDurability: data.companionWeaponDurability !== undefined ? data.companionWeaponDurability : prev.companionWeaponDurability,
+          companionWeaponMaxDurability: data.companionWeaponMaxDurability !== undefined ? data.companionWeaponMaxDurability : prev.companionWeaponMaxDurability
         }));
 
         setSavedGameSession(prev => ({
@@ -555,7 +597,14 @@ export default function App() {
           currentMonsterHp: nextMonsterHp,
           currentMonsterLevel: prev ? prev.currentMonsterLevel : 1, 
           combatInitiative: data.initiativeWinner,
-          currentTurn: data.nextTurn
+          currentTurn: data.nextTurn,
+          companionActive: data.companionActive !== undefined ? data.companionActive : (prev ? prev.companionActive : false),
+          companionHp: data.companionHp !== undefined ? data.companionHp : (prev ? prev.companionHp : 0),
+          companionMaxHp: data.companionMaxHp !== undefined ? data.companionMaxHp : (prev ? prev.companionMaxHp : 0),
+          companionName: data.companionName !== undefined ? data.companionName : (prev ? prev.companionName : null),
+          companionWeaponName: data.companionWeaponName !== undefined ? data.companionWeaponName : (prev ? prev.companionWeaponName : null),
+          companionWeaponDurability: data.companionWeaponDurability !== undefined ? data.companionWeaponDurability : (prev ? prev.companionWeaponDurability : 0),
+          companionWeaponMaxDurability: data.companionWeaponMaxDurability !== undefined ? data.companionWeaponMaxDurability : (prev ? prev.companionWeaponMaxDurability : 0)
         }));
 
         if (data.isGameCompleted) {
@@ -635,10 +684,13 @@ export default function App() {
             <VictoryScreen activeSession={activeSession} handleLogout={handleLogout} />
           ) : activeSession.stats.hp <= 0 ? (
             <GraveScreen activeSession={activeSession} onContinue={handleRespawn} />
+          ) : showCompanionReveal ? (
+            <CompanionScreen activeSession={activeSession} onContinue={handleContinueAfterCompanion} />
           ) : isNavigating ? (
             <MovementScreen
               activeSession={activeSession}
               handleEnterCombat={handleEnterCombat}
+              onFindCompanion={handleFindCompanion}
               phase={movementPhase}
               setPhase={setMovementPhase}
               handleRepairWeapon={handleRepairWeapon}

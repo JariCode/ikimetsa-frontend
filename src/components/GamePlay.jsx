@@ -78,12 +78,31 @@ export default function GamePlay({
         <div className="status-item">
           <span>Ase:</span> <strong>{activeSession.inventory[0]?.name} ({activeSession.inventory[0]?.durability}/{activeSession.inventory[0]?.maxDurability})</strong>
           {activeSession.inventory[0]?.durability < activeSession.inventory[0]?.maxDurability && (activeSession.repairPoints >= 2) && (
-            <button className="repair-mini-btn" onClick={handleRepairWeapon}>
+            <button className="repair-mini-btn" onClick={() => handleRepairWeapon('player')}>
               🔧 Korjaa (2pts)
             </button>
           )}
         </div>
         <div className="status-item"><span>Korjauspisteet:</span> <strong>{activeSession.repairPoints || 0} Pts</strong></div>
+        {activeSession.companionFound && (
+          <div className="status-item">
+            <span>Kumppani:</span>{' '}
+            {activeSession.companionActive ? (
+              <>
+                <strong>{activeSession.companionName} ({activeSession.companionHp} / {activeSession.companionMaxHp} HP)</strong>
+                {' — '}
+                <strong>{activeSession.companionWeaponName} ({activeSession.companionWeaponDurability}/{activeSession.companionWeaponMaxDurability})</strong>
+                {activeSession.companionWeaponDurability < activeSession.companionWeaponMaxDurability && (activeSession.repairPoints >= 2) && (
+                  <button className="repair-mini-btn" onClick={() => handleRepairWeapon('companion')}>
+                    🔧 Korjaa (2pts)
+                  </button>
+                )}
+              </>
+            ) : (
+              <strong className="low-hp">{activeSession.companionName} (kaatunut - toipuu nuotiolla)</strong>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="combat-arena">
