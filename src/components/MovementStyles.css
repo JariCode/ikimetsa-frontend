@@ -181,3 +181,71 @@
   85% { opacity: 0.6; }
   100% { transform: translateY(-140px) scale(1.1); opacity: 0; }
 }
+
+
+/* ==========================================================================
+   🌊 KOSKEN TAUSTA-ANIMAATIO - vesi virtaa viistosti yläviistosta alaviistoon,
+   ei suoraan vaakaa niin kuin metsässä/suolla. Rantakalliot kaukana hitaasti.
+   ========================================================================== */
+
+.traveling-background-koski {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  overflow: hidden;
+  background: linear-gradient(180deg, #16232b 0%, #223d49 55%, #2a4f60 100%);
+  pointer-events: none;
+}
+
+/* Kaukaiset rantakalliot - tummat, hitaasti liikkuvat siluetit */
+.traveling-background-koski::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 200%; height: 65%;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 100' preserveAspectRatio='none'><polygon points='0,100 20,55 45,70 60,40 80,100' fill='%230d1a20'/><polygon points='100,100 125,50 145,68 165,35 190,100' fill='%230a161b'/><polygon points='210,100 232,58 255,72 272,42 300,100' fill='%230d1a20'/></svg>");
+  background-repeat: repeat-x;
+  background-size: 50% 100%;
+  background-position: bottom;
+  opacity: 0.9;
+  animation: koskiRocksFar 12s linear infinite;
+  /* Pehmentää laatikon alareunan liukuvasti näkymättömäksi, jotta 65%-korkeuden
+     raja ei näy terävänä suorana viivana koko ruudun leveydeltä */
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 75%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 0%, black 75%, transparent 100%);
+}
+
+/* Vaahtoava vesi - viistot raidat jotka liikkuvat background-positionilla (aina
+   saumaton, toisin kuin transform: translate joka paljastaa reunan silloin
+   tällöin). Siirtymä on laskettu tasan yhden raitajakson mittaiseksi 115°
+   kulmassa, jotta silmukka ei koskaan hyppää näkyvästi. */
+.traveling-background-koski::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    115deg,
+    rgba(255, 255, 255, 0.22) 0px,
+    rgba(255, 255, 255, 0.22) 3px,
+    transparent 3px,
+    transparent 26px
+  );
+  /* Häivytetään raidat pehmeästi ylä- ja alareunassa, jotta viisto kuvio ei
+     leikkaannu terävästi suoraan reunaan (mikä näyttäisi väreilevältä koska
+     leikkauskohta muuttuu koko ajan kun kuvio liikkuu) */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);
+  animation: koskiFlow 1.1s linear infinite;
+}
+
+@keyframes koskiRocksFar {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes koskiFlow {
+  0%   { background-position: 0 0; }
+  100% { background-position: 23.6px 11px; }
+}
