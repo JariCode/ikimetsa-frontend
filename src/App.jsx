@@ -60,18 +60,9 @@ export default function App() {
     setGameLogs(prevLogs => [...prevLogs, newLog]);
   };
 
+  // 🔥 Uloskirjautuminen: pelkkä /api/auth/logout riittää, koska se reitti hoitaa
+  // jo itse mahdollisen läpäistyn pelin tallennuksen siivouksen palvelimella.
   const handleLogout = async () => {
-    if (activeSession?.isGameCompleted) {
-      try {
-        await fetch(`${import.meta.env.VITE_API_URL}/api/game/session`, {
-          method: 'DELETE',
-          credentials: 'include'
-        });
-      } catch (e) {
-        console.error("Vanhan voittosession poistovirhe:", e);
-      }
-    }
-
     try {
       await fetch(`${import.meta.env.VITE_API_URL}/api/auth/logout`, {
         method: 'POST',
