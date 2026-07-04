@@ -14,7 +14,7 @@ export default function MovementScreen({
   const [currentRoll, setCurrentRoll] = useState(null);
   const [isRolling, setIsRolling] = useState(false);
   const isRollingRef = useRef(false); // 🛡️ Sama arvo kuin isRolling, mutta päivittyy VÄLITTÖMÄSTI ilman renderöintiviivettä
-  const [storyText, setStoryText] = useState('Polku erkanee synkkään pöheikköön. Heitä noppaa kulkeaksesi syvemmälle...');
+  const [storyText, setStoryText] = useState('Heitä noppaa kulkeaksesi syvemmälle...');
 
   useEffect(() => {
     if (phase === 'intro') {
@@ -184,6 +184,12 @@ export default function MovementScreen({
             <div className="forest-leaf l4"></div>
             <div className="forest-leaf l5"></div>
             <div className="forest-leaf l6"></div>
+          </>
+        )}
+        {currentArea?.backgroundClass === 'traveling-background-hautausmaa' && (
+          <>
+            <div className="will-o-wisp w1"></div>
+            <div className="will-o-wisp w2"></div>
           </>
         )}
       </div>
