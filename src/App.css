@@ -807,6 +807,7 @@ div.game-play-screen .player-status-bar {
   animation: diceSpin 0.12s infinite linear;
   background: #0f1f33;
 }
+
 /* --- LISÄTTY: YHTENÄISEN JAETUN LOKIN CSS-TYYLIT --- */
 .unified-log-box {
   background: rgba(2, 4, 2, 0.9);

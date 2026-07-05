@@ -574,9 +574,12 @@ export default function App() {
     if (isRolling || monsterHp <= 0) return;
     setIsRolling(true);
     setDiceResult(null);
+    setDamageDiceResult([null, null]);
+
+    // 🎲 Vain iso d20 pyörii aluksi - d8-vahinkonopat eivät pyöri ollenkaan
+    // ennen kuin tiedetään osuiko isku, koska niitä ei edes heitetä ellei osuttu.
     const interval = setInterval(() => {
       setDiceResult(Math.floor(Math.random() * 20) + 1);
-      setDamageDiceResult([Math.floor(Math.random() * 8) + 1, Math.floor(Math.random() * 8) + 1]);
     }, 60);
 
     try {
@@ -593,22 +596,18 @@ export default function App() {
       setCurrentTurn(data.nextTurn);
       const nextMonsterHp = data.monsterHp;
 
-      setTimeout(() => {
-        clearInterval(interval);
-        setIsRolling(false);
+      // 📦 Kaikki taisteluvuoron jälkeiset päivitykset (lokit, sessio, jne.) koottuna
+      // yhteen funktioon, jotta niitä voi kutsua joko heti (kun ei osunut) tai
+      // vasta d8-nopkien lyhyen pyörähdyksen jälkeen (kun osui).
+      const applyTurnResult = () => {
         const fullCombatLogs = data.combatLogs || [];
-        setDiceResult(typeof data.diceRoll === 'number' ? data.diceRoll : 12);
-        setDamageDiceResult([
-          typeof data.damageDie1 === 'number' ? data.damageDie1 : null,
-          typeof data.damageDie2 === 'number' ? data.damageDie2 : null
-        ]);
-        
+
         if (data.newLogs && data.newLogs.length > 0) {
           data.newLogs.forEach(msg => {
             addGameLog(msg, 'combat');
           });
         }
-        
+
         setMonsterHp(nextMonsterHp);
         setIsShaking(true);
         setTimeout(() => setIsShaking(false), 300);
@@ -675,6 +674,32 @@ export default function App() {
         if (nextMonsterHp <= 0) {
           setCombatInitiative(null);
           setCurrentTurn(null);
+        }
+      };
+
+      setTimeout(() => {
+        clearInterval(interval);
+        setDiceResult(typeof data.diceRoll === 'number' ? data.diceRoll : 12);
+
+        const isHit = typeof data.damageDie1 === 'number';
+
+        if (isHit) {
+          // 🎲 Osuttiin! Pyöräytetään d8-vahinkonopat lyhyesti ennen kuin ne
+          // pysähtyvät oikeisiin lukuihin - d20 on jo pysähtynyt tässä vaiheessa.
+          const damageInterval = setInterval(() => {
+            setDamageDiceResult([Math.floor(Math.random() * 8) + 1, Math.floor(Math.random() * 8) + 1]);
+          }, 60);
+
+          setTimeout(() => {
+            clearInterval(damageInterval);
+            setIsRolling(false);
+            setDamageDiceResult([data.damageDie1, data.damageDie2]);
+            applyTurnResult();
+          }, 500);
+        } else {
+          setIsRolling(false);
+          setDamageDiceResult([null, null]);
+          applyTurnResult();
         }
       }, 1000);
     } catch (err) { 
