@@ -9,8 +9,9 @@ import ProfileSettings from './components/ProfileSettings';
 import MovementScreen from './components/MovementScreen';
 import CampfireScreen from './components/CampfireScreen';
 import GraveScreen from './components/GraveScreen';
-import VictoryScreen from './components/VictoryScreen'; // 🔥 LISÄTTY LOPPURUUTU
+import VictoryScreen from './components/VictoryScreen';
 import CompanionScreen from './components/CompanionScreen';
+import WeaponScreen from './components/WeaponScreen';
 
 export default function App() {
   const [sessionId, setSessionId] = useState(sessionStorage.getItem('ikimetsa_session_id') || null);
@@ -52,6 +53,7 @@ export default function App() {
   const [showDeathFade, setShowDeathFade] = useState(false);
   const campfireActionInProgressRef = useRef(false);
   const [showCompanionReveal, setShowCompanionReveal] = useState(sessionStorage.getItem('ikimetsa_show_companion_reveal') === 'true');
+  const [showWeaponReveal, setShowWeaponReveal] = useState(sessionStorage.getItem('ikimetsa_show_weapon_reveal') === 'true');
 
   const addGameLog = (message, type = 'general') => {
     const newLog = {
@@ -62,15 +64,6 @@ export default function App() {
     setGameLogs(prevLogs => [...prevLogs, newLog]);
   };
 
-  // 📝 Lähettää lokirivin palvelimelle tallennettavaksi - käytetään VAIN sellaiselle
-  // tekstille jota backend ei muuten koskaan tallenna itse (esim. liikkumisen
-  // nopanheittotekstit). Ei koskaan kutsuta viesteille jotka backend on jo
-  // tallentanut omassa vastauksessaan - se tuplaisi rivin tietokannassa.
-  //
-  // 🛡️ sendBeacon eikä fetch: fetch on "fire and forget" -kutsu joka voi jäädä
-  // kesken jos sivu päivitetään/suljetaan ennen kuin pyyntö ehtii perille -
-  // sendBeacon on selaimen tarkoituksella suunnittelema selviytymään juuri
-  // tästä tilanteesta.
   const persistLogToServer = (message) => {
     const url = `${import.meta.env.VITE_API_URL}/api/game/log-message`;
     const payload = JSON.stringify({ message });
@@ -83,7 +76,6 @@ export default function App() {
     } catch (e) {
       console.error('sendBeacon epäonnistui, käytetään fetch-varmistusta:', e);
     }
-    // Varajärjestelmä jos sendBeacon ei ole tuettu tai epäonnistui
     fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -97,8 +89,6 @@ export default function App() {
     persistLogToServer(message);
   };
 
-  // 🔥 Uloskirjautuminen: pelkkä /api/auth/logout riittää, koska se reitti hoitaa
-  // jo itse mahdollisen läpäistyn pelin tallennuksen siivouksen palvelimella.
   const handleLogout = async () => {
     try {
       await fetch(`${import.meta.env.VITE_API_URL}/api/auth/logout`, {
@@ -114,6 +104,7 @@ export default function App() {
     sessionStorage.removeItem('ikimetsa_death_fade_shown');
     sessionStorage.removeItem('ikimetsa_monster_reveal_shown');
     sessionStorage.removeItem('ikimetsa_show_companion_reveal');
+    sessionStorage.removeItem('ikimetsa_show_weapon_reveal');
     setSessionId(null);
     setShouldRestoreSession(false);
     setLoggedInUser(null);
@@ -217,7 +208,14 @@ export default function App() {
     }
   }, [showCompanionReveal]);
 
-  // 💀 Kuoleman sumennusefekti
+  useEffect(() => {
+    if (showWeaponReveal) {
+      sessionStorage.setItem('ikimetsa_show_weapon_reveal', 'true');
+    } else {
+      sessionStorage.removeItem('ikimetsa_show_weapon_reveal');
+    }
+  }, [showWeaponReveal]);
+
   const deathFadeHandledRef = React.useRef(false);
   useEffect(() => {
     if (!activeSession || activeSession.stats.hp > 0) return;
@@ -336,6 +334,7 @@ export default function App() {
       sessionStorage.removeItem('ikimetsa_death_fade_shown');
       sessionStorage.removeItem('ikimetsa_monster_reveal_shown');
       sessionStorage.removeItem('ikimetsa_show_companion_reveal');
+      sessionStorage.removeItem('ikimetsa_show_weapon_reveal');
       
       setCombatInitiative(null);
       setCurrentTurn(null);
@@ -344,8 +343,6 @@ export default function App() {
     } catch (err) { setError(err.message); }
   };
 
-  // 🧑‍🤝‍🧑 Kumppanin löytäminen - ei vie taisteluun, näyttää löytöruudun ja
-  // palauttaa sitten samalle liikkumisruudulle jatkamaan matkaa.
   const handleFindCompanion = async () => {
     setError('');
     try {
@@ -366,6 +363,28 @@ export default function App() {
   const handleContinueAfterCompanion = () => {
     sessionStorage.removeItem('ikimetsa_show_companion_reveal');
     setShowCompanionReveal(false);
+  };
+
+  const handleFindWeapon = async () => {
+    setError('');
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/game/find-weapon`, {
+        method: 'POST',
+        credentials: 'include'
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || 'Aseen löytäminen epäonnistui.');
+
+      setActiveSession(data);
+      setSavedGameSession(data);
+      addGameLog(`⚔️ Löysit uuden aseen: ${data.inventory?.[0]?.name}!`, 'system');
+      setShowWeaponReveal(true);
+    } catch (err) { setError(err.message); }
+  };
+
+  const handleContinueAfterWeapon = () => {
+    sessionStorage.removeItem('ikimetsa_show_weapon_reveal');
+    setShowWeaponReveal(false);
   };
 
   const handleEnterCombat = async () => {
@@ -586,7 +605,6 @@ export default function App() {
         setIsShaking(true);
         setTimeout(() => setIsShaking(false), 300);
 
-        // 🔥 LAUKAISTAAN VERIROISKE TÄSSÄ HETI JOS HIRVIÖ KUOLI
         if (nextMonsterHp <= 0) {
           setShowVictorySplash(true);
           setTimeout(() => setShowVictorySplash(false), 1700);
@@ -721,11 +739,14 @@ export default function App() {
             <GraveScreen activeSession={activeSession} onContinue={handleRespawn} />
           ) : showCompanionReveal ? (
             <CompanionScreen activeSession={activeSession} onContinue={handleContinueAfterCompanion} />
+          ) : showWeaponReveal ? (
+            <WeaponScreen activeSession={activeSession} onContinue={handleContinueAfterWeapon} />
           ) : isNavigating ? (
             <MovementScreen
               activeSession={activeSession}
               handleEnterCombat={handleEnterCombat}
               onFindCompanion={handleFindCompanion}
+              onFindWeapon={handleFindWeapon}
               phase={movementPhase}
               setPhase={setMovementPhase}
               handleRepairWeapon={handleRepairWeapon}

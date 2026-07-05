@@ -1,0 +1,142 @@
+.weapon-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  position: relative;
+  z-index: 10;
+  text-align: center;
+}
+
+.weapon-title {
+  margin-bottom: 0;
+}
+
+.weapon-heading {
+  color: #f5a623;
+  text-shadow: 0 0 12px rgba(245, 166, 35, 0.5);
+  text-align: center;
+}
+
+.weapon-visual {
+  position: relative;
+  width: 220px;
+  height: 200px;
+}
+
+/* Multakumpu josta ase pistää esiin */
+.weapon-mound {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 180px;
+  height: 60px;
+  background: radial-gradient(ellipse at center, #3a2a1a 0%, #241a10 70%, transparent 100%);
+  border-radius: 50%;
+}
+
+/* ⚔️ MACHETE - leveä, suora, hieman kaartuva terä + tumma kahva */
+.weapon-machete {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%) rotate(-10deg);
+  width: 40px;
+  height: 160px;
+}
+
+.machete-handle {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 40px;
+  background: linear-gradient(180deg, #3a2a1a 0%, #201509 100%);
+  border-radius: 3px;
+}
+
+.machete-blade {
+  position: absolute;
+  bottom: 34px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 130px;
+  background: linear-gradient(180deg, #d8d8dc 0%, #a8a8ae 60%, #c8c8cc 100%);
+  clip-path: polygon(20% 100%, 80% 100%, 100% 25%, 55% 0%, 30% 15%, 0% 40%);
+  box-shadow: 0 0 18px rgba(200, 200, 210, 0.4);
+}
+
+.machete-glint {
+  position: absolute;
+  bottom: 50px;
+  left: 43%;
+  width: 5px;
+  height: 90px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, transparent 100%);
+  animation: weaponGlint 3s ease-in-out infinite;
+}
+
+/* 🛠️ SORKKARAUTA - kulmikas metallitanko + tyypillinen haaraava kynsipää */
+.weapon-crowbar {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%) rotate(18deg);
+  width: 40px;
+  height: 170px;
+}
+
+.crowbar-shaft {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 140px;
+  background: linear-gradient(180deg, #6b6560 0%, #3a3632 50%, #2a2723 100%);
+  border-radius: 3px;
+  box-shadow: 0 0 14px rgba(107, 101, 96, 0.4);
+}
+
+.crowbar-claw {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 34px;
+  height: 34px;
+  background: linear-gradient(160deg, #6b6560 0%, #3a3632 60%, #2a2723 100%);
+  clip-path: polygon(40% 100%, 60% 100%, 60% 40%, 100% 0%, 85% 0%, 50% 30%, 15% 0%, 0% 0%, 40% 40%);
+}
+
+@keyframes weaponGlint {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+.weapon-scroll-window {
+  height: 12rem;
+  margin: 20px auto;
+}
+
+.weapon-scroll-content .intro-text {
+  height: auto;
+  line-height: 1.6;
+  white-space: normal;
+  overflow: visible;
+  text-align: center;
+  padding: 0 24px;
+  margin-bottom: 0.7rem;
+}
+
+.weapon-scroll-content {
+  animation: weaponScroll 20s linear 0.5s 1 both;
+}
+
+@keyframes weaponScroll {
+  from { transform: translateY(12rem); }
+  to   { transform: translateY(-30rem); }
+}

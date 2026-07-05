@@ -6,6 +6,7 @@ export default function MovementScreen({
   activeSession,
   handleEnterCombat,
   onFindCompanion,
+  onFindWeapon,
   phase,
   setPhase,
   handleRepairWeapon,
@@ -14,7 +15,7 @@ export default function MovementScreen({
 }) {
   const [currentRoll, setCurrentRoll] = useState(null);
   const [isRolling, setIsRolling] = useState(false);
-  const isRollingRef = useRef(false); // 🛡️ Sama arvo kuin isRolling, mutta päivittyy VÄLITTÖMÄSTI ilman renderöintiviivettä
+  const isRollingRef = useRef(false);
   const [storyText, setStoryText] = useState('Heitä noppaa kulkeaksesi syvemmälle...');
 
   useEffect(() => {
@@ -30,7 +31,6 @@ export default function MovementScreen({
   const currentArea = activeSession?.currentArea;
   const locationLabel = currentArea?.locationLabel || 'SIJAINTI: METSÄN POLKU';
 
-  // 🎲 Arpoo satunnaisen rivin annetusta listasta - varalla geneerinen teksti jos aluetta ei löydy
   const pickRandom = (list, fallback) => {
     if (!list || list.length === 0) return fallback;
     return list[Math.floor(Math.random() * list.length)];
@@ -52,9 +52,6 @@ export default function MovementScreen({
       setCurrentRoll(roll);
 
       if (roll === 6) {
-        // 🧑‍🤝‍🧑 Jos alueella on kumppanitapahtuma eikä kumppania ole vielä löydetty,
-        // ensimmäinen kuutonen johtaa löytöruutuun taistelun sijaan. Vasta seuraava
-        // kuutonen (kumppani jo löydetty) johtaa oikeaan taisteluun.
         const hasUnfoundCompanion = currentArea?.companionEvent?.name && !activeSession?.companionFound;
 
         if (hasUnfoundCompanion) {
@@ -70,10 +67,21 @@ export default function MovementScreen({
           return;
         }
 
-        // 🛡️ EI vapauteta isRolling-tilaa tässä - nappi pysyy lukittuna kunnes
-        // taisteluun siirtyminen (handleEnterCombat) oikeasti tapahtuu 1500ms päästä.
-        // Ilman tätä nappia ehti painaa uudelleen kesken siirtymän, mikä käynnisti
-        // toisen kierroksen päällekkäin ja tuplasi taisteluun-astumisviestin.
+        const hasUnfoundWeapon = currentArea?.weaponEvent?.discoveryText && !activeSession?.weaponFound;
+
+        if (hasUnfoundWeapon) {
+          const discoveryText = currentArea.weaponEvent.discoveryText;
+          const msg = `Heitit [${roll}]! ${discoveryText}`;
+          setStoryText(msg);
+          onAddLog(`🎲 ${msg}`, 'movement');
+          setTimeout(() => {
+            onFindWeapon();
+            isRollingRef.current = false;
+            setIsRolling(false);
+          }, 1500);
+          return;
+        }
+
         const encounterText = currentArea?.encounterText || 'Äkillinen kylmyys jähmettää askeleesi. Pimeys tiivistyy suoraan silmiesi edessä...';
         const msg = `Heitit [${roll}]! ${encounterText}`;
         setStoryText(msg);
@@ -119,7 +127,6 @@ export default function MovementScreen({
   return (
     <>
       <div className="game-play-screen">
-        {/* YLÄPALKKI */}
         <div className="player-status-bar">
           <div className="status-item">
             <span>Hahmo:</span> <strong>{activeSession.characterType} (Taso {activeSession.stats.level || 1})</strong>
@@ -174,10 +181,8 @@ export default function MovementScreen({
             </div>
           )}
 
-          {/* LOKILAATIKKO NOSTETTU PAINIKKEEN YLÄPUOLELLE */}
           <GameLogComponent logs={gameLogs} />
 
-          {/* PAINIKE SIIRRETTY ALIMMAISEKSI */}
           <div className="action-buttons">
             <button className="attack-btn" onClick={handleD6Roll} disabled={isRolling}>
               {isRolling ? 'Edetään...' : 'HEITÄ NOPPAA JA ETENE'}
