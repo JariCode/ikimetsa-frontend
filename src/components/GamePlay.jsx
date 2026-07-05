@@ -7,6 +7,7 @@ export default function GamePlay({
   activeSession,
   monsterHp,
   diceResult,
+  damageDiceResult,
   isRolling,
   gameLogs,
   onAddLog,
@@ -115,6 +116,14 @@ export default function GamePlay({
           <div className="dice-row">
             <div className={`d20-visual-dice ${isRolling ? 'spinning' : 'stopped'}`}>
               <span>{diceResult}</span>
+            </div>
+            <div className="damage-dice-pair">
+              <div className={`d8-visual-dice ${isRolling ? 'spinning' : 'stopped'}`}>
+                <span>{damageDiceResult?.[0] ?? '–'}</span>
+              </div>
+              <div className={`d8-visual-dice ${isRolling ? 'spinning' : 'stopped'}`}>
+                <span>{damageDiceResult?.[1] ?? '–'}</span>
+              </div>
             </div>
           </div>
         )}

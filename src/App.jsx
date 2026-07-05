@@ -43,6 +43,7 @@ export default function App() {
   const [isShaking, setIsShaking] = useState(false);
   const [isRolling, setIsRolling] = useState(false);
   const [diceResult, setDiceResult] = useState(null);
+  const [damageDiceResult, setDamageDiceResult] = useState([null, null]); // 🎲 Kaksi d8-vahinkonoppaa, vierekkäin d20:n kanssa
   
   const [combatInitiative, setCombatInitiative] = useState(null);
   const [currentTurn, setCurrentTurn] = useState(null);
@@ -573,7 +574,10 @@ export default function App() {
     if (isRolling || monsterHp <= 0) return;
     setIsRolling(true);
     setDiceResult(null);
-    const interval = setInterval(() => { setDiceResult(Math.floor(Math.random() * 20) + 1); }, 60);
+    const interval = setInterval(() => {
+      setDiceResult(Math.floor(Math.random() * 20) + 1);
+      setDamageDiceResult([Math.floor(Math.random() * 8) + 1, Math.floor(Math.random() * 8) + 1]);
+    }, 60);
 
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/combat/turn`, {
@@ -594,6 +598,10 @@ export default function App() {
         setIsRolling(false);
         const fullCombatLogs = data.combatLogs || [];
         setDiceResult(typeof data.diceRoll === 'number' ? data.diceRoll : 12);
+        setDamageDiceResult([
+          typeof data.damageDie1 === 'number' ? data.damageDie1 : null,
+          typeof data.damageDie2 === 'number' ? data.damageDie2 : null
+        ]);
         
         if (data.newLogs && data.newLogs.length > 0) {
           data.newLogs.forEach(msg => {
@@ -757,7 +765,7 @@ export default function App() {
             <CampfireScreen onContinue={handleContinueJourney} />
           ) : (
             <GamePlay 
-              activeSession={activeSession} monsterHp={monsterHp} diceResult={diceResult}
+              activeSession={activeSession} monsterHp={monsterHp} diceResult={diceResult} damageDiceResult={damageDiceResult}
               isRolling={isRolling} gameLogs={gameLogs} onAddLog={addGameLog} combatInitiative={combatInitiative}
               currentTurn={currentTurn} handleRepairWeapon={handleRepairWeapon} handleCombatTurn={handleCombatTurn}
             />
