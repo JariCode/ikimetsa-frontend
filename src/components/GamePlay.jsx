@@ -9,6 +9,7 @@ export default function GamePlay({
   diceResult,
   damageDiceResult,
   isRolling,
+  isDamageRolling,
   gameLogs,
   onAddLog,
   combatInitiative,
@@ -118,11 +119,11 @@ export default function GamePlay({
               <span>{diceResult}</span>
             </div>
             <div className="damage-dice-pair">
-              <div className={`d8-visual-dice ${isRolling ? 'spinning' : 'stopped'}`}>
-                <span>{damageDiceResult?.[0] ?? '–'}</span>
+              <div className={`d8-visual-dice ${isDamageRolling ? 'spinning' : 'stopped'}`}>
+                <span>{damageDiceResult?.[0] ?? 1}</span>
               </div>
-              <div className={`d8-visual-dice ${isRolling ? 'spinning' : 'stopped'}`}>
-                <span>{damageDiceResult?.[1] ?? '–'}</span>
+              <div className={`d8-visual-dice ${isDamageRolling ? 'spinning' : 'stopped'}`}>
+                <span>{damageDiceResult?.[1] ?? 1}</span>
               </div>
             </div>
           </div>

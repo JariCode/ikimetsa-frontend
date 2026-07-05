@@ -42,6 +42,7 @@ export default function App() {
   const [monsterHp, setMonsterHp] = useState(25);
   const [isShaking, setIsShaking] = useState(false);
   const [isRolling, setIsRolling] = useState(false);
+  const [isDamageRolling, setIsDamageRolling] = useState(false); // 🎲 Pyörivätkö nimenomaan d8-vahinkonopat (vain osuman jälkeen)
   const [diceResult, setDiceResult] = useState(null);
   const [damageDiceResult, setDamageDiceResult] = useState([null, null]); // 🎲 Kaksi d8-vahinkonoppaa, vierekkäin d20:n kanssa
   
@@ -573,6 +574,7 @@ export default function App() {
   const handleCombatTurn = async () => {
     if (isRolling || monsterHp <= 0) return;
     setIsRolling(true);
+    setIsDamageRolling(false);
     setDiceResult(null);
     setDamageDiceResult([null, null]);
 
@@ -686,6 +688,7 @@ export default function App() {
         if (isHit) {
           // 🎲 Osuttiin! Pyöräytetään d8-vahinkonopat lyhyesti ennen kuin ne
           // pysähtyvät oikeisiin lukuihin - d20 on jo pysähtynyt tässä vaiheessa.
+          setIsDamageRolling(true);
           const damageInterval = setInterval(() => {
             setDamageDiceResult([Math.floor(Math.random() * 8) + 1, Math.floor(Math.random() * 8) + 1]);
           }, 60);
@@ -693,11 +696,13 @@ export default function App() {
           setTimeout(() => {
             clearInterval(damageInterval);
             setIsRolling(false);
+            setIsDamageRolling(false);
             setDamageDiceResult([data.damageDie1, data.damageDie2]);
             applyTurnResult();
           }, 500);
         } else {
           setIsRolling(false);
+          setIsDamageRolling(false);
           setDamageDiceResult([null, null]);
           applyTurnResult();
         }
@@ -705,6 +710,7 @@ export default function App() {
     } catch (err) { 
       clearInterval(interval); 
       setIsRolling(false); 
+      setIsDamageRolling(false);
       setError('Yhteys palvelimeen katkesi.'); 
     }
   };
@@ -791,7 +797,7 @@ export default function App() {
           ) : (
             <GamePlay 
               activeSession={activeSession} monsterHp={monsterHp} diceResult={diceResult} damageDiceResult={damageDiceResult}
-              isRolling={isRolling} gameLogs={gameLogs} onAddLog={addGameLog} combatInitiative={combatInitiative}
+              isRolling={isRolling} isDamageRolling={isDamageRolling} gameLogs={gameLogs} onAddLog={addGameLog} combatInitiative={combatInitiative}
               currentTurn={currentTurn} handleRepairWeapon={handleRepairWeapon} handleCombatTurn={handleCombatTurn}
             />
           )}
