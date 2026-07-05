@@ -1162,3 +1162,97 @@ div.game-play-screen .player-status-bar {
   border-color: #4ade80;
   color: #4ade80;
 }
+
+/* 👑 LOPPUVOITON EEPPINEN SIIRTYMÄ - Velhon kukistuminen ennen voittoruutua.
+   Kolme vaihetta: valkoinen välähdys, violetin kirouksen sirpaleet jotka
+   sinkoutuvat ulos, ja lopuksi koko ruudun tumma häivytys jonka läpi
+   voittoruutu paljastuu. */
+.final-victory-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  overflow: hidden;
+  background: radial-gradient(circle at center, rgba(40, 0, 60, 0.0) 0%, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.95) 100%);
+  animation: finalVictoryDarken 3.2s ease-in forwards;
+}
+
+.final-victory-flash {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, #ffffff 0%, #c9a0ff 30%, transparent 70%);
+  opacity: 0;
+  animation: finalVictoryFlash 0.9s ease-out forwards;
+}
+
+@keyframes finalVictoryFlash {
+  0% { opacity: 0; transform: scale(0.2); }
+  15% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(2.5); }
+}
+
+@keyframes finalVictoryDarken {
+  0% { background: radial-gradient(circle at center, rgba(40,0,60,0) 0%, rgba(0,0,0,0) 40%, rgba(0,0,0,0) 100%); }
+  40% { background: radial-gradient(circle at center, rgba(60,0,90,0.3) 0%, rgba(20,0,30,0.4) 45%, rgba(0,0,0,0.6) 100%); }
+  100% { background: radial-gradient(circle at center, rgba(0,0,0,0.98) 0%, #000 60%, #000 100%); }
+}
+
+.final-victory-shards {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+}
+
+.final-victory-shards .shard {
+  position: absolute;
+  width: 14px;
+  height: 60px;
+  background: linear-gradient(180deg, #e0b3ff 0%, #8a2be2 60%, transparent 100%);
+  border-radius: 50% 50% 2px 2px;
+  transform-origin: center bottom;
+  opacity: 0;
+  box-shadow: 0 0 16px rgba(138, 43, 226, 0.8);
+}
+
+.final-victory-shards .s1 { animation: burst0 1.6s ease-out 0.5s forwards; }
+.final-victory-shards .s2 { animation: burst45 1.6s ease-out 0.5s forwards; }
+.final-victory-shards .s3 { animation: burst90 1.6s ease-out 0.5s forwards; }
+.final-victory-shards .s4 { animation: burst135 1.6s ease-out 0.5s forwards; }
+.final-victory-shards .s5 { animation: burst180 1.6s ease-out 0.5s forwards; }
+.final-victory-shards .s6 { animation: burst225 1.6s ease-out 0.5s forwards; }
+.final-victory-shards .s7 { animation: burst270 1.6s ease-out 0.5s forwards; }
+.final-victory-shards .s8 { animation: burst315 1.6s ease-out 0.5s forwards; }
+
+@keyframes burst0   { 0%{opacity:0;transform:rotate(0deg) translateY(0) scale(.3);} 20%{opacity:1;} 100%{opacity:0;transform:rotate(0deg) translateY(-340px) scale(1.1);} }
+@keyframes burst45  { 0%{opacity:0;transform:rotate(45deg) translateY(0) scale(.3);} 20%{opacity:1;} 100%{opacity:0;transform:rotate(45deg) translateY(-340px) scale(1.1);} }
+@keyframes burst90  { 0%{opacity:0;transform:rotate(90deg) translateY(0) scale(.3);} 20%{opacity:1;} 100%{opacity:0;transform:rotate(90deg) translateY(-340px) scale(1.1);} }
+@keyframes burst135 { 0%{opacity:0;transform:rotate(135deg) translateY(0) scale(.3);} 20%{opacity:1;} 100%{opacity:0;transform:rotate(135deg) translateY(-340px) scale(1.1);} }
+@keyframes burst180 { 0%{opacity:0;transform:rotate(180deg) translateY(0) scale(.3);} 20%{opacity:1;} 100%{opacity:0;transform:rotate(180deg) translateY(-340px) scale(1.1);} }
+@keyframes burst225 { 0%{opacity:0;transform:rotate(225deg) translateY(0) scale(.3);} 20%{opacity:1;} 100%{opacity:0;transform:rotate(225deg) translateY(-340px) scale(1.1);} }
+@keyframes burst270 { 0%{opacity:0;transform:rotate(270deg) translateY(0) scale(.3);} 20%{opacity:1;} 100%{opacity:0;transform:rotate(270deg) translateY(-340px) scale(1.1);} }
+@keyframes burst315 { 0%{opacity:0;transform:rotate(315deg) translateY(0) scale(.3);} 20%{opacity:1;} 100%{opacity:0;transform:rotate(315deg) translateY(-340px) scale(1.1);} }
+
+.final-victory-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #e0b3ff;
+  font-size: 2.4rem;
+  font-weight: bold;
+  letter-spacing: 4px;
+  text-shadow: 0 0 20px rgba(138, 43, 226, 0.9), 0 0 40px rgba(138, 43, 226, 0.5);
+  opacity: 0;
+  white-space: nowrap;
+  animation: finalVictoryText 3.2s ease-in-out forwards;
+}
+
+@keyframes finalVictoryText {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.7); }
+  30% { opacity: 0; }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.1); }
+}

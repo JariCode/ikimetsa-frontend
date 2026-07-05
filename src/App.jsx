@@ -52,6 +52,7 @@ export default function App() {
   const [isNavigating, setIsNavigating] = useState(sessionStorage.getItem('ikimetsa_is_navigating') === 'true');
   const [movementPhase, setMovementPhase] = useState(sessionStorage.getItem('ikimetsa_movement_phase') || 'intro');
   const [showVictorySplash, setShowVictorySplash] = useState(false);
+  const [showFinalVictory, setShowFinalVictory] = useState(false); // 👑 Velhon kukistumisen eeppinen siirtymä ennen voittoruutua
   const [showDeathFade, setShowDeathFade] = useState(false);
   const campfireActionInProgressRef = useRef(false);
   const [showCompanionReveal, setShowCompanionReveal] = useState(sessionStorage.getItem('ikimetsa_show_companion_reveal') === 'true');
@@ -614,14 +615,24 @@ export default function App() {
         setIsShaking(true);
         setTimeout(() => setIsShaking(false), 300);
 
-        if (nextMonsterHp <= 0) {
+        // 👑 LOPPUVOITTO (Velho kaatui): näytetään näyttävä monivaiheinen siirtymä
+        // ennen kuin voittoruutu paljastuu, jottei loppu pompsahda yhtäkkiä esiin.
+        const isFinalVictory = nextMonsterHp <= 0 && data.isGameCompleted;
+
+        if (nextMonsterHp <= 0 && !isFinalVictory) {
           setShowVictorySplash(true);
           setTimeout(() => setShowVictorySplash(false), 1700);
         }
 
+        if (isFinalVictory) {
+          setShowFinalVictory(true);
+        }
+
         setActiveSession(prev => ({
           ...prev,
-          isGameCompleted: data.isGameCompleted !== undefined ? data.isGameCompleted : prev.isGameCompleted,
+          // 👑 Loppuvoitossa EI aseteta isGameCompletedia vielä - se tehdään vasta
+          // siirtymäanimaation jälkeen, jotta VictoryScreen ei paljastu liian aikaisin.
+          isGameCompleted: isFinalVictory ? prev.isGameCompleted : (data.isGameCompleted !== undefined ? data.isGameCompleted : prev.isGameCompleted),
           repairPoints: data.repairPoints !== undefined ? data.repairPoints : prev.repairPoints,
           stats: { 
             ...prev.stats, 
@@ -647,7 +658,7 @@ export default function App() {
 
         setSavedGameSession(prev => ({
           ...prev,
-          isGameCompleted: data.isGameCompleted !== undefined ? data.isGameCompleted : (prev ? prev.isGameCompleted : false),
+          isGameCompleted: isFinalVictory ? (prev ? prev.isGameCompleted : false) : (data.isGameCompleted !== undefined ? data.isGameCompleted : (prev ? prev.isGameCompleted : false)),
           stats: prev ? {
             ...prev.stats,
             hp: data.playerHp,
@@ -669,11 +680,21 @@ export default function App() {
           companionWeaponMaxDurability: data.companionWeaponMaxDurability !== undefined ? data.companionWeaponMaxDurability : (prev ? prev.companionWeaponMaxDurability : 0)
         }));
 
-        if (data.isGameCompleted) {
+        if (isFinalVictory) {
+          // 👑 Näyttävä siirtymä soi ~3.2s, minkä jälkeen paljastetaan voittoruutu
+          setTimeout(() => {
+            setShowFinalVictory(false);
+            setActiveSession(prev => prev ? { ...prev, isGameCompleted: true } : prev);
+            setSavedGameSession(prev => prev ? { ...prev, isGameCompleted: true } : prev);
+            setIsNavigating(true);
+            setCombatInitiative(null);
+            setCurrentTurn(null);
+          }, 3200);
+        } else if (data.isGameCompleted) {
           setIsNavigating(true);
         }
 
-        if (nextMonsterHp <= 0) {
+        if (nextMonsterHp <= 0 && !isFinalVictory) {
           setCombatInitiative(null);
           setCurrentTurn(null);
         }
@@ -738,6 +759,22 @@ export default function App() {
           {error && <div className="global-error-popup">⚠️ {error}</div>}
           {successMessage && <div className="global-success-popup">✅ {successMessage}</div>}
           {showVictorySplash && <div className="victory-blood-splash" />}
+          {showFinalVictory && (
+            <div className="final-victory-overlay">
+              <div className="final-victory-flash" />
+              <div className="final-victory-shards">
+                <span className="shard s1"></span>
+                <span className="shard s2"></span>
+                <span className="shard s3"></span>
+                <span className="shard s4"></span>
+                <span className="shard s5"></span>
+                <span className="shard s6"></span>
+                <span className="shard s7"></span>
+                <span className="shard s8"></span>
+              </div>
+              <div className="final-victory-text">Kirous murtuu...</div>
+            </div>
+          )}
           {showDeathFade && <div className="death-fade-overlay" />}
 
           {sessionId && (showProfile || (gameStarted && activeSession)) && (
@@ -792,7 +829,7 @@ export default function App() {
               gameLogs={gameLogs}
               onAddLog={addPersistentGameLog}
             />
-          ) : monsterHp <= 0 ? (
+          ) : (monsterHp <= 0 && !showFinalVictory) ? (
             <CampfireScreen onContinue={handleContinueJourney} />
           ) : (
             <GamePlay 
