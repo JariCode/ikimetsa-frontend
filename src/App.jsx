@@ -57,6 +57,16 @@ export default function App() {
   const campfireActionInProgressRef = useRef(false);
   const [showCompanionReveal, setShowCompanionReveal] = useState(sessionStorage.getItem('ikimetsa_show_companion_reveal') === 'true');
   const [showWeaponReveal, setShowWeaponReveal] = useState(sessionStorage.getItem('ikimetsa_show_weapon_reveal') === 'true');
+  const [showMovementTransition, setShowMovementTransition] = useState(false); // 🌫️ Usvasiirtymä liikkumisruutuun saavuttaessa
+
+  // 🌫️ Laukaisee usvasiirtymän joka pyyhkäisee ruudun yli. Kutsutaan VAIN niistä
+  // kohdista jotka oikeasti vievät liikkumisruutuun (voitto, respawn, uusi peli,
+  // matkan jatko, aseen/kumppanin jälkeen). Sivun päivitys ei kutsu näitä, joten
+  // se ei koskaan laukaise siirtymää.
+  const triggerMovementTransition = () => {
+    setShowMovementTransition(true);
+    setTimeout(() => setShowMovementTransition(false), 2000);
+  };
 
   const addGameLog = (message, type = 'general') => {
     const newLog = {
@@ -334,6 +344,7 @@ export default function App() {
       
       setIsNavigating(true);
       setMovementPhase('intro');
+      triggerMovementTransition();
       sessionStorage.removeItem('ikimetsa_death_fade_shown');
       sessionStorage.removeItem('ikimetsa_monster_reveal_shown');
       sessionStorage.removeItem('ikimetsa_show_companion_reveal');
@@ -366,6 +377,7 @@ export default function App() {
   const handleContinueAfterCompanion = () => {
     sessionStorage.removeItem('ikimetsa_show_companion_reveal');
     setShowCompanionReveal(false);
+    triggerMovementTransition();
   };
 
   const handleFindWeapon = async () => {
@@ -388,6 +400,7 @@ export default function App() {
   const handleContinueAfterWeapon = () => {
     sessionStorage.removeItem('ikimetsa_show_weapon_reveal');
     setShowWeaponReveal(false);
+    triggerMovementTransition();
   };
 
   const handleEnterCombat = async () => {
@@ -477,6 +490,7 @@ export default function App() {
       
       setIsNavigating(true);
       setMovementPhase('walking');
+      triggerMovementTransition();
       campfireActionInProgressRef.current = false;
     } catch (err) { 
       setError(err.message); 
@@ -508,6 +522,7 @@ export default function App() {
         addGameLog("Jatkat matkaasi syvemmälle Ikimetsän varjoihin.", "movement");
         setIsNavigating(true);
         setMovementPhase('walking');
+        triggerMovementTransition();
       }
       campfireActionInProgressRef.current = false;
     } catch (err) { 
@@ -681,7 +696,7 @@ export default function App() {
         }));
 
         if (isFinalVictory) {
-          // 👑 Näyttävä siirtymä soi ~3.2s, minkä jälkeen paljastetaan voittoruutu
+          // 👑 Näyttävä siirtymä soi ~4.5s, minkä jälkeen paljastetaan voittoruutu
           setTimeout(() => {
             setShowFinalVictory(false);
             setActiveSession(prev => prev ? { ...prev, isGameCompleted: true } : prev);
@@ -689,7 +704,7 @@ export default function App() {
             setIsNavigating(true);
             setCombatInitiative(null);
             setCurrentTurn(null);
-          }, 3200);
+          }, 4500);
         } else if (data.isGameCompleted) {
           setIsNavigating(true);
         }
@@ -776,6 +791,12 @@ export default function App() {
             </div>
           )}
           {showDeathFade && <div className="death-fade-overlay" />}
+          {showMovementTransition && (
+            <div className="movement-transition-overlay">
+              <div className="movement-fog fog-a"></div>
+              <div className="movement-fog fog-b"></div>
+            </div>
+          )}
 
           {sessionId && (showProfile || (gameStarted && activeSession)) && (
             <div className="top-right-buttons">

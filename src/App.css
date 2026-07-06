@@ -1266,3 +1266,52 @@ div.game-play-screen .player-status-bar {
   85% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
   100% { opacity: 0; transform: translate(-50%, -50%) scale(1.1); }
 }
+
+/* 🌫️ USVASIIRTYMÄ LIIKKUMISRUUTUUN - kun saavutaan liikkumisruutuun mistä
+   tahansa (voitto, respawn, uusi peli, aseen/kumppanin jälkeen), tiheä usva
+   pyyhkäisee ruudun yli ja haihtuu, paljastaen liikkumisruudun alta. Kesto
+   1.2s täsmää App.jsx:n triggerMovementTransition setTimeout-arvoon (1200ms).
+   Laukeaa VAIN näistä siirtymistä, ei sivun päivityksestä eikä nopanheitosta. */
+.movement-transition-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  overflow: hidden;
+  animation: movementFogClear 2s ease-out forwards;
+}
+
+@keyframes movementFogClear {
+  0% { opacity: 1; }
+  70% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.movement-fog {
+  position: absolute;
+  top: -20%;
+  width: 160%;
+  height: 140%;
+  background: radial-gradient(ellipse at center, rgba(180, 200, 180, 0.55) 0%, rgba(120, 140, 120, 0.35) 40%, transparent 75%);
+  filter: blur(30px);
+}
+
+.movement-fog.fog-a {
+  left: -60%;
+  animation: fogSweepA 2s ease-out forwards;
+}
+
+.movement-fog.fog-b {
+  right: -60%;
+  animation: fogSweepB 2s ease-out forwards;
+}
+
+@keyframes fogSweepA {
+  0% { transform: translateX(0) scale(1.2); opacity: 0.9; }
+  100% { transform: translateX(120%) scale(1.4); opacity: 0; }
+}
+
+@keyframes fogSweepB {
+  0% { transform: translateX(0) scale(1.2); opacity: 0.9; }
+  100% { transform: translateX(-120%) scale(1.4); opacity: 0; }
+}
