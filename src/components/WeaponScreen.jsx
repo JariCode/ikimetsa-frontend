@@ -45,7 +45,7 @@ export default function WeaponScreen({ activeSession, onContinue }) {
       </div>
 
       <button className="start-btn start-btn-continue" onClick={onContinue}>
-        Jatka matkaa uudella aseella
+        Jatka matkaa uuden aseesi kanssa
       </button>
     </div>
   );
