@@ -114,9 +114,24 @@ export default function GamePlay({
         {diceResult !== null && (
           <div className="dice-row">
             <div className={`d20-visual-dice ${isRolling ? 'spinning' : 'stopped'}`}>
+              <svg className="d20-facets" viewBox="0 0 100 100" aria-hidden="true">
+                <polygon points="50,8 82,27 82,63 50,82 18,63 18,27" />
+                <line x1="18" y1="27" x2="50" y2="45" />
+                <line x1="82" y1="27" x2="50" y2="45" />
+                <line x1="50" y1="8" x2="50" y2="45" />
+                <line x1="18" y1="63" x2="50" y2="45" />
+                <line x1="82" y1="63" x2="50" y2="45" />
+                <line x1="50" y1="82" x2="50" y2="45" />
+                <line x1="18" y1="27" x2="50" y2="8" />
+                <line x1="82" y1="27" x2="50" y2="8" />
+                <line x1="18" y1="63" x2="18" y2="27" />
+                <line x1="82" y1="63" x2="82" y2="27" />
+                <line x1="50" y1="82" x2="18" y2="63" />
+                <line x1="50" y1="82" x2="82" y2="63" />
+              </svg>
               <span>{diceResult}</span>
             </div>
-            <div className="damage-dice-pair">
+                        <div className="damage-dice-pair">
               <div className={`d8-visual-dice ${isDamageRolling ? 'spinning' : 'stopped'}`}>
                 <span>{damageDiceResult?.[0] ?? 1}</span>
               </div>
