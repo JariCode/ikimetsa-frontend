@@ -11,7 +11,8 @@ export default function MovementScreen({
   setPhase,
   handleRepairWeapon,
   gameLogs,
-  onAddLog
+  onAddLog,
+  triggerTransition
 }) {
   const [currentRoll, setCurrentRoll] = useState(null);
   const [isRolling, setIsRolling] = useState(false);
@@ -22,11 +23,12 @@ export default function MovementScreen({
     if (phase === 'intro') {
       const autoTimer = setTimeout(() => {
         setPhase('walking');
+        if (triggerTransition) triggerTransition();
       }, 14000); 
       
       return () => clearTimeout(autoTimer);
     }
-  }, [phase]);
+  }, [phase, setPhase, triggerTransition]);
 
   const currentArea = activeSession?.currentArea;
   const locationLabel = currentArea?.locationLabel || 'SIJAINTI: METSÄN POLKU';

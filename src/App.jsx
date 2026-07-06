@@ -322,6 +322,7 @@ export default function App() {
       } else {
         setIsNavigating(!savedGameSession.hasEnteredCombat);
         setMovementPhase('walking');
+        triggerMovementTransition();
       }
     }
     setGameStarted(true);
@@ -465,7 +466,7 @@ export default function App() {
       if (sourceLogs.length > 0) {
         addGameLog(sourceLogs[sourceLogs.length - 1], 'system');
       }
-    } catch (err) { setError(err.message); }
+    } catch (err) { setError(err.message); return false; }
   };
 
   const handleRespawn = async () => {
@@ -556,7 +557,7 @@ export default function App() {
     setError('');
     setSuccessMessage('');
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/password`, {
+      const response = await fetch(`${import.meta.env.vite_api_url}/api/auth/password`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ currentPassword, newPassword }),
@@ -871,6 +872,7 @@ export default function App() {
               handleRepairWeapon={handleRepairWeapon}
               gameLogs={gameLogs}
               onAddLog={addPersistentGameLog}
+              triggerTransition={triggerMovementTransition}
             />
           ) : (monsterHp <= 0 && !showFinalVictory) ? (
             <CampfireScreen onContinue={handleContinueJourney} />
