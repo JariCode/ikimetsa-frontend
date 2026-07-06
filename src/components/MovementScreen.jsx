@@ -131,7 +131,7 @@ export default function MovementScreen({
       <div className="game-play-screen">
         <div className="player-status-bar">
           <div className="status-item">
-            <span>Hahmo:</span> <strong>{activeSession.characterType} (Taso {activeSession.stats.level || 1})</strong>
+            <span>Hahmo:</span> <strong>{activeSession.characterType} (Lvl {activeSession.stats.level || 1})</strong>
           </div>
           <div className="status-item">
             <span>Kunto:</span> <strong className={activeSession.stats.hp < 15 ? 'low-hp' : ''}>{activeSession.stats.hp} / {activeSession.stats.maxHp} HP</strong>
@@ -149,21 +149,46 @@ export default function MovementScreen({
           </div>
           <div className="status-item"><span>Korjauspisteet:</span> <strong>{activeSession.repairPoints || 0} Pts</strong></div>
           {activeSession.companionFound && (
-            <div className="status-item">
-              <span>Kumppani:</span>{' '}
+            <div className="companion-status-block">
               {activeSession.companionActive ? (
                 <>
-                  <strong>{activeSession.companionName} ({activeSession.companionHp} / {activeSession.companionMaxHp} HP)</strong>
-                  {' — '}
-                  <strong>{activeSession.companionWeaponName} ({activeSession.companionWeaponDurability}/{activeSession.companionWeaponMaxDurability})</strong>
-                  {activeSession.companionWeaponDurability < activeSession.companionWeaponMaxDurability && (activeSession.repairPoints >= 2) && (
-                    <button className="repair-mini-btn" onClick={() => handleRepairWeapon('companion')}>
-                      🔧 Korjaa (2pts)
-                    </button>
-                  )}
+                  {/* Rivi 1: Vasemmalla nimi ja taso, oikealla kunto (HP) */}
+                  <div className="companion-row-line">
+                    <div className="companion-left-column">
+                      <span>Kumppani:</span>
+                      <strong>{activeSession.companionName} (Lvl {activeSession.stats.level || 1})</strong>
+                    </div>
+                    <div className="companion-right-column">
+                      <span>Kumppanin kunto:</span>
+                      <strong className={activeSession.companionHp < 15 ? 'low-hp' : ''}>
+                        {activeSession.companionHp} / {activeSession.companionMaxHp} HP
+                      </strong>
+                    </div>
+                  </div>
+
+                  {/* Rivi 2: Vasemmalla ase ja kestävyys, oikealla korjauspainike */}
+                  <div className="companion-row-line">
+                    <div className="companion-left-column">
+                      <span>Kumppanin ase:</span>
+                      <strong>{activeSession.companionWeaponName} ({activeSession.companionWeaponDurability}/{activeSession.companionWeaponMaxDurability})</strong>
+                    </div>
+                    <div className="companion-right-column" style={{ justifyContent: 'flex-end' }}>
+                      {activeSession.companionWeaponDurability < activeSession.companionWeaponMaxDurability && (activeSession.repairPoints >= 2) && (
+                        <button className="repair-mini-btn" style={{ margin: 0 }} onClick={() => handleRepairWeapon('companion')}>
+                          🔧 Korjaa (2pts)
+                        </button>
+                      )}
+                    </div>
+                  </div>
                 </>
               ) : (
-                <strong className="low-hp">{activeSession.companionName} (kaatunut - toipuu nuotiolla)</strong>
+                /* Jos kumppani on kaatunut */
+                <div className="companion-row-line">
+                  <div className="companion-left-column">
+                    <span>Kumppani:</span>
+                    <strong className="low-hp">{activeSession.companionName} (kaatunut - toipuu nuotiolla)</strong>
+                  </div>
+                </div>
               )}
             </div>
           )}

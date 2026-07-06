@@ -60,6 +60,8 @@ export default function App() {
   const [showCompanionReveal, setShowCompanionReveal] = useState(sessionStorage.getItem('ikimetsa_show_companion_reveal') === 'true');
   const [showWeaponReveal, setShowWeaponReveal] = useState(sessionStorage.getItem('ikimetsa_show_weapon_reveal') === 'true');
   const [showMovementTransition, setShowMovementTransition] = useState(false); // 🌫️ Usvasiirtymä liikkumisruutuun saavuttaessa
+  const [showCompanionTransition, setShowCompanionTransition] = useState(false); // 🕸️ Seitin repeäminen kumppaniruutuun saavuttaessa
+  const [showWeaponTransition, setShowWeaponTransition] = useState(false); // ⛏️ Mullan pöllähdys aseruutuun saavuttaessa
 
   // 🌫️ Laukaisee usvasiirtymän joka pyyhkäisee ruudun yli. Kutsutaan VAIN niistä
   // kohdista jotka oikeasti vievät liikkumisruutuun (voitto, respawn, uusi peli,
@@ -68,6 +70,18 @@ export default function App() {
   const triggerMovementTransition = () => {
     setShowMovementTransition(true);
     setTimeout(() => setShowMovementTransition(false), 2000);
+  };
+
+  // 🕸️ Seitin repeämissiirtymä kumppaniruutuun saavuttaessa
+  const triggerCompanionTransition = () => {
+    setShowCompanionTransition(true);
+    setTimeout(() => setShowCompanionTransition(false), 2000);
+  };
+
+  // ⛏️ Mullan pöllähdyssiirtymä aseruutuun saavuttaessa
+  const triggerWeaponTransition = () => {
+    setShowWeaponTransition(true);
+    setTimeout(() => setShowWeaponTransition(false), 2000);
   };
 
   const addGameLog = (message, type = 'general') => {
@@ -322,7 +336,6 @@ export default function App() {
       } else {
         setIsNavigating(!savedGameSession.hasEnteredCombat);
         setMovementPhase('walking');
-        triggerMovementTransition();
       }
     }
     setGameStarted(true);
@@ -347,7 +360,6 @@ export default function App() {
       
       setIsNavigating(true);
       setMovementPhase('intro');
-      triggerMovementTransition();
       sessionStorage.removeItem('ikimetsa_death_fade_shown');
       sessionStorage.removeItem('ikimetsa_monster_reveal_shown');
       sessionStorage.removeItem('ikimetsa_show_companion_reveal');
@@ -373,6 +385,7 @@ export default function App() {
       setActiveSession(data);
       setSavedGameSession(data);
       addGameLog(`🧑‍🤝‍🧑 ${data.companionName} liittyy seuraasi.`, 'system');
+      triggerCompanionTransition();
       setShowCompanionReveal(true);
     } catch (err) { setError(err.message); }
   };
@@ -396,6 +409,7 @@ export default function App() {
       setActiveSession(data);
       setSavedGameSession(data);
       addGameLog(`⚔️ Löysit uuden aseen: ${data.inventory?.[0]?.name}!`, 'system');
+      triggerWeaponTransition();
       setShowWeaponReveal(true);
     } catch (err) { setError(err.message); }
   };
@@ -466,7 +480,7 @@ export default function App() {
       if (sourceLogs.length > 0) {
         addGameLog(sourceLogs[sourceLogs.length - 1], 'system');
       }
-    } catch (err) { setError(err.message); return false; }
+    } catch (err) { setError(err.message); }
   };
 
   const handleRespawn = async () => {
@@ -557,7 +571,7 @@ export default function App() {
     setError('');
     setSuccessMessage('');
     try {
-      const response = await fetch(`${import.meta.env.vite_api_url}/api/auth/password`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/password`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ currentPassword, newPassword }),
@@ -796,6 +810,7 @@ export default function App() {
         <>
           {error && <div className="global-error-popup">⚠️ {error}</div>}
           {successMessage && <div className="global-success-popup">✅ {successMessage}</div>}
+
           {showVictorySplash && <div className="victory-blood-splash" />}
           {showFinalVictory && (
             <div className="final-victory-overlay">
@@ -818,6 +833,28 @@ export default function App() {
             <div className="movement-transition-overlay">
               <div className="movement-fog fog-a"></div>
               <div className="movement-fog fog-b"></div>
+            </div>
+          )}
+          {showCompanionTransition && (
+            <div className="companion-transition-overlay">
+              <div className="web-tear web-left"></div>
+              <div className="web-tear web-right"></div>
+              <div className="web-strand ws1"></div>
+              <div className="web-strand ws2"></div>
+              <div className="web-strand ws3"></div>
+              <div className="web-strand ws4"></div>
+              <div className="web-strand ws5"></div>
+            </div>
+          )}
+          {showWeaponTransition && (
+            <div className="weapon-transition-overlay">
+              <div className="dirt-burst"></div>
+              <div className="dirt-clod dc1"></div>
+              <div className="dirt-clod dc2"></div>
+              <div className="dirt-clod dc3"></div>
+              <div className="dirt-clod dc4"></div>
+              <div className="dirt-clod dc5"></div>
+              <div className="dirt-clod dc6"></div>
             </div>
           )}
 
@@ -872,7 +909,6 @@ export default function App() {
               handleRepairWeapon={handleRepairWeapon}
               gameLogs={gameLogs}
               onAddLog={addPersistentGameLog}
-              triggerTransition={triggerMovementTransition}
             />
           ) : (monsterHp <= 0 && !showFinalVictory) ? (
             <CampfireScreen onContinue={handleContinueJourney} />

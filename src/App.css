@@ -1366,3 +1366,198 @@ div.game-play-screen .player-status-bar {
   0% { transform: translateX(0) scale(1.2); opacity: 0.9; }
   100% { transform: translateX(-120%) scale(1.4); opacity: 0; }
 }
+
+/* 🕸️ KUMPPANIN SEITTISIIRTYMÄ - kun saavutaan kumppaniruutuun (Aarne), seitti
+   repeää keskeltä auki ja säikeet rispaantuvat sivuille. Kesto 2s täsmää
+   App.jsx:n triggerCompanionTransition setTimeout-arvoon (2000ms). */
+.companion-transition-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  overflow: hidden;
+  animation: transitionFadeOut 2s ease-out forwards;
+}
+
+.web-tear {
+  position: absolute;
+  top: 0;
+  width: 55%;
+  height: 100%;
+  background:
+    repeating-linear-gradient(45deg, transparent 0 26px, rgba(220, 230, 230, 0.14) 26px 28px),
+    repeating-linear-gradient(-45deg, transparent 0 26px, rgba(220, 230, 230, 0.14) 26px 28px),
+    radial-gradient(circle at center, rgba(200, 220, 220, 0.15) 0%, transparent 70%);
+}
+
+.web-tear.web-left {
+  left: 0;
+  border-right: 1px solid rgba(220, 230, 230, 0.25);
+  animation: webTearLeft 2s ease-in forwards;
+}
+
+.web-tear.web-right {
+  right: 0;
+  border-left: 1px solid rgba(220, 230, 230, 0.25);
+  animation: webTearRight 2s ease-in forwards;
+}
+
+@keyframes webTearLeft {
+  0% { transform: translateX(0); opacity: 0.95; }
+  100% { transform: translateX(-100%); opacity: 0; }
+}
+
+@keyframes webTearRight {
+  0% { transform: translateX(0); opacity: 0.95; }
+  100% { transform: translateX(100%); opacity: 0; }
+}
+
+/* Säikeet venyvät koko ruudun korkeuden yli (vh) kiinteän pikselikoron sijaan */
+.web-strand {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 3px;
+  height: 80vh;
+  background: linear-gradient(180deg, transparent, rgba(220, 230, 230, 0.55), transparent);
+  transform-origin: center top;
+  opacity: 0;
+  animation: webStrandSnap 2s ease-out forwards;
+}
+
+.web-strand.ws1 { transform: rotate(20deg); }
+.web-strand.ws2 { transform: rotate(75deg); }
+.web-strand.ws3 { transform: rotate(140deg); }
+.web-strand.ws4 { transform: rotate(220deg); }
+.web-strand.ws5 { transform: rotate(300deg); }
+
+@keyframes webStrandSnap {
+  0% { opacity: 0; height: 0; }
+  30% { opacity: 0.8; height: 90vh; }
+  55% { opacity: 0.6; height: 70vh; }
+  100% { opacity: 0; height: 25vh; }
+}
+
+/* ⛏️ ASEEN MULLANSIIRTYMÄ - kun saavutaan aseruutuun, multa pöllähtää ja
+   kokkareita lentää. Kesto 2s täsmää App.jsx:n triggerWeaponTransition-arvoon. */
+.weapon-transition-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  overflow: hidden;
+  animation: transitionFadeOut 2s ease-out forwards;
+}
+
+/* Purkaus skaalautuu ruudun kokoon (vmax) - täyttää koko näytön keskeltä */
+.dirt-burst {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 60vmax;
+  height: 60vmax;
+  transform: translate(-50%, -50%) scale(0.2);
+  background: radial-gradient(circle at center, rgba(92, 64, 40, 0.85) 0%, rgba(60, 42, 26, 0.5) 45%, transparent 72%);
+  border-radius: 50%;
+  filter: blur(10px);
+  opacity: 0;
+  animation: dirtBurst 2s ease-out forwards;
+}
+
+@keyframes dirtBurst {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.2); }
+  25% { opacity: 1; transform: translate(-50%, -50%) scale(1.6); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(2.4); }
+}
+
+/* Kokkareet isompia ja lentävät koko ruudun laajuudelta (vw/vh) */
+.dirt-clod {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 26px;
+  height: 22px;
+  background: #4a3420;
+  border-radius: 45% 55% 50% 50%;
+  box-shadow: 0 0 8px rgba(40, 28, 16, 0.7);
+  opacity: 0;
+}
+
+.dirt-clod.dc1 { animation: dirtClod1 2s ease-out forwards; }
+.dirt-clod.dc2 { animation: dirtClod2 2s ease-out forwards; }
+.dirt-clod.dc3 { animation: dirtClod3 2s ease-out forwards; }
+.dirt-clod.dc4 { animation: dirtClod4 2s ease-out forwards; }
+.dirt-clod.dc5 { animation: dirtClod5 2s ease-out forwards; }
+.dirt-clod.dc6 { animation: dirtClod6 2s ease-out forwards; }
+
+@keyframes dirtClod1 { 0%{opacity:0;transform:translate(0,0) scale(.5) rotate(0deg);} 15%{opacity:1;} 100%{opacity:0;transform:translate(-45vw,-38vh) scale(1.2) rotate(220deg);} }
+@keyframes dirtClod2 { 0%{opacity:0;transform:translate(0,0) scale(.5) rotate(0deg);} 15%{opacity:1;} 100%{opacity:0;transform:translate(42vw,-42vh) scale(1.2) rotate(-200deg);} }
+@keyframes dirtClod3 { 0%{opacity:0;transform:translate(0,0) scale(.5) rotate(0deg);} 15%{opacity:1;} 100%{opacity:0;transform:translate(-30vw,-48vh) scale(1.2) rotate(300deg);} }
+@keyframes dirtClod4 { 0%{opacity:0;transform:translate(0,0) scale(.5) rotate(0deg);} 15%{opacity:1;} 100%{opacity:0;transform:translate(35vw,-46vh) scale(1.2) rotate(-260deg);} }
+@keyframes dirtClod5 { 0%{opacity:0;transform:translate(0,0) scale(.5) rotate(0deg);} 15%{opacity:1;} 100%{opacity:0;transform:translate(-15vw,-50vh) scale(1.2) rotate(180deg);} }
+@keyframes dirtClod6 { 0%{opacity:0;transform:translate(0,0) scale(.5) rotate(0deg);} 15%{opacity:1;} 100%{opacity:0;transform:translate(20vw,-48vh) scale(1.2) rotate(-180deg);} }
+
+/* Yhteinen häivytys molemmille siirtymille - overlay katoaa lopussa */
+@keyframes transitionFadeOut {
+  0% { opacity: 1; }
+  75% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* --- MATKAKUMPPANIN KAKSIRIVINEN STATUS-LOHKO --- */
+.companion-status-block {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  border-top: 1px dashed #1e3a1e;
+  padding-top: 12px;
+  margin-top: 4px;
+}
+
+.companion-row-line {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+}
+
+/* 🎯 TÄTÄ LUKUA ON KASVATETTU (260px -> 305px): Se työntää oikeaa saraketta nätisti oikealle */
+.companion-row-line .companion-left-column {
+  width: 405px; /* 👈 Jos haluat siirtää kunto-tekstiä vieläkin enemmän oikealle, suurenna tätä lukua (esim. 315px) */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+/* Oikea sarake: Pidetään tämä täysin ennallaan, jotta tyhjä tila jää yhä oikealle */
+.companion-row-line .companion-right-column {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  margin-right: auto;
+}
+
+/* Korjauspainike pysyy nätisti heti asetekstin vieressä */
+.companion-row-line .companion-right-column .repair-mini-btn {
+  margin: 0 0 0 10px;
+}
+
+/* Pakotetaan kumppanilohkon tekstit samanvärisiksi ja -kokoisiksi kuin ylemmät rivit */
+.companion-status-block span {
+  color: #9ca3af;
+  font-size: 1rem;
+}
+
+.companion-status-block strong {
+  color: #4ade80;
+  font-size: 1rem;
+}
+
+.companion-status-block strong.low-hp {
+  color: #ef4444;
+}
