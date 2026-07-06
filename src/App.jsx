@@ -45,6 +45,8 @@ export default function App() {
   const [isDamageRolling, setIsDamageRolling] = useState(false); // 🎲 Pyörivätkö nimenomaan d8-vahinkonopat (vain osuman jälkeen)
   const [diceResult, setDiceResult] = useState(null);
   const [damageDiceResult, setDamageDiceResult] = useState([null, null]); // 🎲 Kaksi d8-vahinkonoppaa, vierekkäin d20:n kanssa
+  const [monsterDamageResult, setMonsterDamageResult] = useState(null); // 🎲 Hirviön yksi vahinkonoppa (kun hirviö osuu pelaajaan tai kumppaniin)
+  const [isMonsterDamageRolling, setIsMonsterDamageRolling] = useState(false); // 🎲 Pyöriikö hirviön vahinkonoppa
   
   const [combatInitiative, setCombatInitiative] = useState(null);
   const [currentTurn, setCurrentTurn] = useState(null);
@@ -591,10 +593,12 @@ export default function App() {
     if (isRolling || monsterHp <= 0) return;
     setIsRolling(true);
     setIsDamageRolling(false);
+    setIsMonsterDamageRolling(false);
     setDiceResult(null);
     setDamageDiceResult([null, null]);
+    setMonsterDamageResult(null);
 
-    // 🎲 Vain iso d20 pyörii aluksi - d8-vahinkonopat eivät pyöri ollenkaan
+    // 🎲 Vain iso d20 pyörii aluksi - vahinkonopat eivät pyöri ollenkaan
     // ennen kuin tiedetään osuiko isku, koska niitä ei edes heitetä ellei osuttu.
     const interval = setInterval(() => {
       setDiceResult(Math.floor(Math.random() * 20) + 1);
@@ -616,7 +620,7 @@ export default function App() {
 
       // 📦 Kaikki taisteluvuoron jälkeiset päivitykset (lokit, sessio, jne.) koottuna
       // yhteen funktioon, jotta niitä voi kutsua joko heti (kun ei osunut) tai
-      // vasta d8-nopkien lyhyen pyörähdyksen jälkeen (kun osui).
+      // vasta vahinkonopkien lyhyen pyörähdyksen jälkeen (kun osui).
       const applyTurnResult = () => {
         const fullCombatLogs = data.combatLogs || [];
 
@@ -720,9 +724,10 @@ export default function App() {
         setDiceResult(typeof data.diceRoll === 'number' ? data.diceRoll : 12);
 
         const isHit = typeof data.damageDie1 === 'number';
+        const isMonsterHit = typeof data.monsterDamageDie === 'number';
 
         if (isHit) {
-          // 🎲 Osuttiin! Pyöräytetään d8-vahinkonopat lyhyesti ennen kuin ne
+          // 🎲 Pelaaja osui! Pyöräytetään siniset d8-vahinkonopat lyhyesti ennen kuin ne
           // pysähtyvät oikeisiin lukuihin - d20 on jo pysähtynyt tässä vaiheessa.
           setIsDamageRolling(true);
           const damageInterval = setInterval(() => {
@@ -736,9 +741,25 @@ export default function App() {
             setDamageDiceResult([data.damageDie1, data.damageDie2]);
             applyTurnResult();
           }, 500);
+        } else if (isMonsterHit) {
+          // 🎲 Hirviö osui pelaajaan tai kumppaniin! Pyöräytetään hirviön oma punainen
+          // vahinkonoppa samaan tapaan kuin pelaajalla, d20:n pysähdyttyä.
+          setIsMonsterDamageRolling(true);
+          const monsterDamageInterval = setInterval(() => {
+            setMonsterDamageResult(Math.floor(Math.random() * 8) + 1);
+          }, 60);
+
+          setTimeout(() => {
+            clearInterval(monsterDamageInterval);
+            setIsRolling(false);
+            setIsMonsterDamageRolling(false);
+            setMonsterDamageResult(data.monsterDamageDie);
+            applyTurnResult();
+          }, 500);
         } else {
           setIsRolling(false);
           setIsDamageRolling(false);
+          setIsMonsterDamageRolling(false);
           setDamageDiceResult([null, null]);
           applyTurnResult();
         }
@@ -747,6 +768,7 @@ export default function App() {
       clearInterval(interval); 
       setIsRolling(false); 
       setIsDamageRolling(false);
+      setIsMonsterDamageRolling(false);
       setError('Yhteys palvelimeen katkesi.'); 
     }
   };
@@ -855,6 +877,7 @@ export default function App() {
           ) : (
             <GamePlay 
               activeSession={activeSession} monsterHp={monsterHp} diceResult={diceResult} damageDiceResult={damageDiceResult}
+              monsterDamageResult={monsterDamageResult} isMonsterDamageRolling={isMonsterDamageRolling}
               isRolling={isRolling} isDamageRolling={isDamageRolling} gameLogs={gameLogs} onAddLog={addGameLog} combatInitiative={combatInitiative}
               currentTurn={currentTurn} handleRepairWeapon={handleRepairWeapon} handleCombatTurn={handleCombatTurn}
             />

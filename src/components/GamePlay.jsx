@@ -8,6 +8,8 @@ export default function GamePlay({
   monsterHp,
   diceResult,
   damageDiceResult,
+  monsterDamageResult,
+  isMonsterDamageRolling,
   isRolling,
   isDamageRolling,
   gameLogs,
@@ -20,10 +22,6 @@ export default function GamePlay({
   const monsterKeyForReveal = activeSession?.currentMonsterName || 'Varjohahmo';
 
   // 🛡️ Päätetään VAIN KERRAN komponentin alustuksen yhteydessä pitääkö jumpscare näyttää.
-  // Tämä on turvallista Reactin StrictMode-kaksoisajossa (kehitystila) koska se on pelkkä
-  // luku eikä kirjoitus - toisin kuin aiempi versio joka sekä luki että kirjoitti saman
-  // sessionStorage-avaimen useEffectin sisällä, jolloin toinen ajokerta näki ensimmäisen
-  // jäljen ja perui itsensä ennen kuin animaatio ehti näkyä.
   const [shouldRevealMonster] = useState(() => {
     if (monsterHp <= 0 || combatInitiative) return false;
     const alreadyShown = sessionStorage.getItem('ikimetsa_monster_reveal_shown');
@@ -125,6 +123,9 @@ export default function GamePlay({
               <div className={`d8-visual-dice ${isDamageRolling ? 'spinning' : 'stopped'}`}>
                 <span>{damageDiceResult?.[1] ?? 1}</span>
               </div>
+            </div>
+            <div className={`monster-damage-dice ${isMonsterDamageRolling ? 'spinning' : 'stopped'}`}>
+              <span>{monsterDamageResult ?? 1}</span>
             </div>
           </div>
         )}
