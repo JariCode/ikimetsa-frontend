@@ -480,10 +480,18 @@ div.character-selection-screen .character-cards {
   display: flex;
   flex-direction: column;
   background: rgba(4, 8, 4, 0.95);
-  border: 1px solid #1a331a;
+  /* 🌿 Yhtenäinen hehkureuna liikkumis- ja taisteluruuduille - monikerroksinen
+     varjo antaa syvyyttä ja vihreä hehku sitoo ruudut metsäteemaan. */
+  border: 1px solid #2a4a2a;
+  box-shadow:
+    0 0 0 1px rgba(74, 222, 128, 0.15),
+    0 0 20px rgba(74, 222, 128, 0.12),
+    0 8px 30px rgba(0, 0, 0, 0.7),
+    inset 0 0 30px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(74, 222, 128, 0.1);
   padding: 25px;
   z-index: 10;
-  border-radius: 4px;
+  border-radius: 8px;
   box-sizing: border-box;
 }
 
@@ -1166,7 +1174,9 @@ div.game-play-screen .player-status-bar {
 /* 👑 LOPPUVOITON EEPPINEN SIIRTYMÄ - Velhon kukistuminen ennen voittoruutua.
    Kolme vaihetta: valkoinen välähdys, violetin kirouksen sirpaleet jotka
    sinkoutuvat ulos, ja lopuksi koko ruudun tumma häivytys jonka läpi
-   voittoruutu paljastuu. */
+   voittoruutu paljastuu.
+   HUOM: kesto 4.5s tässä pitää täsmätä App.jsx:n setTimeout 4500 -arvoon,
+   jottei voittoruutu paljastu kesken animaation. */
 .final-victory-overlay {
   position: fixed;
   inset: 0;
@@ -1174,7 +1184,7 @@ div.game-play-screen .player-status-bar {
   pointer-events: none;
   overflow: hidden;
   background: radial-gradient(circle at center, rgba(40, 0, 60, 0.0) 0%, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.95) 100%);
-  animation: finalVictoryDarken 3.2s ease-in forwards;
+  animation: finalVictoryDarken 4.5s ease-in forwards;
 }
 
 .final-victory-flash {
@@ -1246,13 +1256,13 @@ div.game-play-screen .player-status-bar {
   text-shadow: 0 0 20px rgba(138, 43, 226, 0.9), 0 0 40px rgba(138, 43, 226, 0.5);
   opacity: 0;
   white-space: nowrap;
-  animation: finalVictoryText 3.2s ease-in-out forwards;
+  animation: finalVictoryText 4.5s ease-in-out forwards;
 }
 
 @keyframes finalVictoryText {
   0% { opacity: 0; transform: translate(-50%, -50%) scale(0.7); }
-  30% { opacity: 0; }
-  50% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-  80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  20% { opacity: 0; }
+  38% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  85% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
   100% { opacity: 0; transform: translate(-50%, -50%) scale(1.1); }
 }

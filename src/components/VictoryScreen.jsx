@@ -25,7 +25,21 @@ export default function VictoryScreen({ activeSession, handleLogout }) {
             <p className="victory-text">Sakea usva vetäytyy puiden ympäriltä, ja mustat kuuset saavat vihdoin valoa.</p>
             <p className="victory-text">Olet selvinnyt läpi mustan veden, ruttohautojen ja synkimmän sydänmetsän.</p>
             <p className="victory-text">Uljas {activeSession?.characterType || 'seikkailija'} muistetaan ikuisesti sankarina, joka toi auringon takaisin.</p>
-            <p className="victory-text" style={{ marginTop: '40px', color: '#fbbf24', fontWeight: 'bold' }}>KIITOS PELAAMISESTA!</p>
+
+            <div className="victory-credits">
+              <h2 className="victory-credits-title">IKIMETSÄ</h2>
+
+              <p className="victory-credits-name">JariCode</p>
+              <p className="victory-credits-role">Tarina, suunnittelu, koodi ja ulkoasu</p>
+
+              <p className="victory-credits-published">Julkaistu 2026</p>
+
+              <a className="victory-credits-link" href="https://jaricode.fi/" target="_blank" rel="noopener noreferrer">
+                https://jaricode.fi
+              </a>
+            </div>
+
+            <p className="victory-thanks">KIITOS PELAAMISESTA!</p>
           </div>
         </div>
 

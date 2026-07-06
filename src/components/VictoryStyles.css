@@ -148,3 +148,66 @@
   0% { top: 80%; }
   100% { top: -100%; } 
 }
+
+/* 🎬 LOPPUTEKSTIT - tekijätiedot voittoruudun tarinan päätteeksi */
+.victory-credits {
+  margin: 44px auto 20px;
+  padding: 28px 20px;
+  border-top: 1px solid rgba(251, 191, 36, 0.35);
+  border-bottom: 1px solid rgba(251, 191, 36, 0.35);
+  text-align: center;
+}
+
+.victory-credits-title {
+  color: #fbbf24;
+  font-size: 2rem;
+  letter-spacing: 6px;
+  margin: 0 0 24px;
+  text-shadow: 0 0 16px rgba(251, 191, 36, 0.5);
+}
+
+.victory-credits-role {
+  color: #9ca3af;
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin: 18px 0 4px;
+}
+
+.victory-credits-name {
+  color: #f3f4f6;
+  font-size: 1.15rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.victory-credits-published {
+  color: #9ca3af;
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin: 26px 0 4px;
+}
+
+.victory-thanks {
+  margin-top: 40px;
+  color: #fbbf24;
+  font-weight: bold;
+}
+
+.victory-credits-link {
+  display: inline-block;
+  margin-top: 26px;
+  color: #fbbf24;
+  font-size: 1rem;
+  letter-spacing: 1px;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(251, 191, 36, 0.4);
+  padding-bottom: 2px;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.victory-credits-link:hover {
+  color: #fff;
+  border-color: #fff;
+}
