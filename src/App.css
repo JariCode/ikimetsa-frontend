@@ -1522,9 +1522,9 @@ div.game-play-screen .player-status-bar {
   width: 100%;
 }
 
-/* 🎯 TÄTÄ LUKUA ON KASVATETTU (260px -> 305px): Se työntää oikeaa saraketta nätisti oikealle */
+/* 🎯 TÄTÄ LUKUA ON KASVATETTU (260px -> 400px): Se työntää oikeaa saraketta nätisti oikealle */
 .companion-row-line .companion-left-column {
-  width: 405px; /* 👈 Jos haluat siirtää kunto-tekstiä vieläkin enemmän oikealle, suurenna tätä lukua (esim. 315px) */
+  width: 380px; /* 👈 Jos haluat siirtää kunto-tekstiä vieläkin enemmän oikealle, suurenna tätä lukua (esim. 315px) */
   display: flex;
   align-items: center;
   gap: 8px;
@@ -1542,9 +1542,9 @@ div.game-play-screen .player-status-bar {
   margin-right: auto;
 }
 
-/* Korjauspainike pysyy nätisti heti asetekstin vieressä */
+/* Kohdistuu pelkästään kumppanin oikean sarakkeen sisällä olevaan korjausnappiin */
 .companion-row-line .companion-right-column .repair-mini-btn {
-  margin: 0 0 0 10px;
+  margin-left: 0; /* 👈 Kasvata tätä lukua (esim. 45px tai 55px) siirtääksesi nappia vieläkin enemmän oikealle */
 }
 
 /* Pakotetaan kumppanilohkon tekstit samanvärisiksi ja -kokoisiksi kuin ylemmät rivit */

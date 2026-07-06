@@ -110,7 +110,7 @@ export default function GamePlay({
                   </div>
                   <div className="companion-right-column" style={{ justifyContent: 'flex-end' }}>
                     {activeSession.companionWeaponDurability < activeSession.companionWeaponMaxDurability && (activeSession.repairPoints >= 2) && (
-                      <button className="repair-mini-btn" style={{ margin: 0 }} onClick={() => handleRepairWeapon('companion')}>
+                      <button className="repair-mini-btn" onClick={() => handleRepairWeapon('companion')}>
                         🔧 Korjaa (2pts)
                       </button>
                     )}
