@@ -967,6 +967,7 @@ export default function App() {
               handleRepairWeapon={handleRepairWeapon}
               gameLogs={gameLogs}
               onAddLog={addPersistentGameLog}
+              triggerTransition={triggerMovementTransition}
             />
           ) : (monsterHp <= 0 && !showFinalVictory) ? (
             <CampfireScreen onContinue={handleContinueJourney} />

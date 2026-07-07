@@ -7,6 +7,7 @@ export default function MovementScreen({
   handleEnterCombat,
   onFindCompanion,
   onFindWeapon,
+  onFindTreasure,
   phase,
   setPhase,
   handleRepairWeapon,
@@ -54,6 +55,21 @@ export default function MovementScreen({
       setCurrentRoll(roll);
 
       if (roll === 6) {
+        const hasUnfoundTreasure = currentArea?.treasureEvent?.discoveryText && !activeSession?.treasureFound;
+
+        if (hasUnfoundTreasure) {
+          const discoveryText = currentArea.treasureEvent.discoveryText;
+          const msg = `Heitit [${roll}]! ${discoveryText}`;
+          setStoryText(msg);
+          onAddLog(`🎲 ${msg}`, 'movement');
+          setTimeout(() => {
+            onFindTreasure();
+            isRollingRef.current = false;
+            setIsRolling(false);
+          }, 1500);
+          return;
+        }
+
         const hasUnfoundCompanion = currentArea?.companionEvent?.name && !activeSession?.companionFound;
 
         if (hasUnfoundCompanion) {
