@@ -36,7 +36,8 @@ export default function TreasureScreen({ activeSession, onContinue }) {
           ))}
           <p className="intro-text">Avaat hopealangan ja katsot sisään.</p>
           <p className="intro-text">Pussista löytyy {repairBonus} korjauspistettä työkaluillesi.</p>
-          <p className="intro-text">Sekä haltijoiden loihtimaa ravintoa, joka lisää {hpBonus} elinvoimaa pysyvästi.</p>
+          <p className="intro-text">Sekä haltijoiden loihtimaa ravintoa, </p>
+          <p className="intro-text">joka lisää {hpBonus} elinvoimaa pysyvästi.</p>
         </div>
       </div>
 
