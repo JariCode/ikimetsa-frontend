@@ -918,6 +918,8 @@ div.game-play-screen .player-status-bar {
   width: 100%;
   box-sizing: border-box;
   box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.75);
+  scrollbar-color: #1e3a1e #091209;
+  scrollbar-width: thin;
 }
 
 .unified-log-header {
