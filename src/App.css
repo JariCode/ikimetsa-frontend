@@ -481,7 +481,7 @@ div.character-selection-screen .character-cards {
   flex-direction: column;
   background: rgba(4, 8, 4, 0.95);
   /* 🌿 Yhtenäinen hehkureuna liikkumis- ja taisteluruuduille - monikerroksinen
-     varjo antaa syvyyttä ja vihreä hehku sitoo ruudut metsäteemaan. */
+      varjo antaa syvyyttä ja vihreä hehku sitoo ruudut metsäteemaan. */
   border: 1px solid #2a4a2a;
   box-shadow:
     0 0 0 1px rgba(74, 222, 128, 0.15),
@@ -495,17 +495,18 @@ div.character-selection-screen .character-cards {
   box-sizing: border-box;
 }
 
+/* Pelaajan yläpalkki (johtaa gridiä) */
 div.game-play-screen .player-status-bar {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1.2fr 0.9fr 0.9fr; /* Kolme selkeää pystysaraketta */
+  row-gap: 12px;
+  column-gap: 15px;
   align-items: center;
   background: rgba(10, 25, 10, 0.75);
   border: 1px solid #1e3a1e;
   padding: 15px 20px;
   margin-bottom: 30px;
   border-radius: 4px;
-  gap: 15px;
   width: 100%;
   box-sizing: border-box;
 }
@@ -515,13 +516,12 @@ div.game-play-screen .player-status-bar {
   align-items: center; 
   gap: 8px; 
   font-size: 1rem;
-  flex-shrink: 0;
+  white-space: nowrap; /* Estää tekstiä rivittymästä miten sattuu */
 }
 
-/* --- PELIHAHMON KORJAUSNAPPI --- */
-.player-status-bar .player-repair-btn {
-  margin-left: 45px;
-}
+.status-item span { color: #9ca3af; }
+.status-item strong { color: #4ade80; }
+.status-item strong.low-hp { color: #ef4444; }
 
 .status-item span { color: #9ca3af; }
 .status-item strong { color: #4ade80; }
@@ -1508,52 +1508,32 @@ div.game-play-screen .player-status-bar {
   75% { opacity: 1; }
   100% { opacity: 0; }
 }
+
 /*--------------------------------------------------*/
-/* --- MATKAKUMPPANIN KAKSIRIVINEN STATUS-LOHKO --- */
+/* --- MATKAKUMPPANIN LOPULLINEN GRID-LOHKO ------- */
 /*------------------------------------------------*/
 .companion-status-block {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  grid-column: span 3; /* Ottaa haltuunsa koko alarivin leveyssuunnassa */
+  
+  /* 🎯 Muutetaan lohko 3-sarakkeen gridiksi tismalleen samoilla suhteilla kuin pelaajalla */
+  display: grid;
+  grid-template-columns: 1.2fr 0.9fr 0.9fr; 
+  row-gap: 12px;
+  column-gap: 15px;
+  align-items: center;
   width: 100%;
+  
   border-top: 1px dashed #1e3a1e;
   padding-top: 12px;
   margin-top: 4px;
 }
 
-.companion-row-line {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  width: 100%;
+/* Jos kumppani kaatuu, teksti osaa ottaa koko tilan itselleen */
+.companion-status-block .dead-companion-wide {
+  grid-column: span 3;
 }
 
-/* 🎯 TÄTÄ LUKUA ON KASVATETTU (260px -> 400px): Se työntää oikeaa saraketta nätisti oikealle */
-.companion-row-line .companion-left-column {
-  width: 283px; /* 👈 Jos haluat siirtää kunto-tekstiä vieläkin enemmän oikealle, suurenna tätä lukua (esim. 315px) */
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  box-sizing: border-box;
-  flex-shrink: 0;
-}
-
-/* Oikea sarake: Pidetään tämä täysin ennallaan, jotta tyhjä tila jää yhä oikealle */
-.companion-row-line .companion-right-column {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  box-sizing: border-box;
-  flex-shrink: 0;
-  margin-right: auto;
-}
-
-/* Kohdistuu pelkästään kumppanin oikean sarakkeen sisällä olevaan korjausnappiin */
-.companion-row-line .companion-right-column .repair-mini-btn {
-  margin-left: 0; /* 👈 Kasvata tätä lukua (esim. 45px tai 55px) siirtääksesi nappia vieläkin enemmän oikealle */
-}
-
-/* Pakotetaan kumppanilohkon tekstit samanvärisiksi ja -kokoisiksi kuin ylemmät rivit */
+/* Pakotetaan kumppanilohkon tekstit samanvärisiksi */
 .companion-status-block span {
   color: #9ca3af;
   font-size: 1rem;
@@ -1567,4 +1547,3 @@ div.game-play-screen .player-status-bar {
 .companion-status-block strong.low-hp {
   color: #ef4444;
 }
-

@@ -64,8 +64,10 @@ export default function GamePlay({
         </div>
       )}
 
-      {/* YLÄPALKKI */}
+      {/* YLÄPALKKI – TÄYDELLINEN JA PUHDAS GRID-RAKENNE */}
       <div className="player-status-bar">
+        
+        {/* === RIVI 1: PELAAJAN STATUKSEN 3 SARAKETTA === */}
         <div className="status-item">
           <span>Hahmo:</span> <strong>{activeSession.characterType} (Lvl {activeSession.stats.level || 1})</strong>
         </div>
@@ -75,55 +77,56 @@ export default function GamePlay({
         <div className="status-item">
           <span>Kokemus:</span> <strong>{activeSession.stats.xp || 0} / {(activeSession.stats.level || 1) * 100} XP</strong>
         </div>
+        
+        {/* === RIVI 2: PELAAJAN ASEEN 3 SARAKETTA === */}
         <div className="status-item">
           <span>Ase:</span> <strong>{activeSession.inventory[0]?.name} ({activeSession.inventory[0]?.durability}/{activeSession.inventory[0]?.maxDurability})</strong>
+        </div>
+        <div className="status-item">
+          {/* 🎯 Keskimmäinen sarake: Korjauspainike siirretty omaksi solukseen aseen sisältä */}
           {activeSession.inventory[0]?.durability < activeSession.inventory[0]?.maxDurability && (activeSession.repairPoints >= 2) && (
             <button className="repair-mini-btn player-repair-btn" onClick={() => handleRepairWeapon('player')}>
               🔧 Korjaa (2pts)
             </button>
           )}
         </div>
-        <div className="status-item"><span>Korjauspisteet:</span> <strong>{activeSession.repairPoints || 0} Pts</strong></div>
+        <div className="status-item">
+          {/* 🎯 Oikea sarake: Korjauspisteet siirretty viimeiseksi, joten ne asettuvat suoraan Kokemuksen alle */}
+          <span>Korjauspisteet:</span> <strong>{activeSession.repairPoints || 0} Pts</strong>
+        </div>
+
+        {/* === RIVI 3 & 4: MATKAKUMPPANIN STATUKSET === */}
         {activeSession.companionFound && (
           <div className="companion-status-block">
             {activeSession.companionActive ? (
               <>
-                {/* Rivi 1: Vasemmalla nimi ja taso, oikealla kunto (HP) */}
-                <div className="companion-row-line">
-                  <div className="companion-left-column">
-                    <span>Kumppani:</span>
-                    <strong>{activeSession.companionName} (Lvl {activeSession.stats.level || 1})</strong>
-                  </div>
-                  <div className="companion-right-column">
-                    <span>Kunto:</span>
-                    <strong className={activeSession.companionHp < 15 ? 'low-hp' : ''}>
-                      {activeSession.companionHp} / {activeSession.companionMaxHp} HP
-                    </strong>
-                  </div>
+                {/* Kumppanin rivi 1 (Vastaa hahmon riviä 1) */}
+                <div className="status-item">
+                    <span>Kumppani:</span> <strong>{activeSession.companionName} (Lvl {activeSession.stats.level || 1})</strong>
                 </div>
+                <div className="status-item">
+                  <span>Kunto:</span> <strong className={activeSession.companionHp < 15 ? 'low-hp' : ''}>{activeSession.companionHp} / {activeSession.companionMaxHp} HP</strong>
+                </div>
+                <div className="status-item"></div> {/* 🎯 Jätetään tyhjäksi (Kokemuksen alunen) */}
 
-                {/* Rivi 2: Vasemmalla ase ja kestävyys, oikealla korjauspainike jos tarpeen */}
-                <div className="companion-row-line">
-                  <div className="companion-left-column">
-                    <span>Ase:</span>
-                    <strong>{activeSession.companionWeaponName} ({activeSession.companionWeaponDurability}/{activeSession.companionWeaponMaxDurability})</strong>
-                  </div>
-                  <div className="companion-right-column">
-                    {activeSession.companionWeaponDurability < activeSession.companionWeaponMaxDurability && (activeSession.repairPoints >= 2) && (
-                      <button className="repair-mini-btn" onClick={() => handleRepairWeapon('companion')}>
-                        🔧 Korjaa (2pts)
-                      </button>
-                    )}
-                  </div>
+                {/* Kumppanin rivi 2 (Vastaa hahmon riviä 2) */}
+                <div className="status-item">
+                  <span>Ase:</span> <strong>{activeSession.companionWeaponName} ({activeSession.companionWeaponDurability}/{activeSession.companionWeaponMaxDurability})</strong>
                 </div>
+                <div className="status-item">
+                  {/* 🎯 Keskimmäinen sarake: Kumppanin korjausnappi omassa solussaan */}
+                  {activeSession.companionWeaponDurability < activeSession.companionWeaponMaxDurability && (activeSession.repairPoints >= 2) && (
+                    <button className="repair-mini-btn" onClick={() => handleRepairWeapon('companion')}>
+                      🔧 Korjaa (2pts)
+                    </button>
+                  )}
+                </div>
+                <div className="status-item"></div> {/* 🎯 Jätetään tyhjäksi (Korjauspisteiden alunen) */}
               </>
             ) : (
-              /* Jos kumppani on kaatunut */
-              <div className="companion-row-line">
-                <div className="companion-left-column">
-                  <span>Kumppani:</span>
-                  <strong className="low-hp">{activeSession.companionName} (kaatunut - toipuu nuotiolla)</strong>
-                </div>
+              /* Jos kumppani on kaatunut, se nappaa koko alarivin tilan haltuunsa */
+              <div className="status-item dead-companion-wide">
+                <span>Kumppani:</span> <strong className="low-hp">{activeSession.companionName} (kaatunut - toipuu nuotiolla)</strong>
               </div>
             )}
           </div>
