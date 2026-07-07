@@ -1,0 +1,130 @@
+.treasure-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  z-index: 10;
+  text-align: center;
+}
+
+.treasure-title {
+  margin-bottom: 0;
+}
+
+.treasure-heading {
+  color: #7dd3fc;
+  text-shadow: 0 0 12px rgba(125, 211, 252, 0.5);
+  text-align: center;
+}
+
+.treasure-visual {
+  position: relative;
+  width: 240px;
+  height: 200px;
+}
+
+/* 🌊 Veden pinta jonka päällä pussi kelluu */
+.treasure-water {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 220px;
+  height: 70px;
+  background: radial-gradient(ellipse at center, rgba(30, 90, 130, 0.6) 0%, rgba(15, 50, 80, 0.35) 60%, transparent 100%);
+  border-radius: 50%;
+  filter: blur(2px);
+}
+
+/* Aaltoväreet jotka leviävät pussin ympärillä */
+.treasure-ripple {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 2px solid rgba(125, 211, 252, 0.35);
+  border-radius: 50%;
+  opacity: 0;
+}
+
+.treasure-ripple.ripple-1 {
+  width: 80px;
+  height: 26px;
+  animation: treasureRipple 3s ease-out infinite;
+}
+
+.treasure-ripple.ripple-2 {
+  width: 80px;
+  height: 26px;
+  animation: treasureRipple 3s ease-out infinite 1.5s;
+}
+
+@keyframes treasureRipple {
+  0% { width: 40px; height: 14px; opacity: 0.7; }
+  100% { width: 180px; height: 56px; opacity: 0; }
+}
+
+/* 🎒 Kelluva nahkapussi joka keinuu hiljaa aalloilla */
+.treasure-pouch {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90px;
+  height: 100px;
+  animation: pouchBob 3.5s ease-in-out infinite;
+}
+
+.pouch-body {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 78px;
+  background: radial-gradient(ellipse at 40% 35%, #6b4a2a 0%, #4a3018 65%, #2e1d0e 100%);
+  border-radius: 45% 45% 50% 50% / 35% 35% 65% 65%;
+  box-shadow: inset -6px -8px 14px rgba(0, 0, 0, 0.5), 0 6px 12px rgba(0, 0, 0, 0.5);
+}
+
+/* Pussin suu joka on kiristetty hopealangalla */
+.pouch-neck {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 42px;
+  height: 20px;
+  background: linear-gradient(180deg, #5a3d22 0%, #3a2614 100%);
+  border-radius: 40% 40% 20% 20%;
+  border-top: 3px solid #c0c8d0;
+  box-shadow: 0 -2px 6px rgba(192, 200, 208, 0.5);
+}
+
+/* Himmeä haltijoiden hehku joka kajastaa pussin sisältä */
+.pouch-glow {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle, rgba(125, 211, 252, 0.35) 0%, rgba(125, 211, 252, 0) 70%);
+  animation: pouchGlowPulse 2.5s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes pouchBob {
+  0%, 100% { transform: translateX(-50%) translateY(0) rotate(-3deg); }
+  50% { transform: translateX(-50%) translateY(-8px) rotate(3deg); }
+}
+
+@keyframes pouchGlowPulse {
+  0% { opacity: 0.5; transform: translateX(-50%) scale(0.9); }
+  100% { opacity: 1; transform: translateX(-50%) scale(1.15); }
+}
+
+.treasure-scroll-window {
+  margin: 30px auto;
+}

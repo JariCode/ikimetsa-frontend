@@ -12,6 +12,7 @@ import GraveScreen from './components/GraveScreen';
 import VictoryScreen from './components/VictoryScreen';
 import CompanionScreen from './components/CompanionScreen';
 import WeaponScreen from './components/WeaponScreen';
+import TreasureScreen from './components/TreasureScreen';
 
 export default function App() {
   const [sessionId, setSessionId] = useState(sessionStorage.getItem('ikimetsa_session_id') || null);
@@ -59,9 +60,11 @@ export default function App() {
   const campfireActionInProgressRef = useRef(false);
   const [showCompanionReveal, setShowCompanionReveal] = useState(sessionStorage.getItem('ikimetsa_show_companion_reveal') === 'true');
   const [showWeaponReveal, setShowWeaponReveal] = useState(sessionStorage.getItem('ikimetsa_show_weapon_reveal') === 'true');
+  const [showTreasureReveal, setShowTreasureReveal] = useState(sessionStorage.getItem('ikimetsa_show_treasure_reveal') === 'true');
   const [showMovementTransition, setShowMovementTransition] = useState(false); // 🌫️ Usvasiirtymä liikkumisruutuun saavuttaessa
   const [showCompanionTransition, setShowCompanionTransition] = useState(false); // 🕸️ Seitin repeäminen kumppaniruutuun saavuttaessa
   const [showWeaponTransition, setShowWeaponTransition] = useState(false); // ⛏️ Mullan pöllähdys aseruutuun saavuttaessa
+  const [showTreasureTransition, setShowTreasureTransition] = useState(false); // 🌊 Vesipärskähdys aarrepussiruutuun saavuttaessa
 
   // 🌫️ Laukaisee usvasiirtymän joka pyyhkäisee ruudun yli. Kutsutaan VAIN niistä
   // kohdista jotka oikeasti vievät liikkumisruutuun (voitto, respawn, uusi peli,
@@ -82,6 +85,12 @@ export default function App() {
   const triggerWeaponTransition = () => {
     setShowWeaponTransition(true);
     setTimeout(() => setShowWeaponTransition(false), 2000);
+  };
+
+  // 🌊 Vesipärskähdyssiirtymä aarrepussiruutuun saavuttaessa
+  const triggerTreasureTransition = () => {
+    setShowTreasureTransition(true);
+    setTimeout(() => setShowTreasureTransition(false), 2000);
   };
 
   const addGameLog = (message, type = 'general') => {
@@ -134,6 +143,7 @@ export default function App() {
     sessionStorage.removeItem('ikimetsa_monster_reveal_shown');
     sessionStorage.removeItem('ikimetsa_show_companion_reveal');
     sessionStorage.removeItem('ikimetsa_show_weapon_reveal');
+    sessionStorage.removeItem('ikimetsa_show_treasure_reveal');
     setSessionId(null);
     setShouldRestoreSession(false);
     setLoggedInUser(null);
@@ -244,6 +254,14 @@ export default function App() {
       sessionStorage.removeItem('ikimetsa_show_weapon_reveal');
     }
   }, [showWeaponReveal]);
+
+  useEffect(() => {
+    if (showTreasureReveal) {
+      sessionStorage.setItem('ikimetsa_show_treasure_reveal', 'true');
+    } else {
+      sessionStorage.removeItem('ikimetsa_show_treasure_reveal');
+    }
+  }, [showTreasureReveal]);
 
   const deathFadeHandledRef = React.useRef(false);
   useEffect(() => {
@@ -364,6 +382,7 @@ export default function App() {
       sessionStorage.removeItem('ikimetsa_monster_reveal_shown');
       sessionStorage.removeItem('ikimetsa_show_companion_reveal');
       sessionStorage.removeItem('ikimetsa_show_weapon_reveal');
+      sessionStorage.removeItem('ikimetsa_show_treasure_reveal');
       
       setCombatInitiative(null);
       setCurrentTurn(null);
@@ -417,6 +436,30 @@ export default function App() {
   const handleContinueAfterWeapon = () => {
     sessionStorage.removeItem('ikimetsa_show_weapon_reveal');
     setShowWeaponReveal(false);
+    triggerMovementTransition();
+  };
+
+  const handleFindTreasure = async () => {
+    setError('');
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/game/find-treasure`, {
+        method: 'POST',
+        credentials: 'include'
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || 'Aarrepussin löytäminen epäonnistui.');
+
+      setActiveSession(data);
+      setSavedGameSession(data);
+      addGameLog(`🎒 Löysit haltijoiden pussin!`, 'system');
+      triggerTreasureTransition();
+      setShowTreasureReveal(true);
+    } catch (err) { setError(err.message); }
+  };
+
+  const handleContinueAfterTreasure = () => {
+    sessionStorage.removeItem('ikimetsa_show_treasure_reveal');
+    setShowTreasureReveal(false);
     triggerMovementTransition();
   };
 
@@ -857,6 +900,18 @@ export default function App() {
               <div className="dirt-clod dc6"></div>
             </div>
           )}
+          {showTreasureTransition && (
+            <div className="treasure-transition-overlay">
+              <div className="water-splash"></div>
+              <div className="water-droplet wd1"></div>
+              <div className="water-droplet wd2"></div>
+              <div className="water-droplet wd3"></div>
+              <div className="water-droplet wd4"></div>
+              <div className="water-droplet wd5"></div>
+              <div className="water-droplet wd6"></div>
+              <div className="water-wave"></div>
+            </div>
+          )}
 
           {sessionId && (showProfile || (gameStarted && activeSession)) && (
             <div className="top-right-buttons">
@@ -898,12 +953,15 @@ export default function App() {
             <CompanionScreen activeSession={activeSession} onContinue={handleContinueAfterCompanion} />
           ) : showWeaponReveal ? (
             <WeaponScreen activeSession={activeSession} onContinue={handleContinueAfterWeapon} />
+          ) : showTreasureReveal ? (
+            <TreasureScreen activeSession={activeSession} onContinue={handleContinueAfterTreasure} />
           ) : isNavigating ? (
             <MovementScreen
               activeSession={activeSession}
               handleEnterCombat={handleEnterCombat}
               onFindCompanion={handleFindCompanion}
               onFindWeapon={handleFindWeapon}
+              onFindTreasure={handleFindTreasure}
               phase={movementPhase}
               setPhase={setMovementPhase}
               handleRepairWeapon={handleRepairWeapon}

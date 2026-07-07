@@ -535,6 +535,43 @@ div.game-play-screen .player-status-bar {
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
+/* --- KUMPPANIN TILAPALKKI --- */
+.companion-status-block {
+  grid-column: span 3; /* Ottaa haltuunsa koko alarivin leveyssuunnassa */
+  
+  /* 🎯 Muutetaan lohko 3-sarakkeen gridiksi tismalleen samoilla suhteilla kuin pelaajalla */
+  display: grid;
+  grid-template-columns: 1.2fr 0.9fr 0.9fr; 
+  row-gap: 12px;
+  column-gap: 15px;
+  align-items: center;
+  width: 100%;
+  
+  border-top: 1px dashed #1e3a1e;
+  padding-top: 12px;
+  margin-top: 4px;
+}
+
+/* Jos kumppani kaatuu, teksti osaa ottaa koko tilan itselleen */
+.companion-status-block .dead-companion-wide {
+  grid-column: span 3;
+}
+
+/* Pakotetaan kumppanilohkon tekstit samanvärisiksi */
+.companion-status-block span {
+  color: #9ca3af;
+  font-size: 1rem;
+}
+
+.companion-status-block strong {
+  color: #4ade80;
+  font-size: 1rem;
+}
+
+.companion-status-block strong.low-hp {
+  color: #ef4444;
+}
+
 /* --- HIRVIÖBOXI --- */
 .monster-box {
   background: rgba(139, 0, 0, 0.1);
@@ -1509,41 +1546,82 @@ div.game-play-screen .player-status-bar {
   100% { opacity: 0; }
 }
 
-/*--------------------------------------------------*/
-/* --- MATKAKUMPPANIN LOPULLINEN GRID-LOHKO ------- */
-/*------------------------------------------------*/
-.companion-status-block {
-  grid-column: span 3; /* Ottaa haltuunsa koko alarivin leveyssuunnassa */
-  
-  /* 🎯 Muutetaan lohko 3-sarakkeen gridiksi tismalleen samoilla suhteilla kuin pelaajalla */
-  display: grid;
-  grid-template-columns: 1.2fr 0.9fr 0.9fr; 
-  row-gap: 12px;
-  column-gap: 15px;
-  align-items: center;
-  width: 100%;
-  
-  border-top: 1px dashed #1e3a1e;
-  padding-top: 12px;
-  margin-top: 4px;
+/* 🌊 AARREPUSSIN VESISIIRTYMÄ - kun saavutaan aarrepussiruutuun (Järvi, alue 4),
+   pussi nostetaan vedestä: vesi pärskähtää, pisarat lentävät ja aalto leviää.
+   Kesto 2s täsmää App.jsx:n triggerTreasureTransition setTimeout-arvoon (2000ms). */
+.treasure-transition-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  overflow: hidden;
+  animation: transitionFadeOut 2s ease-out forwards;
 }
 
-/* Jos kumppani kaatuu, teksti osaa ottaa koko tilan itselleen */
-.companion-status-block .dead-companion-wide {
-  grid-column: span 3;
+/* Sininen vesipärskähdys keskeltä */
+.water-splash {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 50vmax;
+  height: 50vmax;
+  transform: translate(-50%, -50%) scale(0.2);
+  background: radial-gradient(circle at center, rgba(80, 160, 210, 0.7) 0%, rgba(40, 100, 150, 0.4) 45%, transparent 72%);
+  border-radius: 50%;
+  filter: blur(10px);
+  opacity: 0;
+  animation: waterSplash 2s ease-out forwards;
 }
 
-/* Pakotetaan kumppanilohkon tekstit samanvärisiksi */
-.companion-status-block span {
-  color: #9ca3af;
-  font-size: 1rem;
+@keyframes waterSplash {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.2); }
+  25% { opacity: 1; transform: translate(-50%, -50%) scale(1.5); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(2.3); }
 }
 
-.companion-status-block strong {
-  color: #4ade80;
-  font-size: 1rem;
+/* Vesipisarat jotka lentävät ylös ja sivuille */
+.water-droplet {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 18px;
+  height: 24px;
+  background: radial-gradient(ellipse at 40% 30%, #bae6fd 0%, #38bdf8 60%, #0284c7 100%);
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
+  opacity: 0;
 }
 
-.companion-status-block strong.low-hp {
-  color: #ef4444;
+.water-droplet.wd1 { animation: waterDrop1 2s ease-out forwards; }
+.water-droplet.wd2 { animation: waterDrop2 2s ease-out forwards; }
+.water-droplet.wd3 { animation: waterDrop3 2s ease-out forwards; }
+.water-droplet.wd4 { animation: waterDrop4 2s ease-out forwards; }
+.water-droplet.wd5 { animation: waterDrop5 2s ease-out forwards; }
+.water-droplet.wd6 { animation: waterDrop6 2s ease-out forwards; }
+
+@keyframes waterDrop1 { 0%{opacity:0;transform:translate(0,0) scale(.5);} 15%{opacity:1;} 100%{opacity:0;transform:translate(-40vw,-42vh) scale(1);} }
+@keyframes waterDrop2 { 0%{opacity:0;transform:translate(0,0) scale(.5);} 15%{opacity:1;} 100%{opacity:0;transform:translate(38vw,-44vh) scale(1);} }
+@keyframes waterDrop3 { 0%{opacity:0;transform:translate(0,0) scale(.5);} 15%{opacity:1;} 100%{opacity:0;transform:translate(-25vw,-50vh) scale(1);} }
+@keyframes waterDrop4 { 0%{opacity:0;transform:translate(0,0) scale(.5);} 15%{opacity:1;} 100%{opacity:0;transform:translate(28vw,-48vh) scale(1);} }
+@keyframes waterDrop5 { 0%{opacity:0;transform:translate(0,0) scale(.5);} 15%{opacity:1;} 100%{opacity:0;transform:translate(-12vw,-52vh) scale(1);} }
+@keyframes waterDrop6 { 0%{opacity:0;transform:translate(0,0) scale(.5);} 15%{opacity:1;} 100%{opacity:0;transform:translate(15vw,-50vh) scale(1);} }
+
+/* Leviävä aaltorengas veden pinnalla */
+.water-wave {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  transform: translate(-50%, -50%);
+  border: 3px solid rgba(125, 211, 252, 0.5);
+  border-radius: 50%;
+  opacity: 0;
+  animation: waterWave 2s ease-out forwards;
+}
+
+@keyframes waterWave {
+  0% { opacity: 0; width: 40px; height: 40px; }
+  20% { opacity: 0.8; }
+  100% { opacity: 0; width: 90vmax; height: 90vmax; }
 }
