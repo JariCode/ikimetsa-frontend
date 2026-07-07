@@ -78,7 +78,7 @@ export default function GamePlay({
         <div className="status-item">
           <span>Ase:</span> <strong>{activeSession.inventory[0]?.name} ({activeSession.inventory[0]?.durability}/{activeSession.inventory[0]?.maxDurability})</strong>
           {activeSession.inventory[0]?.durability < activeSession.inventory[0]?.maxDurability && (activeSession.repairPoints >= 2) && (
-            <button className="repair-mini-btn" onClick={() => handleRepairWeapon('player')}>
+            <button className="repair-mini-btn player-repair-btn" onClick={() => handleRepairWeapon('player')}>
               🔧 Korjaa (2pts)
             </button>
           )}
@@ -95,7 +95,7 @@ export default function GamePlay({
                     <strong>{activeSession.companionName} (Lvl {activeSession.stats.level || 1})</strong>
                   </div>
                   <div className="companion-right-column">
-                    <span>Kumppanin kunto:</span>
+                    <span>Kunto:</span>
                     <strong className={activeSession.companionHp < 15 ? 'low-hp' : ''}>
                       {activeSession.companionHp} / {activeSession.companionMaxHp} HP
                     </strong>
@@ -105,10 +105,10 @@ export default function GamePlay({
                 {/* Rivi 2: Vasemmalla ase ja kestävyys, oikealla korjauspainike jos tarpeen */}
                 <div className="companion-row-line">
                   <div className="companion-left-column">
-                    <span>Kumppanin ase:</span>
+                    <span>Ase:</span>
                     <strong>{activeSession.companionWeaponName} ({activeSession.companionWeaponDurability}/{activeSession.companionWeaponMaxDurability})</strong>
                   </div>
-                  <div className="companion-right-column" style={{ justifyContent: 'flex-end' }}>
+                  <div className="companion-right-column">
                     {activeSession.companionWeaponDurability < activeSession.companionWeaponMaxDurability && (activeSession.repairPoints >= 2) && (
                       <button className="repair-mini-btn" onClick={() => handleRepairWeapon('companion')}>
                         🔧 Korjaa (2pts)

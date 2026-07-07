@@ -518,6 +518,11 @@ div.game-play-screen .player-status-bar {
   flex-shrink: 0;
 }
 
+/* --- PELIHAHMON KORJAUSNAPPI --- */
+.player-status-bar .player-repair-btn {
+  margin-left: 45px;
+}
+
 .status-item span { color: #9ca3af; }
 .status-item strong { color: #4ade80; }
 
@@ -1503,8 +1508,9 @@ div.game-play-screen .player-status-bar {
   75% { opacity: 1; }
   100% { opacity: 0; }
 }
-
+/*--------------------------------------------------*/
 /* --- MATKAKUMPPANIN KAKSIRIVINEN STATUS-LOHKO --- */
+/*------------------------------------------------*/
 .companion-status-block {
   display: flex;
   flex-direction: column;
@@ -1524,7 +1530,7 @@ div.game-play-screen .player-status-bar {
 
 /* 🎯 TÄTÄ LUKUA ON KASVATETTU (260px -> 400px): Se työntää oikeaa saraketta nätisti oikealle */
 .companion-row-line .companion-left-column {
-  width: 380px; /* 👈 Jos haluat siirtää kunto-tekstiä vieläkin enemmän oikealle, suurenna tätä lukua (esim. 315px) */
+  width: 283px; /* 👈 Jos haluat siirtää kunto-tekstiä vieläkin enemmän oikealle, suurenna tätä lukua (esim. 315px) */
   display: flex;
   align-items: center;
   gap: 8px;
@@ -1561,3 +1567,4 @@ div.game-play-screen .player-status-bar {
 .companion-status-block strong.low-hp {
   color: #ef4444;
 }
+
