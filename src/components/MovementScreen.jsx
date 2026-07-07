@@ -167,7 +167,7 @@ export default function MovementScreen({
                 <>
                   {/* Kumppanin rivi 1 (Vastaa hahmon riviä 1) */}
                   <div className="status-item">
-                      <span>Kumppani:</span> <strong>{activeSession.companionName} (Lvl {activeSession.stats.level || 1})</strong>
+                    <span>Kumppani:</span> <strong>{activeSession.companionName} (Lvl {Math.max(1, (activeSession.stats.level || 1) - 2)})</strong>
                   </div>
                   <div className="status-item">
                     <span>Kunto:</span> <strong className={activeSession.companionHp < 15 ? 'low-hp' : ''}>{activeSession.companionHp} / {activeSession.companionMaxHp} HP</strong>
