@@ -13,6 +13,7 @@ import VictoryScreen from './components/VictoryScreen';
 import CompanionScreen from './components/CompanionScreen';
 import WeaponScreen from './components/WeaponScreen';
 import TreasureScreen from './components/TreasureScreen';
+import AdminPanel from './components/AdminPanel';
 
 export default function App() {
   const [sessionId, setSessionId] = useState(sessionStorage.getItem('ikimetsa_session_id') || null);
@@ -24,6 +25,8 @@ export default function App() {
   const [usernameInput, setUsernameInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
   const [loggedInUser, setLoggedInUser] = useState(null);
+  const [userRole, setUserRole] = useState(null); // 🔐 'admin' näyttää Admin-napin ja -paneelin
+  const [showAdmin, setShowAdmin] = useState(sessionStorage.getItem('ikimetsa_show_admin') === 'true');
   const [savedGameSession, setSavedGameSession] = useState(null);
   const [showProfile, setShowProfile] = useState(sessionStorage.getItem('ikimetsa_show_profile') === 'true');
   const [successMessage, setSuccessMessage] = useState('');
@@ -139,6 +142,7 @@ export default function App() {
 
     sessionStorage.removeItem('ikimetsa_session_id');
     sessionStorage.removeItem('ikimetsa_show_profile');
+    sessionStorage.removeItem('ikimetsa_show_admin');
     sessionStorage.removeItem('ikimetsa_death_fade_shown');
     sessionStorage.removeItem('ikimetsa_monster_reveal_shown');
     sessionStorage.removeItem('ikimetsa_show_companion_reveal');
@@ -147,6 +151,8 @@ export default function App() {
     setSessionId(null);
     setShouldRestoreSession(false);
     setLoggedInUser(null);
+    setUserRole(null);
+    setShowAdmin(false);
     setSavedGameSession(null);
     setActiveSession(null);
     setGameStarted(false);
@@ -174,6 +180,7 @@ export default function App() {
         })
         .then(data => {
           setLoggedInUser(data.username || null);
+          setUserRole(data.role || null);
           if (data.session) {
             setSavedGameSession(data.session);
             setActiveSession(data.session);
@@ -222,6 +229,14 @@ export default function App() {
       sessionStorage.removeItem('ikimetsa_show_profile');
     }
   }, [showProfile]);
+
+  useEffect(() => {
+    if (showAdmin) {
+      sessionStorage.setItem('ikimetsa_show_admin', 'true');
+    } else {
+      sessionStorage.removeItem('ikimetsa_show_admin');
+    }
+  }, [showAdmin]);
 
   useEffect(() => {
     if (isNavigating) {
@@ -312,6 +327,7 @@ export default function App() {
       setShouldRestoreSession(false);
       setIsHydratingSession(false);
       setLoggedInUser(data.username);
+      setUserRole(data.role || null);
       setSavedGameSession(data.session || null);
       setActiveSession(null);
       setGameStarted(false);
@@ -604,6 +620,7 @@ export default function App() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || 'Käyttäjätunnuksen vaihto epäonnistui.');
       setLoggedInUser(data.username);
+      setUserRole(data.role || null);
       setSuccessMessage('Käyttäjätunnus vaihdettu onnistuneesti.');
       setTimeout(() => setSuccessMessage(''), 3000);
       return true;
@@ -913,12 +930,19 @@ export default function App() {
             </div>
           )}
 
-          {sessionId && (showProfile || (gameStarted && activeSession)) && (
+          {sessionId && (showProfile || showAdmin || (gameStarted && activeSession)) && (
             <div className="top-right-buttons">
               {showProfile ? (
                 <button className="profile-top-btn" onClick={() => setShowProfile(false)}>Takaisin peliin</button>
+              ) : showAdmin ? (
+                <button className="profile-top-btn" onClick={() => setShowAdmin(false)}>Takaisin peliin</button>
               ) : (
-                <button className="profile-top-btn" onClick={() => setShowProfile(true)}>Profiili</button>
+                <>
+                  <button className="profile-top-btn" onClick={() => setShowProfile(true)}>Profiili</button>
+                  {userRole === 'admin' && (
+                    <button className="profile-top-btn" onClick={() => setShowAdmin(true)}>Ylläpito</button>
+                  )}
+                </>
               )}
               <button className="logout-top-btn" onClick={handleLogout}>Kirjaudu ulos</button>
             </div>
@@ -931,6 +955,8 @@ export default function App() {
               passwordInput={passwordInput} setPasswordInput={setPasswordInput}
               handleAuthSubmit={handleAuthSubmit}
             />
+          ) : showAdmin ? (
+            <AdminPanel onError={setError} />
           ) : showProfile ? (
             <ProfileSettings
               currentUsername={loggedInUser}

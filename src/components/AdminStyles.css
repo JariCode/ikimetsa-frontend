@@ -1,0 +1,244 @@
+.admin-panel {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  background: rgba(4, 8, 4, 0.95);
+  border: 1px solid #2a4a2a;
+  box-shadow:
+    0 0 0 1px rgba(74, 222, 128, 0.15),
+    0 0 20px rgba(74, 222, 128, 0.12),
+    0 8px 30px rgba(0, 0, 0, 0.7),
+    inset 0 0 30px rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+  padding: 28px;
+  box-sizing: border-box;
+}
+
+.admin-title {
+  color: #4ade80;
+  text-shadow: 0 0 12px rgba(74, 222, 128, 0.5);
+  margin: 0 0 20px;
+  text-align: center;
+}
+
+.admin-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid #1e3a1e;
+  padding-bottom: 12px;
+}
+
+.admin-tab {
+  background: rgba(10, 25, 10, 0.75);
+  color: #9ca3af;
+  border: 1px solid #1e3a1e;
+  padding: 10px 24px;
+  font-size: 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.admin-tab:hover {
+  color: #4ade80;
+  border-color: #2a4a2a;
+}
+
+.admin-tab.active {
+  background: #166534;
+  color: #fff;
+  border-color: #4ade80;
+  box-shadow: 0 0 12px rgba(74, 222, 128, 0.3);
+}
+
+.admin-loading {
+  color: #9ca3af;
+  text-align: center;
+  padding: 20px;
+}
+
+.admin-logs {
+  width: 100%;
+}
+
+/* Lokitaulukko rajattuun korkeuteen omalla vieritysalueellaan, ettei se
+   venytä koko sivua. Sarakeleveydet kiinnitetään ettei ID-sarake leviä. */
+.admin-log-scroll {
+  max-height: 60vh;
+  overflow-y: auto;
+  border: 1px solid rgba(30, 58, 30, 0.5);
+  border-radius: 4px;
+  scrollbar-color: #1e3a1e #091209;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  table-layout: fixed;
+}
+
+.admin-table th {
+  color: #9ca3af;
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid #2a4a2a;
+  font-weight: normal;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: sticky;
+  top: 0;
+  background: #0a1a0a;
+  z-index: 1;
+}
+
+.admin-table td {
+  color: #f0fdf4;
+  padding: 12px;
+  border-bottom: 1px solid rgba(30, 58, 30, 0.5);
+  vertical-align: top;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.admin-logs .admin-table th:nth-child(1),
+.admin-logs .admin-table td:nth-child(1) { width: 25%; } /* Aika saa riittävästi tilaa, ettei teksti rivity */
+
+.admin-logs .admin-table th:nth-child(2),
+.admin-logs .admin-table td:nth-child(2) { width: 20%; } /* Käyttäjä (tekijä) */
+
+.admin-logs .admin-table th:nth-child(3),
+.admin-logs .admin-table td:nth-child(3) { width: 55%; } /* Tapahtuman kuvaus saa lopputilan haltuunsa */
+
+.admin-row-self {
+  background: rgba(74, 222, 128, 0.05);
+}
+
+.admin-self-tag {
+  color: #4ade80;
+  font-size: 0.85rem;
+}
+
+.admin-role-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.admin-role-badge.role-admin {
+  background: rgba(251, 191, 36, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.4);
+}
+
+.admin-role-badge.role-user {
+  background: rgba(148, 163, 184, 0.15);
+  color: #cbd5e1;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+.admin-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.admin-action-btn {
+  background: #166534;
+  color: #fff;
+  border: 1px solid #4ade80;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.admin-action-btn:hover:not(:disabled) {
+  background: #15803d;
+  box-shadow: 0 0 10px rgba(74, 222, 128, 0.3);
+}
+
+.admin-action-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.admin-action-danger {
+  background: #7f1d1d;
+  border-color: #ef4444;
+}
+
+.admin-action-danger:hover:not(:disabled) {
+  background: #991b1b;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+}
+
+.admin-log-search {
+  width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  background: rgba(10, 25, 10, 0.75);
+  border: 1px solid #2a4a2a;
+  border-radius: 4px;
+  color: #f0fdf4;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+}
+
+.admin-log-search:focus {
+  outline: none;
+  border-color: #4ade80;
+  box-shadow: 0 0 8px rgba(74, 222, 128, 0.2);
+}
+
+.admin-log-time {
+  color: #9ca3af;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.admin-log-action {
+  color: #7dd3fc;
+  font-size: 0.8rem;
+  font-family: monospace;
+}
+
+.admin-log-details {
+  color: #cbd5e1;
+  font-size: 0.9rem;
+}
+
+/* Vahvistuslaatikon peittotausta - keskittää dialogin ruudulle */
+.admin-confirm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 20px;
+}
+
+.admin-confirm-overlay .profile-confirm-box {
+  max-width: 480px;
+}
+
+.admin-confirm-overlay .auth-submit-btn {
+  background: rgba(251, 191, 36, 0.15); /* Läpinäkyvä keltainen pohja */
+  color: #fbbf24; /* Keltainen teksti */
+  border: 1px solid rgba(251, 191, 36, 0.4); /* Läpinäkyvä keltainen reunus */
+  font-weight: bold;
+}
+
+.admin-confirm-overlay .auth-submit-btn:hover {
+  background: rgba(251, 191, 36, 0.25); /* Hieman vahvempi keltainen tausta */
+  box-shadow: 0 0 12px rgba(251, 191, 36, 0.3);
+}
