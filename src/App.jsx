@@ -143,6 +143,7 @@ export default function App() {
     sessionStorage.removeItem('ikimetsa_session_id');
     sessionStorage.removeItem('ikimetsa_show_profile');
     sessionStorage.removeItem('ikimetsa_show_admin');
+    sessionStorage.removeItem('ikimetsa_admin_tab');
     sessionStorage.removeItem('ikimetsa_death_fade_shown');
     sessionStorage.removeItem('ikimetsa_monster_reveal_shown');
     sessionStorage.removeItem('ikimetsa_show_companion_reveal');
@@ -933,9 +934,17 @@ export default function App() {
           {sessionId && (showProfile || showAdmin || (gameStarted && activeSession)) && (
             <div className="top-right-buttons">
               {showProfile ? (
-                <button className="profile-top-btn" onClick={() => setShowProfile(false)}>Takaisin peliin</button>
+                <>
+                  <button className="profile-top-btn" onClick={() => { setShowProfile(false); }}>Takaisin peliin</button>
+                  {userRole === 'admin' && (
+                    <button className="profile-top-btn" onClick={() => { setShowProfile(false); setShowAdmin(true); }}>Ylläpito</button>
+                  )}
+                </>
               ) : showAdmin ? (
-                <button className="profile-top-btn" onClick={() => setShowAdmin(false)}>Takaisin peliin</button>
+                <>
+                  <button className="profile-top-btn" onClick={() => { setShowAdmin(false); }}>Takaisin peliin</button>
+                  <button className="profile-top-btn" onClick={() => { setShowAdmin(false); setShowProfile(true); }}>Profiili</button>
+                </>
               ) : (
                 <>
                   <button className="profile-top-btn" onClick={() => setShowProfile(true)}>Profiili</button>

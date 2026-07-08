@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './AdminStyles.css';
 
 export default function AdminPanel({ onError }) {
-  const [activeTab, setActiveTab] = useState('users'); // 'users' | 'logs'
+  const [activeTab, setActiveTab] = useState(sessionStorage.getItem('ikimetsa_admin_tab') || 'users'); // 'users' | 'logs'
 
   const [users, setUsers] = useState([]);
   const [currentAdminId, setCurrentAdminId] = useState(null);
@@ -45,6 +45,7 @@ export default function AdminPanel({ onError }) {
   };
 
   useEffect(() => {
+    sessionStorage.setItem('ikimetsa_admin_tab', activeTab);
     if (activeTab === 'users') fetchUsers();
     if (activeTab === 'logs') fetchLogs();
   }, [activeTab]);
