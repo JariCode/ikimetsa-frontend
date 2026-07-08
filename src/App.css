@@ -664,7 +664,7 @@ div.game-play-screen .player-status-bar {
 
 @keyframes campfireScroll {
   from { transform: translateY(7.8rem); }
-  to   { transform: translateY(-7.8rem); }
+  to   { transform: translateY(-16rem); }
 }
 
 .campfire-visual {
@@ -762,7 +762,7 @@ div.game-play-screen .player-status-bar {
 
 @keyframes graveScroll {
   from { transform: translateY(7.8rem); }
-  to   { transform: translateY(-7.8rem); }
+  to   { transform: translateY(-16rem); }
 }
 
 .grave-btn {
