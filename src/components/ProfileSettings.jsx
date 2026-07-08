@@ -12,7 +12,7 @@ export default function ProfileSettings({
   onChangePassword,
   onDeleteAccount
 }) {
-  const [activeTab, setActiveTab] = useState('username'); // 'username' | 'password' | 'delete'
+  const [activeTab, setActiveTab] = useState(sessionStorage.getItem('ikimetsa_profile_tab') || 'username'); // 'username' | 'password' | 'delete'
 
   const [newUsername, setNewUsername] = useState('');
   const [usernameConfirmPassword, setUsernameConfirmPassword] = useState('');
@@ -35,6 +35,7 @@ export default function ProfileSettings({
     setPendingPassword(false);
     setPendingDelete(false);
     setActiveTab(tab);
+    sessionStorage.setItem('ikimetsa_profile_tab', tab);
   };
 
   // --- KÄYTTÄJÄTUNNUKSEN VAIHTO ---

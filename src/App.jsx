@@ -18,7 +18,7 @@ import AdminPanel from './components/AdminPanel';
 export default function App() {
   const [sessionId, setSessionId] = useState(sessionStorage.getItem('ikimetsa_session_id') || null);
   const [shouldRestoreSession, setShouldRestoreSession] = useState(
-    Boolean(sessionStorage.getItem('ikimetsa_session_id') && sessionStorage.getItem('ikimetsa_session_id') !== 'logged_in')
+    Boolean(sessionStorage.getItem('ikimetsa_session_id'))
   );
   const [isHydratingSession, setIsHydratingSession] = useState(Boolean(sessionStorage.getItem('ikimetsa_session_id') && sessionStorage.getItem('ikimetsa_session_id') !== 'logged_in'));
   const [authMode, setAuthMode] = useState('login');
@@ -144,6 +144,7 @@ export default function App() {
     sessionStorage.removeItem('ikimetsa_show_profile');
     sessionStorage.removeItem('ikimetsa_show_admin');
     sessionStorage.removeItem('ikimetsa_admin_tab');
+    sessionStorage.removeItem('ikimetsa_profile_tab');
     sessionStorage.removeItem('ikimetsa_death_fade_shown');
     sessionStorage.removeItem('ikimetsa_monster_reveal_shown');
     sessionStorage.removeItem('ikimetsa_show_companion_reveal');
