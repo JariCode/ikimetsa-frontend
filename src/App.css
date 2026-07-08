@@ -6,6 +6,32 @@ body {
   overflow: hidden;
 }
 
+/* 🦊 Firefox-korjaus: estää tekstikursorin (caret) vilkkumasta ei-tekstielementeissä.
+   Firefox saattaa muuten sijoittaa vilkkuvan kursorin otsikoihin, kappaleisiin ja
+   taustaan kun niitä klikkaa. user-select: none estää tämän kaikkialta, ja se
+   sallitaan takaisin vain syöttökentissä joissa kirjoittaminen on tarpeen. */
+* {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  caret-color: transparent;
+}
+
+input,
+textarea {
+  user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  caret-color: auto;
+}
+
+/* Napit eivät saa koskaan näyttää tekstikursoria - Firefox saattaa muuten
+   sijoittaa vilkkuvan caretin napin tekstiin kun sitä klikataan. */
+button {
+  cursor: pointer;
+  caret-color: transparent;
+}
+
 .game-container {
   display: flex;
   justify-content: center;
