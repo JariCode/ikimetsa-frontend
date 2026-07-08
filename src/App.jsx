@@ -931,18 +931,18 @@ export default function App() {
             </div>
           )}
 
-          {sessionId && (showProfile || showAdmin || (gameStarted && activeSession)) && (
+          {sessionId && (
             <div className="top-right-buttons">
               {showProfile ? (
                 <>
-                  <button className="profile-top-btn" onClick={() => { setShowProfile(false); }}>Takaisin peliin</button>
+                  <button className="profile-top-btn" onClick={() => { setShowProfile(false); }}>Ikimetsä</button>
                   {userRole === 'admin' && (
                     <button className="profile-top-btn" onClick={() => { setShowProfile(false); setShowAdmin(true); }}>Ylläpito</button>
                   )}
                 </>
               ) : showAdmin ? (
                 <>
-                  <button className="profile-top-btn" onClick={() => { setShowAdmin(false); }}>Takaisin peliin</button>
+                  <button className="profile-top-btn" onClick={() => { setShowAdmin(false); }}>Ikimetsä</button>
                   <button className="profile-top-btn" onClick={() => { setShowAdmin(false); setShowProfile(true); }}>Profiili</button>
                 </>
               ) : (
