@@ -1630,18 +1630,19 @@ div.game-play-screen .player-status-bar {
   }
 
 /* Intro tarinan teksti mobiilissa: teksti saa olla useammalla rivillä, ei katkea, ja mahtuu kokonaisuudessaan ruudulle. */
-  .intro-scroll-window .intro-scroll-content .intro-text {
+.intro-scroll-window .intro-scroll-content .intro-text {
     display: block;
     white-space: normal;    
     text-overflow: clip;
-    overflow: visible;
+    overflow: hidden;
     
     width: 100%;
     max-width: 100%;
     text-align: center;
     font-size: 0.85rem;
-    line-height: 1.4;
-    margin-bottom: 24px;
+    line-height: 1.2;
+    height: 2.4rem;
+    margin: 0;
   }
 
   /*Intro tarinan teksti mobiilissa: scrollausikkuna pienemmäksi, jotta se mahtuu ruudulle. */
@@ -1686,9 +1687,120 @@ div.game-play-screen .player-status-bar {
   .character-selection-screen .char-stats {
     font-size: 0.8rem;
   }
-  
-}
 
+/* Kortti mahtuu ruudulle, ei mene navin alle, taustaa näkyy reunoilla. */
+  .game-play-screen {
+    padding: 10px;
+    max-width: 94vw;
+    max-height: calc(100vh - 90px);
+    overflow-y: auto;
+  }
+
+  /* Tilapalkki 2 sarakkeeseen 3:n sijaan - matalampi kortti. */
+  div.game-play-screen .player-status-bar,
+  .companion-status-block {
+    grid-template-columns: 1fr 1fr;
+    row-gap: 8px;
+    column-gap: 10px;
+    padding: 12px 14px;
+  }
+
+  /* Kaatunut kumppani: span 2 sarakkeen leveydeltä. */
+  .companion-status-block .dead-companion-wide {
+    grid-column: span 2;
+  }
+
+  /* Otsikko ja arvo päällekkäin, ettei rivitys riko asettelua. */
+  .status-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    white-space: normal;
+    font-size: 0.8rem;
+  }
+
+  .companion-status-block span,
+  .companion-status-block strong {
+    font-size: 0.8rem;
+  }
+
+  /* Korjausnappi pienemmäksi mobiilissa. */
+  .repair-mini-btn {
+    padding: 4px 8px;
+    font-size: 0.7rem;
+    margin-left: 0;
+  }
+
+  /* Liikkumis- ja hirviöruutu: pienempi padding. */
+  .movement-box,
+  .monster-box {
+    padding: 10px;
+  }
+
+  /* Otsikko pienemmäksi ja tiiviimmäksi. */
+  .movement-title,
+  .monster-title {
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+
+  /* Kuntoteksti/tarinateksti: oletus-<p> liian iso. */
+  .monster-box p,
+  .movement-box p {
+    font-size: 0.85rem;
+    margin: 6px 0 0 0;
+  }
+
+  /* Noppien rivi ja nopat pienemmiksi, jotta rivi mahtuu leveydeltään. */
+  .dice-row {
+    gap: 10px;
+    margin: 8px 0;
+  }
+
+  .d20-visual-dice,
+  .d6-movement-dice {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+  }
+
+  .d8-visual-dice,
+  .monster-damage-dice {
+    width: 24px;
+    height: 24px;
+    font-size: 0.85rem;
+  }
+
+  /* Loki tiiviimmäksi: pienempi otsikko, padding, korkeus. */
+  .unified-log-header {
+    font-size: 0.75rem;
+    padding: 5px 10px;
+  }
+
+  .unified-log-content {
+    padding: 10px;
+    height: 110px;
+  }
+
+  .unified-log-line {
+    font-size: 0.75rem;
+  }
+
+  .action-buttons {
+    margin-top: 12px;
+  }
+
+  /* Nappi: pienempi fontti, koska teksti on pidempi kuin muissa napeissa. */
+  .attack-btn {
+    padding: 10px 14px;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+  }
+
+}
+  
 /* --- KAPEA PUHELIN (max 400px) --- */
 @media (max-width: 400px) {
   .game-title {
