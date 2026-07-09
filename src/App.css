@@ -1691,26 +1691,35 @@ div.game-play-screen .player-status-bar {
 /* Kortti mahtuu ruudulle, ei mene navin alle, taustaa näkyy reunoilla. */
   .game-play-screen {
     padding: 10px;
+    margin-top: 20px;
     max-width: 94vw;
     max-height: calc(100vh - 90px);
     overflow-y: auto;
   }
 
-  /* Tilapalkki 2 sarakkeeseen 3:n sijaan - matalampi kortti. */
-  div.game-play-screen .player-status-bar,
-  .companion-status-block {
+  /* Tilapalkki 2 sarakkeeseen, tiivis väli ja padding. */
+  div.game-play-screen .player-status-bar {
     grid-template-columns: 1fr 1fr;
-    row-gap: 8px;
+    row-gap: 5px;
     column-gap: 10px;
-    padding: 12px 14px;
+    padding: 8px 10px;
   }
 
-  /* Kaatunut kumppani: span 2 sarakkeen leveydeltä. */
+  /* Kumppanilohko ei ole enää oma laatikko/grid, lapset putoavat suoraan gridiin. */
+  .companion-status-block {
+    display: contents;
+  }
+
+  /* Tyhjät täytesolut piiloon. */
+  .status-item:empty {
+    display: none;
+  }
+
   .companion-status-block .dead-companion-wide {
     grid-column: span 2;
   }
 
-  /* Otsikko ja arvo päällekkäin, ettei rivitys riko asettelua. */
+  /* Otsikko ja arvo päällekkäin. */
   .status-item {
     display: flex;
     flex-direction: column;
@@ -1725,63 +1734,60 @@ div.game-play-screen .player-status-bar {
     font-size: 0.8rem;
   }
 
-  /* Korjausnappi pienemmäksi mobiilissa. */
   .repair-mini-btn {
     padding: 4px 8px;
     font-size: 0.7rem;
     margin-left: 0;
   }
 
-  /* Liikkumis- ja hirviöruutu: pienempi padding. */
-  .movement-box,
-  .monster-box {
-    padding: 10px;
+  /* Esi-isäluokka lisätty, koska pelkkä .monster-box hävisi spesifisyydessä
+     hirviökohtaisille luokille (esim. .monster-box-hamahakki { padding: 20px; }). */
+  .game-play-screen .movement-box,
+  .game-play-screen .monster-box {
+    padding: 6px;
   }
 
-  /* Otsikko pienemmäksi ja tiiviimmäksi. */
   .movement-title,
   .monster-title {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     letter-spacing: 1px;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
   }
 
-  /* Kuntoteksti/tarinateksti: oletus-<p> liian iso. */
+  /* Oletus-<p> liian iso. */
   .monster-box p,
   .movement-box p {
     font-size: 0.85rem;
     margin: 6px 0 0 0;
   }
 
-  /* Noppien rivi ja nopat pienemmiksi, jotta rivi mahtuu leveydeltään. */
   .dice-row {
-    gap: 10px;
-    margin: 8px 0;
+    gap: 6px;
+    margin: 10px 0 4px 0;
   }
 
   .d20-visual-dice,
   .d6-movement-dice {
-    width: 36px;
-    height: 36px;
-    font-size: 1rem;
+    width: 32px;
+    height: 32px;
+    font-size: 0.9rem;
   }
 
   .d8-visual-dice,
   .monster-damage-dice {
-    width: 24px;
-    height: 24px;
-    font-size: 0.85rem;
+    width: 22px;
+    height: 22px;
+    font-size: 0.75rem;
   }
 
-  /* Loki tiiviimmäksi: pienempi otsikko, padding, korkeus. */
   .unified-log-header {
     font-size: 0.75rem;
     padding: 5px 10px;
   }
 
   .unified-log-content {
-    padding: 10px;
-    height: 110px;
+    padding: 8px;
+    height: 90px;
   }
 
   .unified-log-line {
@@ -1789,14 +1795,14 @@ div.game-play-screen .player-status-bar {
   }
 
   .action-buttons {
-    margin-top: 12px;
+    margin-top: 8px;
   }
 
-  /* Nappi: pienempi fontti, koska teksti on pidempi kuin muissa napeissa. */
+  /* Nappi: pienempi kuin muut, koska teksti pidempi. */
   .attack-btn {
-    padding: 10px 14px;
-    font-size: 0.8rem;
-    letter-spacing: 1px;
+    padding: 8px 12px;
+    font-size: 0.75rem;
+    letter-spacing: 0.8px;
   }
 
 }
