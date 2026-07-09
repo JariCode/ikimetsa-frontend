@@ -335,6 +335,20 @@ button {
   margin: 40px auto;
 }
 
+/* Liikkumisruudun oma alkutarina (5 riviä) - oma animaatio erikseen, koska
+   se jaetaan koko peliin sisään tullessa aina uudestaan ja JS vaihtaa
+   vaiheen automaattisesti 14s kohdalla (MovementScreen.jsx). Kesto+viive
+   pitää pysyä selvästi alle sen, jotta viimeiset rivit ehtivät näkyä
+   ennen automaattista siirtymistä liikkumisruutuun. */
+.movement-scroll-window .intro-scroll-content {
+  animation: movementIntroScroll 11s linear 1.2s 1 both;
+}
+
+@keyframes movementIntroScroll {
+  from { transform: translateY(7.8rem); }
+  to   { transform: translateY(-6.5rem); }
+}
+
 .intro-scroll-content {
   display: flex;
   flex-direction: column;
@@ -358,12 +372,6 @@ button {
 @keyframes introScroll {
   from { transform: translateY(7.8rem); }
   to   { transform: translateY(-36.4rem); }
-}
-
-@media (max-width: 480px) {
-  .intro-scroll-content .intro-text {
-    font-size: 0.85rem;
-  }
 }
 
 .intro-welcome-back {
@@ -664,7 +672,7 @@ div.game-play-screen .player-status-bar {
 
 @keyframes campfireScroll {
   from { transform: translateY(7.8rem); }
-  to   { transform: translateY(-16rem); }
+  to   { transform: translateY(-7.8rem); }
 }
 
 .campfire-visual {
@@ -762,7 +770,7 @@ div.game-play-screen .player-status-bar {
 
 @keyframes graveScroll {
   from { transform: translateY(7.8rem); }
-  to   { transform: translateY(-16rem); }
+  to   { transform: translateY(-7.8rem); }
 }
 
 .grave-btn {
@@ -1630,25 +1638,84 @@ div.game-play-screen .player-status-bar {
   }
 
 /* Intro tarinan teksti mobiilissa: teksti saa olla useammalla rivillä, ei katkea, ja mahtuu kokonaisuudessaan ruudulle. */
-.intro-scroll-window .intro-scroll-content .intro-text {
+  .intro-scroll-window .intro-scroll-content .intro-text {
     display: block;
     white-space: normal;    
     text-overflow: clip;
-    overflow: hidden;
+    overflow: visible;
+    overflow-wrap: break-word;
+    word-break: break-word;
     
     width: 100%;
     max-width: 100%;
+    box-sizing: border-box;
     text-align: center;
     font-size: 0.85rem;
-    line-height: 1.2;
-    height: 2.4rem;
-    margin: 0;
+    line-height: 1.3;
+    height: auto;
+    margin: 0 0 10px 0;
+  }
+
+  /* Sisältö on mobiilissa korkeampi (rivit rivittyvät 2-3 riville + marginaali
+     eikä enää mahdu desktopin kiinteään 2.6rem/rivi), joten alkuperäinen
+     rullausmatka (-36.4rem) ei enää riitä - viimeiset rivit jäivät piiloon.
+     Annetaan uusi, pidempi loppuarvo vain nimellä - kesto/viive periytyy. */
+  @keyframes introScrollMobile {
+    from { transform: translateY(7.8rem); }
+    to   { transform: translateY(-40rem); }
+  }
+
+  .intro-screen .intro-scroll-content {
+    animation-name: introScrollMobile;
+  }
+
+  /* Liikkumisruudun oma intro (5 riviä) - kohdistettu erikseen ettei se
+     peri Alkuintron 17-rivistä introScrollMobile-arvoa vahingossa (sama
+     .intro-screen-luokka on molemmilla). Kesto lyhyempi (11s + 1.2s
+     viive = 12.2s), jotta viimeiset rivit ehtivät näkyä ennen JS:n
+     automaattista 14s siirtymää liikkumisruutuun. */
+  .movement-scroll-window .intro-scroll-content {
+    animation: movementIntroScrollMobile 11s linear 1.2s 1 both;
+  }
+
+  @keyframes movementIntroScrollMobile {
+    from { transform: translateY(7.8rem); }
+    to   { transform: translateY(-7rem); }
+  }
+
+  /* Sama korjaus kuin Introlla: rivit ovat mobiilissa korkeampia kuin
+     desktopin kiinteä 2.6rem/rivi, joten matka piti pidentää ettei
+     viimeiset rivit jää piiloon. */
+  .grave-screen .grave-scroll-content {
+    animation-name: graveScrollMobile;
+  }
+
+  .campfire-screen .campfire-scroll-content {
+    animation-name: campfireScrollMobile;
+  }
+
+  /* Ikkuna oli edelleen alkuperäisessä 7.8rem-korkeudessaan, mutta
+     height:auto-teksti ei täytä sitä kokonaan - jää iso tyhjä väli
+     ikkunan sisään. Pienennetään ikkuna vastaamaan sisältöä. */
+  .grave-scroll-window,
+  .campfire-scroll-window {
+    height: 6rem;
+  }
+
+  @keyframes graveScrollMobile {
+    from { transform: translateY(6rem); }
+    to   { transform: translateY(-11rem); }
+  }
+
+  @keyframes campfireScrollMobile {
+    from { transform: translateY(6rem); }
+    to   { transform: translateY(-7.8rem); }
   }
 
   /*Intro tarinan teksti mobiilissa: scrollausikkuna pienemmäksi, jotta se mahtuu ruudulle. */
   .intro-scroll-window {
     width: 100%;
-    max-width: 300px;
+    max-width: 92%;
     margin: 0 auto;
     overflow: hidden;
   }
@@ -1688,7 +1755,10 @@ div.game-play-screen .player-status-bar {
     font-size: 0.8rem;
   }
 
-/* Kortti mahtuu ruudulle, ei mene navin alle, taustaa näkyy reunoilla. */
+  /* Liikkumis- ja taistelukortti (.game-play-screen): pienempi padding ja
+     kattoraja korkeudelle, jotta kortti pysyy kokonaan mobiiliruudulla ja
+     keskitettynä eikä mene navin nappien päälle. Taustaa
+     (traveling-background) jää näkyviin kortin ympärille. */
   .game-play-screen {
     padding: 10px;
     margin-top: 20px;
@@ -1697,7 +1767,10 @@ div.game-play-screen .player-status-bar {
     overflow-y: auto;
   }
 
-  /* Tilapalkki 2 sarakkeeseen, tiivis väli ja padding. */
+  /* Tilapalkki 2 sarakkeeseen 3:n sijaan - matalampi kortti. JSX:ssä on
+     tyhjiä täyte-diveja jotka kohdistavat sisällön 3 sarakkeen gridiin;
+     ne piilotetaan alla, jotta oikeat kentät asettuvat 2 sarakkeeseen
+     ilman reikiä tai väärää kohdistusta. */
   div.game-play-screen .player-status-bar {
     grid-template-columns: 1fr 1fr;
     row-gap: 5px;
@@ -1705,21 +1778,30 @@ div.game-play-screen .player-status-bar {
     padding: 8px 10px;
   }
 
-  /* Kumppanilohko ei ole enää oma laatikko/grid, lapset putoavat suoraan gridiin. */
+  /* Kumppanilohko oli desktopilla oma erillinen grid joka vei "span 3"
+     vanhemman gridistä - se pakotti koko yhteisen gridin implisiittisesti
+     3 sarakkeeseen ja sotki pelaajankin rivit. Ratkaisu: kumppanilohko
+     lakkaa olemasta oma laatikko/grid, ja sen lapset (Kumppani, Kunto,
+     Ase, jne.) putoavat suoraan player-status-barin 2 sarakkeen gridiin. */
   .companion-status-block {
     display: contents;
   }
 
-  /* Tyhjät täytesolut piiloon. */
+  /* Tyhjät täytesolut (kohdistus 3 sarakkeen gridiin) piiloon, koska 2
+     sarakkeen gridissä ne rikkoisivat kohdistuksen. */
   .status-item:empty {
     display: none;
   }
 
+  /* Kaatunut kumppani: span 2 sarakkeen leveydeltä (tämä on nyt suoraan
+     player-status-barin lapsi display: contents -muutoksen ansiosta). */
   .companion-status-block .dead-companion-wide {
     grid-column: span 2;
   }
 
-  /* Otsikko ja arvo päällekkäin. */
+  /* Sallitaan tekstin rivittyä, ettei se leikkaannu yhden sarakkeen leveydellä.
+     Otsikko ja arvo pinotaan päällekkäin (rivinä eikä vierekkäin), koska
+     vierekkäin ne rikkoivat rivityksen kohdatessa kapean sarakkeen. */
   .status-item {
     display: flex;
     flex-direction: column;
@@ -1734,33 +1816,42 @@ div.game-play-screen .player-status-bar {
     font-size: 0.8rem;
   }
 
+  /* Korjausnappi selvästi pienemmäksi mobiilissa, koska kapeassa
+     sarakkeessa se näytti muuhun sisältöön nähden ylisuurelta. */
   .repair-mini-btn {
     padding: 4px 8px;
     font-size: 0.7rem;
     margin-left: 0;
   }
 
-  /* Esi-isäluokka lisätty, koska pelkkä .monster-box hävisi spesifisyydessä
-     hirviökohtaisille luokille (esim. .monster-box-hamahakki { padding: 20px; }). */
+  /* Liikkumis- ja hirviöruutu: pienempi padding mobiilissa. */
+  /* Lisätty esi-isäluokka (.game-play-screen), koska pelkkä .monster-box
+     hävisi spesifisyydessä hirviökohtaisille luokille (esim.
+     .monster-box-hamahakki { padding: 20px; }) MonsterStyles.css:ssä. */
   .game-play-screen .movement-box,
   .game-play-screen .monster-box {
     padding: 6px;
   }
 
+  /* Ruutujen otsikot pienemmiksi, jotta "VASTUSTAJA: NIMI (LVL X)" mahtuu
+     kahdelle riville liian isoja kirjaimia venyttämättä. Marginaali otsikon
+     alla pienemmäksi, ettei se vie turhaa tilaa kortista. */
   .movement-title,
   .monster-title {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     letter-spacing: 1px;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
   }
 
-  /* Oletus-<p> liian iso. */
+  /* Hirviön/liikkumisen kuntoteksti ("Hirviön kunto: X HP", tarinateksti):
+     oletusarvoinen <p> on liian iso ja sen marginaali vie turhaa korkeutta. */
   .monster-box p,
   .movement-box p {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     margin: 6px 0 0 0;
   }
 
+  /* Noppien rivi ja itse nopat pienemmiksi, jotta koko rivi mahtuu leveydeltään. */
   .dice-row {
     gap: 6px;
     margin: 10px 0 4px 0;
@@ -1780,6 +1871,18 @@ div.game-play-screen .player-status-bar {
     font-size: 0.75rem;
   }
 
+ /* Esi-isäluokka lisätty d6-movement-dicelle, koska sen oma 50px-koko
+     on määritelty MovementStyles.css:ssä joka ladataan App.css:n jälkeen -
+     sama spesifisyys, myöhempi tiedosto voitti riippumatta mediakyselystä. */
+  .game-play-screen .d20-visual-dice,
+  .game-play-screen .d6-movement-dice {
+    width: 32px;
+    height: 32px;
+    font-size: 0.9rem;
+  }
+
+  /* Tapahtumaloki tiiviimmäksi mobiilissa: pienempi otsikko, padding ja
+     korkeus, jotta loki ei vie liikaa tilaa taistelu/liikkumiskortista. */
   .unified-log-header {
     font-size: 0.75rem;
     padding: 5px 10px;
@@ -1798,15 +1901,54 @@ div.game-play-screen .player-status-bar {
     margin-top: 8px;
   }
 
-  /* Nappi: pienempi kuin muut, koska teksti pidempi. */
+  /* Hyökkäys/liikkumisnappi: sama tyyli kuin muilla napeilla, mutta pienempi
+     fontti ja kirjainväli, koska taistelunapin teksti on huomattavasti
+     pidempi ("MÄÄRITÄ ALOITE JA ALOITA TAISTELU") kuin muissa napeissa. */
   .attack-btn {
     padding: 8px 12px;
     font-size: 0.75rem;
     letter-spacing: 0.8px;
   }
 
+  /* Profiilisivu: kentät ja napit samaan kokoon kuin muualla mobiilissa
+     (sama arvo kuin .auth-form input / .auth-submit-btn). */
+  .profile-form input {
+    padding: 12px 14px;
+    font-size: 0.95rem;
+  }
+
+  .profile-tab-btn {
+    padding: 8px 6px;
+    font-size: 0.8rem;
+    letter-spacing: 0.3px;
+  }
+
+  .auth-submit-btn,
+  .danger-btn {
+    padding: 12px 18px;
+    font-size: 0.95rem;
+    letter-spacing: 1.5px;
+  }
+
+  .profile-cancel-btn {
+    padding: 12px 18px;
+    font-size: 0.95rem;
+    letter-spacing: 0.5px;
+  }
+
+  .profile-back-btn {
+    padding: 10px 18px;
+    font-size: 0.9rem;
+  }
+
+  .profile-confirm-text,
+  .profile-danger-text,
+  .profile-field-error {
+    font-size: 0.85rem;
+  }
+
 }
-  
+
 /* --- KAPEA PUHELIN (max 400px) --- */
 @media (max-width: 400px) {
   .game-title {
