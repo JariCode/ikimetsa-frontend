@@ -89,7 +89,7 @@
 .companion-wrap.w3 { top: 92px; transform: translateX(-50%) rotate(-9deg); }
 
 .companion-scroll-window {
-  height: 14rem;
+  height: 7.8rem;
   margin: 20px auto;
 }
 
@@ -108,10 +108,34 @@
 }
 
 .companion-scroll-content {
-  animation: companionScroll 22s linear 0.5s 1 both;
+  animation: companionScroll 14s linear 0.5s 1 both;
 }
 
+/* from-arvo täsmää nyt ikkunan korkeuden (7.8rem) kanssa - ennen se oli
+   10rem, mikä sai tekstin "tyhjäkäymään" ennen ikkunaan tuloa. */
 @keyframes companionScroll {
-  from { transform: translateY(14rem); }
-  to   { transform: translateY(-34rem); }
+  from { transform: translateY(7.8rem); }
+  to   { transform: translateY(-6rem); }
+}
+
+/* 📱 Pienemmillä näytöillä pienennetään hahmon kokoa ja scrollausikkunan korkeutta. */
+@media (max-width: 600px) {
+  .companion-visual {
+    width: 150px;
+    height: 130px;
+  }
+  .companion-scroll-window {
+    height: 5rem;
+  }
+
+  /* Mobili-versio scrollaus-animaatiosta. */
+  .companion-screen .companion-scroll-content {
+    animation-name: companionScrollMobile;
+  }
+
+  /* from-arvo täsmää mobiili-ikkunan korkeuden (5rem) kanssa. */
+  @keyframes companionScrollMobile {
+    from { transform: translateY(5rem); }
+    to   { transform: translateY(-10rem); }
+  }
 }

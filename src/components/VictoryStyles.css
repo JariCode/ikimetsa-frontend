@@ -211,3 +211,63 @@
   color: #fff;
   border-color: #fff;
 }
+
+/* 📱 Mobiili: Kavennetaan ikkuna ja pienennetään fontit/paddingit vastaavasti. */
+@media (max-width: 600px) {
+  .victory-scroll-window {
+    width: 92vw;
+    height: 75vh;
+  }
+ 
+  .victory-scroll-content {
+    padding: 24px 0;
+  }
+ 
+  .victory-title {
+    font-size: 1.6rem;
+    margin-bottom: 30px;
+    letter-spacing: 1px;
+  }
+ 
+  .victory-text {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-bottom: 18px;
+  }
+ 
+  .victory-credits {
+    margin: 28px auto 12px;
+    padding: 18px 12px;
+  }
+ 
+  .victory-credits-title {
+    font-size: 1.4rem;
+    letter-spacing: 3px;
+    margin: 0 0 16px;
+  }
+ 
+  .victory-credits-name {
+    font-size: 1rem;
+  }
+ 
+  .victory-credits-role,
+  .victory-credits-published {
+    font-size: 0.75rem;
+  }
+ 
+  .victory-credits-link {
+    font-size: 0.9rem;
+  }
+ 
+  .victory-exit-btn {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+ 
+  .bright-sun {
+    width: 160px;
+    height: 160px;
+    top: -30px;
+    right: -30px;
+  }
+}

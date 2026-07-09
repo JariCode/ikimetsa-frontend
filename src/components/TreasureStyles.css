@@ -126,5 +126,45 @@
 }
 
 .treasure-scroll-window {
-  margin: 30px auto;
+  height: 7.8rem;
+  margin: 20px auto;
+}
+
+/* Aarteella ei ollut ennen omaa rullausanimaatiota - se käytti vahingossa
+   Intron -36.4rem-matkaa, mikä oli liian pitkä sen lyhyemmälle sisällölle.
+   Oma animaatio joka jättää viimeiset rivit näkyviin, kuten muillakin. */
+.treasure-scroll-content {
+  animation: treasureScroll 14s linear 0.5s 1 both;
+}
+
+@keyframes treasureScroll {
+  from { transform: translateY(7.8rem); }
+  to   { transform: translateY(-5.2rem); }
+}
+
+/* 📱 Pienemmillä näytöillä pienennetään pussia ja veden pinta-alaa */
+@media (max-width: 600px) {
+  .treasure-visual {
+    margin-top: 12px;
+    width: 140px;
+    height: 120px;
+  }
+
+  /* Ikkuna oli edelleen 7.8rem, mutta height:auto-teksti ei täytä sitä
+     kokonaan - jää iso tyhjä väli. Pienennetään ikkuna vastaamaan sisältöä. */
+  .treasure-scroll-window {
+    height: 6rem;
+  }
+
+  /* Rullausmatka siirretty App.css:stä tänne, koska tällä ruudulla on
+     jo oma tyylitiedostonsa. Teksti tulee backendistä ja pituus
+     vaihtelee - arvo -10rem on käyttäjän itse pelin sisällä hienosäätämä. */
+  .treasure-screen .treasure-scroll-content {
+    animation-name: treasureScrollMobile;
+  }
+
+  @keyframes treasureScrollMobile {
+    from { transform: translateY(6rem); }
+    to   { transform: translateY(-10rem); }
+  }
 }

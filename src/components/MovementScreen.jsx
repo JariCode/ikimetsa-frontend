@@ -130,7 +130,7 @@ export default function MovementScreen({
       <div className="intro-screen">
         <h1 className="game-title">IKIMETSÄ</h1>
         <div className="intro-scroll-window movement-scroll-window">
-          <div className="intro-scroll-content" style={{ animationDuration: '29s' }}>
+          <div className="intro-scroll-content">
             <p className="intro-text">Olet valinnut osasi: {activeSession?.characterType}.</p>
             <p className="intro-text">Puristat asettasi tiukemmin nyrkissäsi.</p>
             <p className="intro-text">Kylmä tuuli puhaltaa läpi mädäntyneiden puiden.</p>

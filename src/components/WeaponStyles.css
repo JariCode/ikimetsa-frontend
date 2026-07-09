@@ -118,7 +118,7 @@
 }
 
 .weapon-scroll-window {
-  height: 12rem;
+  height: 7.8rem;
   margin: 20px auto;
 }
 
@@ -133,10 +133,38 @@
 }
 
 .weapon-scroll-content {
-  animation: weaponScroll 20s linear 0.5s 1 both;
+  animation: weaponScroll 14s linear 0.5s 1 both;
 }
 
+/* Loppuarvo muutettu -30rem -> -3rem: jättää viimeiset rivit näkyviin
+   ennen napin ilmestymistä, samaa periaatetta kuin Intro/Hautakivi/Nuotio. */
 @keyframes weaponScroll {
   from { transform: translateY(12rem); }
-  to   { transform: translateY(-30rem); }
+  to   { transform: translateY(-3rem); }
+}
+
+/*Responsiivinen muotoilu pienemmille näytöille*/
+@media (max-width: 600px) {
+  .weapon-visual {
+    width: 140px;
+    height: 120px;
+  }
+  .weapon-scroll-window {
+    height: 6.5rem;
+  }
+
+  /* Rullausmatka siirretty App.css:stä tänne, koska tällä ruudulla on
+     jo oma tyylitiedostonsa - ei ole järkeä pitää sen mobiilisääntöjä
+     erillään toisessa tiedostossa. Kesto annettu kokonaan omana (ei vain
+     animation-name), koska peritty desktopin 20s kesti liian kauan
+     lyhentyneelle 8.5rem-matkalle - noppa rullasi n. 4x hitaammin kuin
+     muut ruudut. Uusi kesto 8.5s vastaa n. 1rem/s, sama kuin muualla. */
+  .weapon-screen .weapon-scroll-content {
+    animation: weaponScrollMobile 8.5s linear 0.5s 1 both;
+  }
+
+  @keyframes weaponScrollMobile {
+    from { transform: translateY(6.5rem); }
+    to   { transform: translateY(-2rem); }
+  }
 }
