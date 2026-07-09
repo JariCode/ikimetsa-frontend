@@ -139,7 +139,7 @@
 
 @keyframes treasureScroll {
   from { transform: translateY(7.8rem); }
-  to   { transform: translateY(-5.2rem); }
+  to   { transform: translateY(-10.5rem); }
 }
 
 /* 📱 Pienemmillä näytöillä pienennetään pussia ja veden pinta-alaa */
@@ -164,7 +164,7 @@
   }
 
   @keyframes treasureScrollMobile {
-    from { transform: translateY(6rem); }
-    to   { transform: translateY(-10rem); }
+    from { transform: translateY(7.8rem); }
+    to   { transform: translateY(-10.5rem); }
   }
 }
