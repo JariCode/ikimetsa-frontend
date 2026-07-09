@@ -1665,6 +1665,11 @@ div.game-play-screen .player-status-bar {
     margin: 0 auto;            /* Keskittää ruudun */
   }
 
+  /* Pienentää korttien välin */
+  div.character-selection-screen .character-cards {
+    gap: 8px;
+  }
+
   /* Pienetellään ja keskitetään kortin sisäiset elementit */
   .character-selection-screen .char-portrait-placeholder {
     font-size: 1.8rem;
