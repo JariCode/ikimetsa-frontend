@@ -682,3 +682,13 @@
   color: #64748b;
   text-shadow: none;
 }
+
+/* 📱 RESPONSIIVISUUS - hirviön paljastuskortti skaalautuu ruudun kokoon */
+@media (max-width: 600px) {
+  .monster-reveal-card {
+    width: 100%;
+    max-width: 100vw;
+    height: auto;
+    aspect-ratio: 8 / 9;
+  }
+}
