@@ -270,4 +270,9 @@
     top: -30px;
     right: -30px;
   }
+
+  @keyframes victoryScrollText {
+  0% { top: 80%; }
+  100% { top: -105%; } 
+}
 }

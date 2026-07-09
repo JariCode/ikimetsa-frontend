@@ -1584,17 +1584,17 @@ div.game-play-screen .player-status-bar {
 
 /* --- PUHELIN (max 600px) --- */
 @media (max-width: 600px) {
-    /* Kuu pienemmäksi ja siistiin kohtaan mobiilissa */
+  /* Kuu pienemmäksi ja siistiin kohtaan mobiilissa */
   .blood-moon {
     width: 70px;
     height: 70px;
   }
 
-  /* Napin alapuolinen teksti: linkkiosa ("Luo uusi käyttäjä" / "Kirjaudu tästä")
-     pysyy katkeamattomana ja menee kokonaisena omalle rivilleen jos ei mahdu. */
+  /* Napin alapuolinen linkkiteksti pysyy katkeamattomana omalla rivillään. */
   .auth-toggle-text span {
     white-space: nowrap;
   }
+
   /* Otsikko pienemmäksi ja tiiviimpi kirjainväli - 3.5rem vei liikaa tilaa */
   .game-title {
     font-size: 2.2rem;
@@ -1602,50 +1602,60 @@ div.game-play-screen .player-status-bar {
     margin-bottom: 28px;
   }
 
-  /* Aloitussivun lomake: kentät ja nappi hieman pienemmiksi ja tiiviimmiksi */
+  /* Kirjautumis-/rekisteröitymislomake: kenttä ja nappi tiiviimmiksi. */
   .auth-form input {
-    padding: 12px 14px;
-    font-size: 0.95rem;
+    padding: 10px 12px;
+    font-size: 0.9rem;
   }
 
-  .auth-submit-btn {
-    padding: 12px 18px;
-    font-size: 0.95rem;
-    letter-spacing: 1.5px;
+  .intro-welcome-back {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin: 20px auto;
   }
 
-  /*Aloitus ja jatka nappi hieman pienemmäksi ja tiiviimmäksi mobiilissa*/
+  /* Ase/Kumppani/Aarre-ruutujen jatka-nappi: pidempi teksti ("Jatka matkaa
+     uuden X:si kanssa") saa napin näyttämään ylisuurelta rivittyessään -
+     pienennetty erikseen, ettei Nuotion/Hautakiven lyhyempi nappi muutu. */
+  .weapon-screen .start-btn,
+  .companion-screen .start-btn,
+  .treasure-screen .start-btn {
+    padding: 10px 16px;
+    font-size: 0.8rem;
+    letter-spacing: 0.8px;
+  }
+
+  /* Aloitus-/jatka-nappi (Intro, Hautakivi, Nuotio) tiiviimmäksi mobiilissa,
+     samaan pienempään kokoluokkaan kuin muutkin napit. */
   .start-btn {
-    padding: 12px 18px;
-    font-size: 0.95rem;
-    letter-spacing: 1.5px;
+    padding: 10px 16px;
+    font-size: 0.8rem;
+    letter-spacing: 0.8px;
   }
 
-  /*Navigaation napit keskitetään vaakasuunnassa, jotta ne eivät jää liian lähelle reunoja mobiilissa. */
-.top-right-buttons {
+  /* Navigaationapit keskitetään vaakasuunnassa, etteivät jää liian reunaan. */
+  .top-right-buttons {
     display: flex;
-    justify-content: center; /* Keskittää napit vaakasuunnassa */
-    left: 0; /* Asettaa vasemman reunan 0:aan */
-    right: 0;/* Asettaa oikean reunan 0:aan */
+    justify-content: center;
+    left: 0;
+    right: 0;
     gap: 6px;
   }
-  
-  /* Navigaation napit pienemmiksi ja tiiviimmiksi mobiilissa */
+
   .top-right-buttons button {
     font-size: 0.75rem;
     letter-spacing: 1.2px;
     padding: 6px 8px;
   }
 
-/* Intro tarinan teksti mobiilissa: teksti saa olla useammalla rivillä, ei katkea, ja mahtuu kokonaisuudessaan ruudulle. */
+  /* Tarinateksti: saa rivittyä useammalle riville, ei katkea, mahtuu ruudulle. */
   .intro-scroll-window .intro-scroll-content .intro-text {
     display: block;
-    white-space: normal;    
+    white-space: normal;
     text-overflow: clip;
     overflow: visible;
     overflow-wrap: break-word;
     word-break: break-word;
-    
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
@@ -1656,10 +1666,9 @@ div.game-play-screen .player-status-bar {
     margin: 0 0 10px 0;
   }
 
-  /* Sisältö on mobiilissa korkeampi (rivit rivittyvät 2-3 riville + marginaali
-     eikä enää mahdu desktopin kiinteään 2.6rem/rivi), joten alkuperäinen
-     rullausmatka (-36.4rem) ei enää riitä - viimeiset rivit jäivät piiloon.
-     Annetaan uusi, pidempi loppuarvo vain nimellä - kesto/viive periytyy. */
+  /* Rivit ovat mobiilissa korkeampia (rivittyvät + marginaali) kuin
+     desktopin kiinteä 2.6rem/rivi, joten jokainen ruutu tarvitsee oman,
+     pidemmän rullausmatkan ettei viimeiset rivit jää piiloon. */
   @keyframes introScrollMobile {
     from { transform: translateY(7.8rem); }
     to   { transform: translateY(-40rem); }
@@ -1670,10 +1679,9 @@ div.game-play-screen .player-status-bar {
   }
 
   /* Liikkumisruudun oma intro (5 riviä) - kohdistettu erikseen ettei se
-     peri Alkuintron 17-rivistä introScrollMobile-arvoa vahingossa (sama
-     .intro-screen-luokka on molemmilla). Kesto lyhyempi (11s + 1.2s
-     viive = 12.2s), jotta viimeiset rivit ehtivät näkyä ennen JS:n
-     automaattista 14s siirtymää liikkumisruutuun. */
+     peri Alkuintron introScrollMobile-arvoa vahingossa (sama .intro-screen
+     -luokka molemmilla). Kesto lyhyt (11s + 1.2s viive), jotta viimeiset
+     rivit ehtivät näkyä ennen JS:n automaattista 14s siirtymää. */
   .movement-scroll-window .intro-scroll-content {
     animation: movementIntroScrollMobile 11s linear 1.2s 1 both;
   }
@@ -1683,9 +1691,6 @@ div.game-play-screen .player-status-bar {
     to   { transform: translateY(-7rem); }
   }
 
-  /* Sama korjaus kuin Introlla: rivit ovat mobiilissa korkeampia kuin
-     desktopin kiinteä 2.6rem/rivi, joten matka piti pidentää ettei
-     viimeiset rivit jää piiloon. */
   .grave-screen .grave-scroll-content {
     animation-name: graveScrollMobile;
   }
@@ -1694,9 +1699,8 @@ div.game-play-screen .player-status-bar {
     animation-name: campfireScrollMobile;
   }
 
-  /* Ikkuna oli edelleen alkuperäisessä 7.8rem-korkeudessaan, mutta
-     height:auto-teksti ei täytä sitä kokonaan - jää iso tyhjä väli
-     ikkunan sisään. Pienennetään ikkuna vastaamaan sisältöä. */
+  /* Ikkuna oli alkuperäisessä 7.8rem-korkeudessa, mutta height:auto-teksti
+     ei täytä sitä kokonaan - jäi iso tyhjä väli. Pienennetty vastaamaan. */
   .grave-scroll-window,
   .campfire-scroll-window {
     height: 6rem;
@@ -1712,7 +1716,7 @@ div.game-play-screen .player-status-bar {
     to   { transform: translateY(-7.8rem); }
   }
 
-  /*Intro tarinan teksti mobiilissa: scrollausikkuna pienemmäksi, jotta se mahtuu ruudulle. */
+  /* Intron scrollausikkuna pienemmäksi, jotta se mahtuu ruudulle. */
   .intro-scroll-window {
     width: 100%;
     max-width: 92%;
@@ -1720,7 +1724,7 @@ div.game-play-screen .player-status-bar {
     overflow: hidden;
   }
 
-  /*Hahmonvalinta otsikko pienemmäksi ja tiiviimmäksi mobiilissa */
+  /* Hahmonvalinta: otsikko ja kortit tiiviimmiksi. */
   .section-title {
     font-size: 2.2rem;
     letter-spacing: 4px;
@@ -1729,16 +1733,14 @@ div.game-play-screen .player-status-bar {
 
   .character-selection-screen {
     width: 100%;
-    max-width: 350px;          /* Mobiilissa ei tarvita niin leveää ruutua */
-    margin: 0 auto;            /* Keskittää ruudun */
+    max-width: 350px;
+    margin: 0 auto;
   }
 
-  /* Pienentää korttien välin */
   div.character-selection-screen .character-cards {
     gap: 8px;
   }
 
-  /* Pienetellään ja keskitetään kortin sisäiset elementit */
   .character-selection-screen .char-portrait-placeholder {
     font-size: 1.8rem;
   }
@@ -1755,7 +1757,7 @@ div.game-play-screen .player-status-bar {
     font-size: 0.8rem;
   }
 
- /* Kortti mahtuu ruudulle, ei mene navin alle, taustaa näkyy reunoilla. */
+  /* Kortti mahtuu ruudulle, ei mene navin alle, taustaa näkyy reunoilla. */
   .game-play-screen {
     padding: 10px;
     margin-top: 20px;
@@ -1766,7 +1768,7 @@ div.game-play-screen .player-status-bar {
 
   /* Tilapalkki 2 sarakkeeseen. JSX:n tyhjät täytesolut piilotetaan alla,
      jotta oikeat kentät asettuvat kahteen sarakkeeseen ilman reikiä. */
- div.game-play-screen .player-status-bar {
+  div.game-play-screen .player-status-bar {
     grid-template-columns: 1fr 1fr;
     row-gap: 3px;
     column-gap: 10px;
@@ -1784,7 +1786,6 @@ div.game-play-screen .player-status-bar {
     display: none;
   }
 
-  /* Kaatunut kumppani vie 2 sarakkeen leveyden. */
   .companion-status-block .dead-companion-wide {
     grid-column: span 2;
   }
@@ -1828,14 +1829,14 @@ div.game-play-screen .player-status-bar {
 
   .movement-title,
   .monster-title {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     letter-spacing: 1px;
     margin-bottom: 6px;
   }
 
   .monster-box p,
   .movement-box p {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     margin: 6px 0 0 0;
   }
 
@@ -1861,7 +1862,7 @@ div.game-play-screen .player-status-bar {
   }
 
   /* Lokin ulompi laatikko: oletusarvoinen margin-top 20px ei ollut
-     ylikirjoitettu mobiilissa - se oli iso tyhjä väli noppien ja lokin välissä. */
+     ylikirjoitettu - se oli iso tyhjä väli noppien ja lokin välissä. */
   .unified-log-box {
     margin-top: 8px;
   }
@@ -1892,11 +1893,12 @@ div.game-play-screen .player-status-bar {
     margin-top: 8px;
   }
 
-  /* Profiilisivu: kentät ja napit samaan kokoon kuin muualla mobiilissa
-     (sama arvo kuin .auth-form input / .auth-submit-btn). */
+  /* Profiili/kirjautuminen/tunnuksenluonti: tiivistetty samaan pienempään
+     kokoluokkaan (10px 16px / 0.8rem) kuin muutkin mobiilinapit peliss -
+     olivat aiemmin selvästi isompia (12px 18px / 0.95rem). */
   .profile-form input {
-    padding: 12px 14px;
-    font-size: 0.95rem;
+    padding: 10px 12px;
+    font-size: 0.9rem;
   }
 
   .profile-tab-btn {
@@ -1907,20 +1909,20 @@ div.game-play-screen .player-status-bar {
 
   .auth-submit-btn,
   .danger-btn {
-    padding: 12px 18px;
-    font-size: 0.95rem;
-    letter-spacing: 1.5px;
+    padding: 10px 16px;
+    font-size: 0.8rem;
+    letter-spacing: 0.8px;
   }
 
   .profile-cancel-btn {
-    padding: 12px 18px;
-    font-size: 0.95rem;
-    letter-spacing: 0.5px;
+    padding: 10px 16px;
+    font-size: 0.8rem;
+    letter-spacing: 0.3px;
   }
 
   .profile-back-btn {
-    padding: 10px 18px;
-    font-size: 0.9rem;
+    padding: 8px 16px;
+    font-size: 0.8rem;
   }
 
   .profile-confirm-text,
@@ -1928,6 +1930,15 @@ div.game-play-screen .player-status-bar {
   .profile-field-error {
     font-size: 0.85rem;
   }
+
+  /* Loppuvoiton teksti: pienempi ja rivittyy useammalle riville, mahtuu ruudulle. */
+  .final-victory-text {
+    font-size: 1.4rem;
+    letter-spacing: 2px;
+    white-space: normal;
+    width: 90vw;
+    text-align: center;
+  }  
 
 }
 

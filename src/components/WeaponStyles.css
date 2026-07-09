@@ -136,10 +136,10 @@
   animation: weaponScroll 14s linear 0.5s 1 both;
 }
 
-/* Loppuarvo muutettu -30rem -> -3rem: jättää viimeiset rivit näkyviin
-   ennen napin ilmestymistä, samaa periaatetta kuin Intro/Hautakivi/Nuotio. */
+/* from-arvo korjattu 10rem -> 7.8rem, jotta se täsmää ikkunan korkeuden
+   kanssa (ennen teksti "tyhjäkäwi" 2.2rem verran ennen ikkunaan tuloa). */
 @keyframes weaponScroll {
-  from { transform: translateY(12rem); }
+  from { transform: translateY(7.8rem); }
   to   { transform: translateY(-3rem); }
 }
 
@@ -149,22 +149,62 @@
     width: 140px;
     height: 120px;
   }
+
+  /* Aseen osat (kirves, machete) olivat kiinteitä pikselikokoja jotka
+     eivät skaalautuneet pienemmän .weapon-visual-säiliön mukana - ase
+     työntyi säiliön yli jopa otsikkoon asti. Skaalattu n. 0.6x. */
+  .weapon-mound {
+    width: 108px;
+    height: 36px;
+  }
+
+  .weapon-machete {
+    width: 24px;
+    height: 96px;
+  }
+
+  .machete-handle {
+    width: 10px;
+    height: 24px;
+  }
+
+  .machete-blade {
+    bottom: 20px;
+    width: 18px;
+    height: 78px;
+  }
+
+  .machete-glint {
+    bottom: 30px;
+    width: 3px;
+    height: 54px;
+  }
+
+  .weapon-crowbar {
+    width: 24px;
+    height: 102px;
+  }
+
+  .crowbar-shaft {
+    width: 5px;
+    height: 84px;
+  }
+
+  .crowbar-claw {
+    width: 20px;
+    height: 20px;
+  }
+
   .weapon-scroll-window {
     height: 6.5rem;
   }
 
-  /* Rullausmatka siirretty App.css:stä tänne, koska tällä ruudulla on
-     jo oma tyylitiedostonsa - ei ole järkeä pitää sen mobiilisääntöjä
-     erillään toisessa tiedostossa. Kesto annettu kokonaan omana (ei vain
-     animation-name), koska peritty desktopin 20s kesti liian kauan
-     lyhentyneelle 8.5rem-matkalle - noppa rullasi n. 4x hitaammin kuin
-     muut ruudut. Uusi kesto 8.5s vastaa n. 1rem/s, sama kuin muualla. */
   .weapon-screen .weapon-scroll-content {
     animation: weaponScrollMobile 8.5s linear 0.5s 1 both;
   }
 
   @keyframes weaponScrollMobile {
     from { transform: translateY(6.5rem); }
-    to   { transform: translateY(-2rem); }
+    to   { transform: translateY(-4rem); }
   }
 }
