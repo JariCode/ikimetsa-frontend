@@ -88,10 +88,6 @@ export default function VictoryScreen({ activeSession, handleLogout }) {
                 <span className="victory-music-credit-source">everything_is_dead</span>
               </p>
               <p className="victory-music-credit">
-                <span className="victory-music-credit-name">"Mystery Secret"</span>
-                <span className="victory-music-credit-source">leberch</span>
-              </p>
-              <p className="victory-music-credit">
                 <span className="victory-music-credit-name">"Elemental Magic Spell Impact Outgoing"</span>
                 <span className="victory-music-credit-source">RescopicSound</span>
               </p>

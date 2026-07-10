@@ -81,19 +81,19 @@ export default function App() {
   // 🕸️ Seitin repeämissiirtymä kumppaniruutuun saavuttaessa
   const triggerCompanionTransition = () => {
     setShowCompanionTransition(true);
-    setTimeout(() => setShowCompanionTransition(false), 2000);
+    setTimeout(() => setShowCompanionTransition(false), 2550);
   };
 
   // ⛏️ Mullan pöllähdyssiirtymä aseruutuun saavuttaessa
   const triggerWeaponTransition = () => {
     setShowWeaponTransition(true);
-    setTimeout(() => setShowWeaponTransition(false), 2000);
+    setTimeout(() => setShowWeaponTransition(false), 2550);
   };
 
   // 🌊 Vesipärskähdyssiirtymä aarrepussiruutuun saavuttaessa
   const triggerTreasureTransition = () => {
     setShowTreasureTransition(true);
-    setTimeout(() => setShowTreasureTransition(false), 2000);
+    setTimeout(() => setShowTreasureTransition(false), 2550);
   };
 
   const addGameLog = (message, type = 'general') => {

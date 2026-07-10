@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import './WeaponStyles.css';
 import discoveryRiserSfx from '../assets/audio/sfx/u_1pruylktlg-riser-7-130957.mp3';
-import mysteryMusic from '../assets/audio/music/leberch-mystery-secret-255437.mp3';
+import mysteryMusic from '../assets/audio/music/everything_is_dead-horror-horror-558813.mp3';
 
 export default function WeaponScreen({ activeSession, onContinue }) {
 
@@ -52,7 +52,15 @@ export default function WeaponScreen({ activeSession, onContinue }) {
   }, []);
   
   const weaponName = activeSession?.inventory?.[0]?.name || 'Tuntematon ase';
-  const isMachete = weaponName === 'Machete';
+  // 🗡️ Aseen visuaali haetaan nimen perusteella - ennen tämä oli binäärinen
+  // "isMachete" ternaari, joka olisi näyttänyt kaikille muille hahmoille
+  // (Varas, Bodari) väärin sorkkarauta-visuaalin.
+  const weaponVisualKey = {
+    'Machete': 'machete',
+    'Sorkkarauta': 'crowbar',
+    'Kaksoisterä': 'twinblade',
+    'Levytanko': 'barbell'
+  }[weaponName] || 'crowbar';
   const discoveryText = activeSession?.currentArea?.weaponEvent?.discoveryText
     || 'Löydät jotain terävää mullan alta.';
 
@@ -67,16 +75,33 @@ export default function WeaponScreen({ activeSession, onContinue }) {
 
       <div className="weapon-visual" aria-hidden="true">
         <div className="weapon-mound"></div>
-        {isMachete ? (
+        {weaponVisualKey === 'machete' && (
           <div className="weapon-machete">
             <div className="machete-handle"></div>
             <div className="machete-blade"></div>
             <div className="machete-glint"></div>
           </div>
-        ) : (
+        )}
+        {weaponVisualKey === 'crowbar' && (
           <div className="weapon-crowbar">
             <div className="crowbar-shaft"></div>
             <div className="crowbar-claw"></div>
+          </div>
+        )}
+        {weaponVisualKey === 'twinblade' && (
+          <div className="weapon-twinblade">
+            <div className="twinblade-hilt"></div>
+            <div className="twinblade-blade left"></div>
+            <div className="twinblade-blade right"></div>
+          </div>
+        )}
+       {weaponVisualKey === 'barbell' && (
+          <div className="weapon-barbell">
+            <div className="barbell-bar"></div>
+            <div className="barbell-grip"></div>
+            <div className="barbell-plate plate-3"></div>
+            <div className="barbell-plate plate-2"></div>
+            <div className="barbell-plate"></div>
           </div>
         )}
       </div>

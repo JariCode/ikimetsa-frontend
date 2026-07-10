@@ -112,6 +112,109 @@
   clip-path: polygon(40% 100%, 60% 100%, 60% 40%, 100% 0%, 85% 0%, 50% 30%, 15% 0%, 0% 0%, 40% 40%);
 }
 
+/* 🗡️ KAKSOISTERÄ (Varas) - kaksi ristikkäistä terää + pieni kahva */
+.weapon-twinblade {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 150px;
+}
+
+.twinblade-blade {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  width: 18px;
+  height: 110px;
+  background: linear-gradient(180deg, #d8d8dc 0%, #a8a8ae 60%, #c8c8cc 100%);
+  clip-path: polygon(30% 100%, 70% 100%, 100% 30%, 50% 0%, 0% 30%);
+  box-shadow: 0 0 14px rgba(200, 200, 210, 0.4);
+}
+
+.twinblade-blade.left {
+  transform: translateX(-70%) rotate(-22deg);
+}
+
+.twinblade-blade.right {
+  transform: translateX(-30%) rotate(22deg);
+}
+
+.twinblade-hilt {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 14px;
+  height: 30px;
+  background: linear-gradient(180deg, #3a2a1a 0%, #201509 100%);
+  border-radius: 3px;
+}
+
+/* 🏋️ LEVYTANKO (Bodari) - ohut tanko, karkea kahvakohta keskellä, ja
+   litteät pinotut painolevyt yläpäässä (sivusta katsottuna levy näyttää
+   ohuelta soikiolta, ei täydeltä pallolta - siksi se ei enää näytä
+   tikkarilta pyöreän pallon + ohuen tikun sijaan). */
+.weapon-barbell {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%) rotate(8deg);
+  width: 46px;
+  height: 170px;
+}
+
+.barbell-bar {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 150px;
+  background: linear-gradient(180deg, #8a8f98 0%, #5a5f68 50%, #3a3d42 100%);
+  border-radius: 3px;
+  box-shadow: 0 0 10px rgba(138, 143, 152, 0.3);
+}
+
+/* Karkea kahvakohta - raidoitettu tekstuuri kuten oikeassa tangon otteessa */
+.barbell-grip {
+  position: absolute;
+  bottom: 55px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 11px;
+  height: 55px;
+  background: repeating-linear-gradient(0deg, #2a2c2e 0px, #2a2c2e 3px, #4a4d52 3px, #4a4d52 6px);
+  border-radius: 3px;
+}
+
+/* Litteät pinotut levyt yläpäässä - kolme pienenevää soikiota */
+.barbell-plate {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 46px;
+  height: 18px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 35% 30%, #4a4d52 0%, #1c1e20 80%);
+  border: 2px solid #2a2c2e;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+.barbell-plate.plate-2 {
+  top: 13px;
+  width: 40px;
+  height: 15px;
+}
+
+.barbell-plate.plate-3 {
+  top: 24px;
+  width: 34px;
+  height: 13px;
+}
+
 @keyframes weaponGlint {
   0%, 100% { opacity: 0.3; }
   50% { opacity: 1; }
@@ -193,6 +296,58 @@
   .crowbar-claw {
     width: 20px;
     height: 20px;
+  }
+
+  /* Kaksoisterä (Varas) ja Levytanko (Bodari) skaalattu samalla n. 0.6x
+     periaatteella kuin machete/sorkkarauta. */
+  .weapon-twinblade {
+    width: 36px;
+    height: 90px;
+  }
+
+  .twinblade-blade {
+    bottom: 12px;
+    width: 11px;
+    height: 66px;
+  }
+
+  .twinblade-hilt {
+    width: 8px;
+    height: 18px;
+  }
+
+  .weapon-barbell {
+    width: 28px;
+    height: 102px;
+  }
+
+  .barbell-bar {
+    width: 5px;
+    height: 90px;
+  }
+
+  .barbell-grip {
+    bottom: 33px;
+    width: 7px;
+    height: 33px;
+  }
+
+  .barbell-plate {
+    width: 28px;
+    height: 11px;
+    border-width: 1px;
+  }
+
+  .barbell-plate.plate-2 {
+    top: 8px;
+    width: 24px;
+    height: 9px;
+  }
+
+  .barbell-plate.plate-3 {
+    top: 14px;
+    width: 20px;
+    height: 8px;
   }
 
   .weapon-scroll-window {

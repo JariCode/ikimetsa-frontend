@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import './CompanionStyles.css';
 import discoveryRiserSfx from '../assets/audio/sfx/u_1pruylktlg-riser-7-130957.mp3';
-import mysteryMusic from '../assets/audio/music/leberch-mystery-secret-255437.mp3';
+import mysteryMusic from '../assets/audio/music/everything_is_dead-horror-horror-558813.mp3';
 
 export default function CompanionScreen({ activeSession, onContinue }) {
 

@@ -1447,15 +1447,17 @@ div.game-play-screen .player-status-bar {
 }
 
 /* 🕸️ KUMPPANIN SEITTISIIRTYMÄ - kun saavutaan kumppaniruutuun (Aarne), seitti
-   repeää keskeltä auki ja säikeet rispaantuvat sivuille. Kesto 2s täsmää
-   App.jsx:n triggerCompanionTransition setTimeout-arvoon (2000ms). */
+   repeää keskeltä auki ja säikeet rispaantuvat sivuille. Kesto 2.55s täsmää
+   App.jsx:n triggerCompanionTransition setTimeout-arvoon (2550ms) - pidennetty
+   2000ms:sta, jotta taustamusiikin/äänitehosteen lataus ehtii käynnistyä
+   ennen kuin ruutu paljastuu (sama periaate kuin hirviön 2550ms jumpscarella). */
 .companion-transition-overlay {
   position: fixed;
   inset: 0;
   z-index: 9998;
   pointer-events: none;
   overflow: hidden;
-  animation: transitionFadeOut 2s ease-out forwards;
+  animation: transitionFadeOut 2.55s ease-out forwards;
 }
 
 .web-tear {
@@ -1472,13 +1474,13 @@ div.game-play-screen .player-status-bar {
 .web-tear.web-left {
   left: 0;
   border-right: 1px solid rgba(220, 230, 230, 0.25);
-  animation: webTearLeft 2s ease-in forwards;
+  animation: webTearLeft 2.55s ease-in forwards;
 }
 
 .web-tear.web-right {
   right: 0;
   border-left: 1px solid rgba(220, 230, 230, 0.25);
-  animation: webTearRight 2s ease-in forwards;
+  animation: webTearRight 2.55s ease-in forwards;
 }
 
 @keyframes webTearLeft {
@@ -1501,7 +1503,7 @@ div.game-play-screen .player-status-bar {
   background: linear-gradient(180deg, transparent, rgba(220, 230, 230, 0.55), transparent);
   transform-origin: center top;
   opacity: 0;
-  animation: webStrandSnap 2s ease-out forwards;
+  animation: webStrandSnap 2.55s ease-out forwards;
 }
 
 .web-strand.ws1 { transform: rotate(20deg); }
@@ -1518,14 +1520,15 @@ div.game-play-screen .player-status-bar {
 }
 
 /* ⛏️ ASEEN MULLANSIIRTYMÄ - kun saavutaan aseruutuun, multa pöllähtää ja
-   kokkareita lentää. Kesto 2s täsmää App.jsx:n triggerWeaponTransition-arvoon. */
+   kokkareita lentää. Kesto 2.55s täsmää App.jsx:n triggerWeaponTransition-arvoon
+   (pidennetty 2000ms:sta samasta syystä kuin Kumppanilla - äänen latausaika). */
 .weapon-transition-overlay {
   position: fixed;
   inset: 0;
   z-index: 9998;
   pointer-events: none;
   overflow: hidden;
-  animation: transitionFadeOut 2s ease-out forwards;
+  animation: transitionFadeOut 2.55s ease-out forwards;
 }
 
 /* Purkaus skaalautuu ruudun kokoon (vmax) - täyttää koko näytön keskeltä */
@@ -1540,7 +1543,7 @@ div.game-play-screen .player-status-bar {
   border-radius: 50%;
   filter: blur(10px);
   opacity: 0;
-  animation: dirtBurst 2s ease-out forwards;
+  animation: dirtBurst 2.55s ease-out forwards;
 }
 
 @keyframes dirtBurst {
@@ -1562,12 +1565,12 @@ div.game-play-screen .player-status-bar {
   opacity: 0;
 }
 
-.dirt-clod.dc1 { animation: dirtClod1 2s ease-out forwards; }
-.dirt-clod.dc2 { animation: dirtClod2 2s ease-out forwards; }
-.dirt-clod.dc3 { animation: dirtClod3 2s ease-out forwards; }
-.dirt-clod.dc4 { animation: dirtClod4 2s ease-out forwards; }
-.dirt-clod.dc5 { animation: dirtClod5 2s ease-out forwards; }
-.dirt-clod.dc6 { animation: dirtClod6 2s ease-out forwards; }
+.dirt-clod.dc1 { animation: dirtClod1 2.55s ease-out forwards; }
+.dirt-clod.dc2 { animation: dirtClod2 2.55s ease-out forwards; }
+.dirt-clod.dc3 { animation: dirtClod3 2.55s ease-out forwards; }
+.dirt-clod.dc4 { animation: dirtClod4 2.55s ease-out forwards; }
+.dirt-clod.dc5 { animation: dirtClod5 2.55s ease-out forwards; }
+.dirt-clod.dc6 { animation: dirtClod6 2.55s ease-out forwards; }
 
 @keyframes dirtClod1 { 0%{opacity:0;transform:translate(0,0) scale(.5) rotate(0deg);} 15%{opacity:1;} 100%{opacity:0;transform:translate(-45vw,-38vh) scale(1.2) rotate(220deg);} }
 @keyframes dirtClod2 { 0%{opacity:0;transform:translate(0,0) scale(.5) rotate(0deg);} 15%{opacity:1;} 100%{opacity:0;transform:translate(42vw,-42vh) scale(1.2) rotate(-200deg);} }
@@ -1581,6 +1584,83 @@ div.game-play-screen .player-status-bar {
   0% { opacity: 1; }
   75% { opacity: 1; }
   100% { opacity: 0; }
+}
+
+/* 🌊 AARTEEN VESIPÄRSKÄHDYSSIIRTYMÄ - tälle ei ollut aiemmin YHTÄÄN CSS-
+   tyyliä (position/animation puuttui kokonaan), joten ruutu paljastui heti
+   ilman mitään peittoa - siksi ääni ehti aina jäädä "myöhässä" tuntuvaksi
+   juuri Aarteella. Sama 2.55s kesto kuin muillakin siirtymillä. */
+.treasure-transition-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  overflow: hidden;
+  animation: transitionFadeOut 2.55s ease-out forwards;
+}
+
+.water-splash {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 60vmax;
+  height: 60vmax;
+  transform: translate(-50%, -50%) scale(0.2);
+  background: radial-gradient(circle at center, rgba(96, 165, 250, 0.55) 0%, rgba(30, 90, 130, 0.35) 45%, transparent 72%);
+  border-radius: 50%;
+  filter: blur(8px);
+  opacity: 0;
+  animation: waterSplashBurst 2.55s ease-out forwards;
+}
+
+@keyframes waterSplashBurst {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.2); }
+  25% { opacity: 1; transform: translate(-50%, -50%) scale(1.6); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(2.4); }
+}
+
+.water-droplet {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 14px;
+  background: radial-gradient(circle at 35% 30%, #bfe3ff 0%, #4a90c2 70%);
+  border-radius: 50% 50% 50% 0;
+  opacity: 0;
+  box-shadow: 0 0 6px rgba(96, 165, 250, 0.6);
+}
+
+.water-droplet.wd1 { animation: waterDrop1 2.55s ease-out forwards; }
+.water-droplet.wd2 { animation: waterDrop2 2.55s ease-out forwards; }
+.water-droplet.wd3 { animation: waterDrop3 2.55s ease-out forwards; }
+.water-droplet.wd4 { animation: waterDrop4 2.55s ease-out forwards; }
+.water-droplet.wd5 { animation: waterDrop5 2.55s ease-out forwards; }
+.water-droplet.wd6 { animation: waterDrop6 2.55s ease-out forwards; }
+
+@keyframes waterDrop1 { 0%{opacity:0;transform:translate(0,0) scale(.5);} 15%{opacity:1;} 100%{opacity:0;transform:translate(-40vw,-30vh) scale(1.1) rotate(120deg);} }
+@keyframes waterDrop2 { 0%{opacity:0;transform:translate(0,0) scale(.5);} 15%{opacity:1;} 100%{opacity:0;transform:translate(38vw,-34vh) scale(1.1) rotate(-140deg);} }
+@keyframes waterDrop3 { 0%{opacity:0;transform:translate(0,0) scale(.5);} 15%{opacity:1;} 100%{opacity:0;transform:translate(-28vw,-42vh) scale(1.1) rotate(200deg);} }
+@keyframes waterDrop4 { 0%{opacity:0;transform:translate(0,0) scale(.5);} 15%{opacity:1;} 100%{opacity:0;transform:translate(32vw,-40vh) scale(1.1) rotate(-180deg);} }
+@keyframes waterDrop5 { 0%{opacity:0;transform:translate(0,0) scale(.5);} 15%{opacity:1;} 100%{opacity:0;transform:translate(-14vw,-46vh) scale(1.1) rotate(160deg);} }
+@keyframes waterDrop6 { 0%{opacity:0;transform:translate(0,0) scale(.5);} 15%{opacity:1;} 100%{opacity:0;transform:translate(18vw,-44vh) scale(1.1) rotate(-160deg);} }
+
+.water-wave {
+  position: absolute;
+  bottom: -10%;
+  left: -20%;
+  width: 140%;
+  height: 40%;
+  background: linear-gradient(180deg, rgba(96, 165, 250, 0.3), transparent);
+  border-radius: 50% 50% 0 0;
+  opacity: 0;
+  animation: waterWaveRise 2.55s ease-out forwards;
+}
+
+@keyframes waterWaveRise {
+  0% { opacity: 0; transform: translateY(20%); }
+  30% { opacity: 0.8; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-10%); }
 }
 
 /* --- PUHELIN (max 600px) --- */
@@ -1744,11 +1824,6 @@ div.game-play-screen .player-status-bar {
 
   div.character-selection-screen .character-cards {
     gap: 8px;
-  }
-
-  .character-selection-screen .char-card {
-    width: 150px;
-    padding: 14px;
   }
 
   .character-selection-screen .char-portrait-placeholder {
