@@ -1602,6 +1602,10 @@ div.game-play-screen .player-status-bar {
     margin-bottom: 28px;
   }
 
+  h2 {
+    font-size: 1.2rem;
+  }
+
   /* Kirjautumis-/rekisteröitymislomake: kenttä ja nappi tiiviimmiksi. */
   .auth-form input {
     padding: 10px 12px;
@@ -1726,7 +1730,7 @@ div.game-play-screen .player-status-bar {
 
   /* Hahmonvalinta: otsikko ja kortit tiiviimmiksi. */
   .section-title {
-    font-size: 2.2rem;
+    font-size: 1.3rem;
     letter-spacing: 4px;
     margin-bottom: 28px;
   }
