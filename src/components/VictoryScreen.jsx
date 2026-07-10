@@ -68,15 +68,39 @@ export default function VictoryScreen({ activeSession, handleLogout }) {
             <p className="victory-text">Olet selvinnyt läpi mustan veden, ruttohautojen ja synkimmän sydänmetsän.</p>
             <p className="victory-text">Uljas {activeSession?.characterType || 'seikkailija'} muistetaan ikuisesti sankarina, joka toi auringon takaisin.</p>
 
-            <div className="victory-music-credits">
+           <div className="victory-music-credits">
               <p className="victory-music-credits-title">Musiikki ja äänitehosteet</p>
-              <p className="victory-music-credit">"Fantasy Cinematic Background – Epic Journey" – OpenMindAudio (Pixabay)</p>
-              <p className="victory-music-credit">"Rise Of The Zombies" – Emmraan (Pixabay)</p>
-              <p className="victory-music-credit">"Horror Horror" – everything_is_dead (Pixabay)</p>
-              <p className="victory-music-credit">"Scary - Horror" – everything_is_dead (Pixabay)</p>
-              <p className="victory-music-credit">"Mystery Secret" – leberch (Pixabay)</p>
-              <p className="victory-music-credit">"Elemental Magic Spell Impact Outgoing" – RescopicSound (Pixabay)</p>
-              <p className="victory-music-credit">"Riser (7)" – u_1pruylktlg (Pixabay)</p>
+
+              <p className="victory-music-credit">
+                <span className="victory-music-credit-name">"Fantasy Cinematic Background – Epic Journey"</span>
+                <span className="victory-music-credit-source">OpenMindAudio</span>
+              </p>
+              <p className="victory-music-credit">
+                <span className="victory-music-credit-name">"Rise Of The Zombies"</span>
+                <span className="victory-music-credit-source">Emmraan</span>
+              </p>
+              <p className="victory-music-credit">
+                <span className="victory-music-credit-name">"Horror Horror"</span>
+                <span className="victory-music-credit-source">everything_is_dead</span>
+              </p>
+              <p className="victory-music-credit">
+                <span className="victory-music-credit-name">"Scary - Horror"</span>
+                <span className="victory-music-credit-source">everything_is_dead</span>
+              </p>
+              <p className="victory-music-credit">
+                <span className="victory-music-credit-name">"Mystery Secret"</span>
+                <span className="victory-music-credit-source">leberch</span>
+              </p>
+              <p className="victory-music-credit">
+                <span className="victory-music-credit-name">"Elemental Magic Spell Impact Outgoing"</span>
+                <span className="victory-music-credit-source">RescopicSound</span>
+              </p>
+              <p className="victory-music-credit">
+                <span className="victory-music-credit-name">"Riser (7)"</span>
+                <span className="victory-music-credit-source">u_1pruylktlg</span>
+              </p>
+
+              <p className="victory-music-credits-footer">Kaikki äänet ja musiikki: Pixabay</p>
             </div>
             
             <div className="victory-credits">
