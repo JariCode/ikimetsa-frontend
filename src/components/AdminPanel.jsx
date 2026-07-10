@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './AdminStyles.css';
+import adminMusic from '../assets/audio/music/everything_is_dead-horror-horror-558813.mp3';
 
 export default function AdminPanel({ onError }) {
   const [activeTab, setActiveTab] = useState(sessionStorage.getItem('ikimetsa_admin_tab') || 'users'); // 'users' | 'logs'
@@ -14,6 +15,46 @@ export default function AdminPanel({ onError }) {
   const [pendingAction, setPendingAction] = useState(null);
 
   const apiUrl = import.meta.env.VITE_API_URL;
+
+  // 🎵 Taustamusiikki soi koko sen ajan kun Admin-paneeli on auki, ja
+  // häivytetään pois kun se poistuu (takaisin peliin / uloskirjautuminen).
+  useEffect(() => {
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const gainNode = audioContext.createGain();
+    gainNode.gain.value = 0.3;
+    gainNode.connect(audioContext.destination);
+
+    let source;
+    let cancelled = false;
+
+    fetch(adminMusic)
+      .then((res) => res.arrayBuffer())
+      .then((buffer) => audioContext.decodeAudioData(buffer))
+      .then((decodedBuffer) => {
+        if (cancelled) return;
+        source = audioContext.createBufferSource();
+        source.buffer = decodedBuffer;
+        source.loop = true;
+        source.connect(gainNode);
+        source.start(0);
+      })
+      .catch(() => {});
+
+    return () => {
+      cancelled = true;
+      const fadeStep = gainNode.gain.value / 24;
+      const fadeInterval = setInterval(() => {
+        if (gainNode.gain.value - fadeStep <= 0) {
+          gainNode.gain.value = 0;
+          if (source) source.stop();
+          audioContext.close();
+          clearInterval(fadeInterval);
+        } else {
+          gainNode.gain.value -= fadeStep;
+        }
+      }, 50);
+    };
+  }, []);
 
   const fetchUsers = async () => {
     setLoading(true);

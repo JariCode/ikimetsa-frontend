@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import characterSelectMusic from '../assets/audio/music/everything_is_dead-horror-horror-558813.mp3';
+import walkingMusic from '../assets/audio/music/everything_is_dead-scary-horror-516341.mp3';
 import './MovementStyles.css';
 import GameLogComponent from './GameLogComponent';
 
@@ -19,6 +21,95 @@ export default function MovementScreen({
   const [isRolling, setIsRolling] = useState(false);
   const isRollingRef = useRef(false);
   const [storyText, setStoryText] = useState('Heitä noppaa kulkeaksesi syvemmälle...');
+
+  // 🎵 Sama musiikki jatkuu hahmonvalinnasta tämän lyhyen intro-tarinan ajan.
+  // Riippuvuus [phase]: kun phase vaihtuu 'intro' -> 'walking', paluufunktio
+  // ajetaan ja häivyttää musiikin pois, eikä uutta käynnistetä (koska
+  // ehtolauseke `if (phase !== 'intro') return;` estää sen).
+  useEffect(() => {
+    if (phase !== 'intro') return;
+
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const gainNode = audioContext.createGain();
+    gainNode.gain.value = 0.3;
+    gainNode.connect(audioContext.destination);
+
+    let source;
+    let cancelled = false;
+
+    fetch(characterSelectMusic)
+      .then((res) => res.arrayBuffer())
+      .then((buffer) => audioContext.decodeAudioData(buffer))
+      .then((decodedBuffer) => {
+        if (cancelled) return;
+        source = audioContext.createBufferSource();
+        source.buffer = decodedBuffer;
+        source.loop = true;
+        source.connect(gainNode);
+        source.start(0);
+      })
+      .catch(() => {});
+
+    return () => {
+      cancelled = true;
+      const fadeStep = gainNode.gain.value / 24;
+      const fadeInterval = setInterval(() => {
+        if (gainNode.gain.value - fadeStep <= 0) {
+          gainNode.gain.value = 0;
+          if (source) source.stop();
+          audioContext.close();
+          clearInterval(fadeInterval);
+        } else {
+          gainNode.gain.value -= fadeStep;
+        }
+      }, 50);
+    };
+  }, [phase]);
+
+  // 🎵 Liikkumisruudun oma tausta 'walking'-vaiheessa. Poistuu automaattisesti
+  // (häivyttäen) kun MovementScreen poistuu DOM:sta - eli profiiliin/admin-
+  // valikkoon siirtyminen, uloskirjautuminen tai taisteluun astuminen
+  // (App.jsx vaihtaa näkyviin ProfileSettings/AdminPanel/AuthScreen/GamePlay
+  // ja MovementScreen unmountautuu), tai jos phase vaihtuu pois 'walking':sta.
+  useEffect(() => {
+    if (phase !== 'walking') return;
+
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const gainNode = audioContext.createGain();
+    gainNode.gain.value = 0.3;
+    gainNode.connect(audioContext.destination);
+
+    let source;
+    let cancelled = false;
+
+    fetch(walkingMusic)
+      .then((res) => res.arrayBuffer())
+      .then((buffer) => audioContext.decodeAudioData(buffer))
+      .then((decodedBuffer) => {
+        if (cancelled) return;
+        source = audioContext.createBufferSource();
+        source.buffer = decodedBuffer;
+        source.loop = true;
+        source.connect(gainNode);
+        source.start(0);
+      })
+      .catch(() => {});
+
+    return () => {
+      cancelled = true;
+      const fadeStep = gainNode.gain.value / 24;
+      const fadeInterval = setInterval(() => {
+        if (gainNode.gain.value - fadeStep <= 0) {
+          gainNode.gain.value = 0;
+          if (source) source.stop();
+          audioContext.close();
+          clearInterval(fadeInterval);
+        } else {
+          gainNode.gain.value -= fadeStep;
+        }
+      }, 50);
+    };
+  }, [phase]);
 
   useEffect(() => {
     if (phase === 'intro') {

@@ -139,6 +139,27 @@
   transform: scale(1.05);
 }
 
+.victory-music-credits {
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(251, 191, 36, 0.2);
+}
+
+.victory-music-credits-title {
+  color: #9ca3af;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin: 0 0 8px;
+}
+
+.victory-music-credit {
+  color: #d1d5db;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  margin: 2px 0;
+}
+
 .victory-exit-btn:active {
   transform: scale(0.98);
 }

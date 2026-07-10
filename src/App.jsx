@@ -31,7 +31,7 @@ export default function App() {
   const [showProfile, setShowProfile] = useState(sessionStorage.getItem('ikimetsa_show_profile') === 'true');
   const [successMessage, setSuccessMessage] = useState('');
 
-  const [gameStarted, setGameStarted] = useState(false);
+  const [gameStarted, setGameStarted] = useState(sessionStorage.getItem('ikimetsa_game_started') === 'true');
   const [characterClasses, setCharacterClasses] = useState([]); 
   const [activeSession, setActiveSession] = useState(null);
   const [error, setError] = useState('');
@@ -185,25 +185,35 @@ export default function App() {
           setUserRole(data.role || null);
           if (data.session) {
             setSavedGameSession(data.session);
-            setActiveSession(data.session);
-            setGameStarted(true);
-            setMonsterHp(data.session.currentMonsterHp ?? 25);
-            setCombatInitiative(data.session.combatInitiative ?? null);
-            setCurrentTurn(data.session.currentTurn ?? null);
-            if (data.session.combatLogs) {
-              const restored = data.session.combatLogs.map(msg => ({
-                message: msg,
-                type: 'combat',
-                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
-              }));
-              setGameLogs(restored);
-            } else {
-              setGameLogs([]);
-            }
-            if (data.session.isGameCompleted) {
-              setIsNavigating(true);
-            } else {
-              setIsNavigating(!data.session.hasEnteredCombat);
+
+            // 🐛 Korjaus: ei automaattisesti hypätä liikkumisruutuun jos
+            // pelaaja on vasta katsomassa Intro-ruutua ("Jatka taivalta")
+            // eikä ole vielä klikannut jatkaakseen tässä välilehdessä.
+            // Sivun päivitys kesken aktiivisen pelin (missä tämä lippu on
+            // jo 'true') palauttaa edelleen normaalisti oikeaan kohtaan.
+            const alreadyStartedThisTab = sessionStorage.getItem('ikimetsa_game_started') === 'true';
+
+            if (alreadyStartedThisTab) {
+              setActiveSession(data.session);
+              setGameStarted(true);
+              setMonsterHp(data.session.currentMonsterHp ?? 25);
+              setCombatInitiative(data.session.combatInitiative ?? null);
+              setCurrentTurn(data.session.currentTurn ?? null);
+              if (data.session.combatLogs) {
+                const restored = data.session.combatLogs.map(msg => ({
+                  message: msg,
+                  type: 'combat',
+                  time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+                }));
+                setGameLogs(restored);
+              } else {
+                setGameLogs([]);
+              }
+              if (data.session.isGameCompleted) {
+                setIsNavigating(true);
+              } else {
+                setIsNavigating(!data.session.hasEnteredCombat);
+              }
             }
           } else {
             setSavedGameSession(null);
@@ -239,6 +249,10 @@ export default function App() {
       sessionStorage.removeItem('ikimetsa_show_admin');
     }
   }, [showAdmin]);
+
+  useEffect(() => {
+    sessionStorage.setItem('ikimetsa_game_started', gameStarted ? 'true' : 'false');
+  }, [gameStarted]);
 
   useEffect(() => {
     if (isNavigating) {

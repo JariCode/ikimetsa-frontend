@@ -2,6 +2,8 @@ import React from 'react';
 import { useEffect, useState } from 'react'; 
 import './MonsterStyles.css';
 import GameLogComponent from './GameLogComponent';
+import monsterRoarSfx from '../assets/audio/sfx/rescopicsound-elemental-magic-spell-impact-outgoing-228342.mp3';
+import combatMusic from '../assets/audio/music/emmraan-rise-of-the-zombies-253760.mp3';
 
 export default function GamePlay({
   activeSession,
@@ -37,8 +39,56 @@ export default function GamePlay({
     setShowMonsterReveal(true);
     const revealTimer = setTimeout(() => setShowMonsterReveal(false), 2550);
 
+    // 🔊 Soitetaan hirviön ääni jumpscaren alkaessa
+    const roarSound = new Audio(monsterRoarSfx);
+    roarSound.volume = 0.6; // 0-1, säädä mieleiseksi
+    roarSound.play().catch(() => {
+ 
+    });
+
     return () => clearTimeout(revealTimer);
   }, [shouldRevealMonster, monsterKeyForReveal]);
+
+  // 🎵 Taistelumusiikki alkaa kun hirviö ilmestyy 
+useEffect(() => {
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const gainNode = audioContext.createGain();
+    gainNode.gain.value = 0.35;
+    gainNode.connect(audioContext.destination);
+
+    let source;
+    let cancelled = false;
+
+    fetch(combatMusic)
+      .then((res) => res.arrayBuffer())
+      .then((buffer) => audioContext.decodeAudioData(buffer))
+      .then((decodedBuffer) => {
+        if (cancelled) return; // Komponentti ehti jo poistua ennen latauksen valmistumista
+        source = audioContext.createBufferSource();
+        source.buffer = decodedBuffer;
+        source.loop = true;
+        source.connect(gainNode);
+        source.start(0);
+      })
+      .catch(() => {});
+
+    return () => {
+      cancelled = true;
+
+      // 🔉 Häivytys pois töksähtämisen sijaan
+      const fadeStep = gainNode.gain.value / 24;
+      const fadeInterval = setInterval(() => {
+        if (gainNode.gain.value - fadeStep <= 0) {
+          gainNode.gain.value = 0;
+          if (source) source.stop();
+          audioContext.close();
+          clearInterval(fadeInterval);
+        } else {
+          gainNode.gain.value -= fadeStep;
+        }
+      }, 50);
+    };
+  }, []);
 
   const monsterName = activeSession.currentMonsterName || 'Varjohahmo';
   const monsterCssClass = activeSession.currentMonsterCssClass || 'varjohahmo';
