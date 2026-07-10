@@ -85,7 +85,7 @@ export default function CompanionScreen({ activeSession, onContinue }) {
           {discoverySentences.map((sentence, i) => (
             <p className="intro-text" key={i}>{sentence}</p>
           ))}
-          <p className="intro-text">Vapautat {companionName}:n seitistä varovasti.</p>
+          <p className="intro-text">Vapautat Aarnen seitistä varovasti.</p>
           <p className="intro-text">"Kiitos", hän kuiskaa käheästi.</p>
           <p className="intro-text">"En unohda tätä. Taistelen rinnallasi loppuun asti."</p>
         </div>
