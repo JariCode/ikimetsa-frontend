@@ -1408,7 +1408,7 @@ div.game-play-screen .player-status-bar {
   z-index: 9998;
   pointer-events: none;
   overflow: hidden;
-  animation: movementFogClear 2s ease-out forwards;
+  animation: movementFogClear 2.55s ease-out forwards;
 }
 
 @keyframes movementFogClear {
