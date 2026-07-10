@@ -443,6 +443,7 @@ button {
 div.character-selection-screen .character-cards {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   justify-content: center;
   gap: 30px;
   margin-top: 40px;
@@ -1743,6 +1744,11 @@ div.game-play-screen .player-status-bar {
 
   div.character-selection-screen .character-cards {
     gap: 8px;
+  }
+
+  .character-selection-screen .char-card {
+    width: 150px;
+    padding: 14px;
   }
 
   .character-selection-screen .char-portrait-placeholder {

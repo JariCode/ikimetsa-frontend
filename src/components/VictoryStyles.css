@@ -195,10 +195,7 @@
   100% { top: -165%; } 
 }
 
-/* 🎬 LOPPUTEKSTIT - tekijätiedot voittoruudun tarinan päätteeksi.
-   margin-top pudotettu 44px -> 30px, jotta väli .victory-music-credits:n
-   alareunan (myös 30px) kanssa on symmetrinen (CSS-marginaalit sulautuvat
-   isompaan arvoon, joten molempien piti olla sama luku). */
+/* 🎬 LOPPUTEKSTIT - tekijätiedot voittoruudun tarinan päätteeksi. */
 .victory-credits {
   margin: 30px auto 20px;
   padding: 28px 20px;

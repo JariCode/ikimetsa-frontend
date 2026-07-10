@@ -1,6 +1,15 @@
 import React, { useEffect } from 'react';
 import characterSelectMusic from '../assets/audio/music/everything_is_dead-horror-horror-558813.mp3';
 
+// 🎭 Ikonit haetaan nimen perusteella - ei enää ase-/työkalujohteisia, koska
+// pelkkä ternaari (2 hahmoa) ei enää riitä nyt kun hahmoja on neljä.
+const CHAR_ICONS = {
+  'Metsästäjä': '🔪',   // Vanha puukko
+  'Mekaanikko': '🔧',   // Raskas jakoavain
+  'Varas': '🗡️',        // Heittoveitset
+  'Bodari': '🏋️'        // Käsipaino
+};
+
 export default function CharacterSelection({ characterClasses, selectCharacter }) {
   // 🎵 Sama tausta jatkuu hahmonvalinnasta - loppuu (häivyttäen) kun
   // hahmo valitaan ja siirrytään peliin/liikkumisruutuun.
@@ -48,7 +57,7 @@ export default function CharacterSelection({ characterClasses, selectCharacter }
         {characterClasses.map((char) => (
           <div key={char._id} className="char-card" onClick={() => selectCharacter(char.name)}>
             <div className="char-portrait-placeholder">
-              {char.name === 'Metsästäjä' ? '🏹' : '🔧'}
+              {CHAR_ICONS[char.name] || '❓'}
             </div>
             <h3>{char.name}</h3>
             <p className="char-desc">{char.description}</p>
