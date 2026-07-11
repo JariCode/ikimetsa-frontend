@@ -3,7 +3,7 @@ import './AdminStyles.css';
 import adminMusic from '../assets/audio/music/everything_is_dead-horror-horror-558813.mp3';
 
 export default function AdminPanel({ onError }) {
-  const [activeTab, setActiveTab] = useState(sessionStorage.getItem('ikimetsa_admin_tab') || 'users'); // 'users' | 'logs' | 'monsters'
+  const [activeTab, setActiveTab] = useState(sessionStorage.getItem('ikimetsa_admin_tab') || 'users'); // 'users' | 'logs' | 'monsters' | 'areas'
 
   const [users, setUsers] = useState([]);
   const [currentAdminId, setCurrentAdminId] = useState(null);
@@ -15,6 +15,11 @@ export default function AdminPanel({ onError }) {
   const [monsters, setMonsters] = useState([]);
   const [monsterForm, setMonsterForm] = useState(null); // null = lomake kiinni, muuten { ...kentät, _id? }
   const [monsterFormError, setMonsterFormError] = useState('');
+
+  // 🗺️ Alueiden hallinta
+  const [areas, setAreas] = useState([]);
+  const [areaForm, setAreaForm] = useState(null);
+  const [areaFormError, setAreaFormError] = useState('');
 
   // Vahvistusta odottavat toiminnot: { type: 'role'|'delete', userId, username, newRole? }
   const [pendingAction, setPendingAction] = useState(null);
@@ -104,11 +109,26 @@ export default function AdminPanel({ onError }) {
     }
   };
 
+  const fetchAreas = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`${apiUrl}/api/auth/admin/areas`, { credentials: 'include' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Alueiden haku epäonnistui.');
+      setAreas(data.areas || []);
+    } catch (err) {
+      if (onError) onError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     sessionStorage.setItem('ikimetsa_admin_tab', activeTab);
     if (activeTab === 'users') fetchUsers();
     if (activeTab === 'logs') fetchLogs();
     if (activeTab === 'monsters') fetchMonsters();
+    if (activeTab === 'areas') fetchAreas();
   }, [activeTab]);
 
   const confirmRoleChange = async () => {
@@ -199,6 +219,100 @@ export default function AdminPanel({ onError }) {
     }
   };
 
+  // --- ALUEIDEN CRUD-TOIMINNOT ---
+
+  const openEditAreaForm = (area) => {
+    setAreaFormError('');
+    setAreaForm({
+      _id: area._id,
+      order: area.order,
+      name: area.name || '',
+      locationLabel: area.locationLabel || '',
+      monsterName: area.monsterName || '',
+      encounterText: area.encounterText || '',
+      backgroundClass: area.backgroundClass || '',
+      mechanic: area.mechanic || 'normal',
+      companionEvent: {
+        name: area.companionEvent?.name || '',
+        discoveryText: area.companionEvent?.discoveryText || '',
+        weaponName: area.companionEvent?.weaponName || ''
+      },
+      weaponEvent: {
+        discoveryText: area.weaponEvent?.discoveryText || '',
+        hunterWeaponName: area.weaponEvent?.hunterWeaponName || '',
+        mechanicWeaponName: area.weaponEvent?.mechanicWeaponName || '',
+        thiefWeaponName: area.weaponEvent?.thiefWeaponName || '',
+        strongmanWeaponName: area.weaponEvent?.strongmanWeaponName || '',
+        damageBonus: area.weaponEvent?.damageBonus ?? 0
+      },
+      treasureEvent: {
+        discoveryText: area.treasureEvent?.discoveryText || '',
+        repairPointsBonus: area.treasureEvent?.repairPointsBonus ?? 0,
+        maxHpBonus: area.treasureEvent?.maxHpBonus ?? 0
+      },
+      goodRollTexts: area.goodRollTexts && area.goodRollTexts.length ? [...area.goodRollTexts] : [''],
+      badRollTexts: area.badRollTexts && area.badRollTexts.length ? [...area.badRollTexts] : ['']
+    });
+  };
+
+  const closeAreaForm = () => {
+    setAreaForm(null);
+    setAreaFormError('');
+  };
+
+  const handleAreaFieldChange = (field, value) => {
+    setAreaForm(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleAreaNestedChange = (section, field, value) => {
+    setAreaForm(prev => ({ ...prev, [section]: { ...prev[section], [field]: value } }));
+  };
+
+  const handleAreaListChange = (listName, index, value) => {
+    setAreaForm(prev => {
+      const updated = [...prev[listName]];
+      updated[index] = value;
+      return { ...prev, [listName]: updated };
+    });
+  };
+
+  const addAreaListRow = (listName) => {
+    setAreaForm(prev => ({ ...prev, [listName]: [...prev[listName], ''] }));
+  };
+
+  const removeAreaListRow = (listName, index) => {
+    setAreaForm(prev => {
+      const updated = prev[listName].filter((_, i) => i !== index);
+      return { ...prev, [listName]: updated.length ? updated : [''] };
+    });
+  };
+
+  const submitAreaForm = async (e) => {
+    e.preventDefault();
+    setAreaFormError('');
+
+    if (!areaForm.name.trim() || !areaForm.locationLabel.trim() || !areaForm.monsterName.trim() || !areaForm.encounterText.trim()) {
+      setAreaFormError('Nimi, sijaintiteksti, hirviön nimi ja kohtaamisteksti ovat pakollisia.');
+      return;
+    }
+
+    try {
+      const res = await fetch(`${apiUrl}/api/auth/admin/area/${areaForm._id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(areaForm),
+        credentials: 'include'
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Alueen tallennus epäonnistui.');
+
+      closeAreaForm();
+      fetchAreas();
+    } catch (err) {
+      setAreaFormError(err.message);
+    }
+  };
+
   const formatDate = (iso) => {
     if (!iso) return '';
     const d = new Date(iso);
@@ -228,6 +342,12 @@ export default function AdminPanel({ onError }) {
           onClick={() => setActiveTab('monsters')}
         >
           Hirviöt
+        </button>
+        <button
+          className={`admin-tab ${activeTab === 'areas' ? 'active' : ''}`}
+          onClick={() => setActiveTab('areas')}
+        >
+          Alueet
         </button>
         <button
           className={`admin-tab ${activeTab === 'logs' ? 'active' : ''}`}
@@ -412,6 +532,245 @@ export default function AdminPanel({ onError }) {
             </table>
           )}
           {!monsterForm && monsters.length === 0 && <p className="admin-loading">Ei hirviöitä.</p>}
+        </div>
+      )}
+
+      {activeTab === 'areas' && !loading && (
+        <div className="admin-areas">
+          {areaForm && (
+            <form className="admin-area-form" onSubmit={submitAreaForm}>
+              <h2>Muokkaa aluetta {areaForm.order}: {areaForm.name}</h2>
+
+              <div className="admin-monster-form-grid">
+                <label>
+                  Nimi
+                  <input
+                    type="text"
+                    value={areaForm.name}
+                    onChange={(e) => handleAreaFieldChange('name', e.target.value)}
+                    required
+                  />
+                </label>
+                <label>
+                  Sijaintiteksti
+                  <input
+                    type="text"
+                    value={areaForm.locationLabel}
+                    onChange={(e) => handleAreaFieldChange('locationLabel', e.target.value)}
+                    required
+                  />
+                </label>
+                <label>
+                  Hirviön nimi
+                  <input
+                    type="text"
+                    value={areaForm.monsterName}
+                    onChange={(e) => handleAreaFieldChange('monsterName', e.target.value)}
+                    required
+                  />
+                </label>
+                <label>
+                  Tausta-CSS-luokka
+                  <input
+                    type="text"
+                    value={areaForm.backgroundClass}
+                    onChange={(e) => handleAreaFieldChange('backgroundClass', e.target.value)}
+                  />
+                </label>
+              </div>
+
+              <label className="admin-area-textarea-label">
+                Kohtaamisteksti (taistelun alkaessa)
+                <textarea
+                  value={areaForm.encounterText}
+                  onChange={(e) => handleAreaFieldChange('encounterText', e.target.value)}
+                  rows={3}
+                  required
+                />
+              </label>
+
+              <h3>Kumppanin löytötapahtuma</h3>
+              <div className="admin-monster-form-grid">
+                <label>
+                  Kumppanin nimi
+                  <input
+                    type="text"
+                    value={areaForm.companionEvent.name}
+                    onChange={(e) => handleAreaNestedChange('companionEvent', 'name', e.target.value)}
+                  />
+                </label>
+                <label>
+                  Kumppanin aseen nimi
+                  <input
+                    type="text"
+                    value={areaForm.companionEvent.weaponName}
+                    onChange={(e) => handleAreaNestedChange('companionEvent', 'weaponName', e.target.value)}
+                  />
+                </label>
+              </div>
+              <label className="admin-area-textarea-label">
+                Kumppanin löytöteksti
+                <textarea
+                  value={areaForm.companionEvent.discoveryText}
+                  onChange={(e) => handleAreaNestedChange('companionEvent', 'discoveryText', e.target.value)}
+                  rows={2}
+                />
+              </label>
+
+              <h3>Aseen löytötapahtuma</h3>
+              <div className="admin-monster-form-grid">
+                <label>
+                  Metsästäjän aseen nimi
+                  <input
+                    type="text"
+                    value={areaForm.weaponEvent.hunterWeaponName}
+                    onChange={(e) => handleAreaNestedChange('weaponEvent', 'hunterWeaponName', e.target.value)}
+                  />
+                </label>
+                <label>
+                  Mekaanikon aseen nimi
+                  <input
+                    type="text"
+                    value={areaForm.weaponEvent.mechanicWeaponName}
+                    onChange={(e) => handleAreaNestedChange('weaponEvent', 'mechanicWeaponName', e.target.value)}
+                  />
+                </label>
+                <label>
+                  Varkaan aseen nimi
+                  <input
+                    type="text"
+                    value={areaForm.weaponEvent.thiefWeaponName}
+                    onChange={(e) => handleAreaNestedChange('weaponEvent', 'thiefWeaponName', e.target.value)}
+                  />
+                </label>
+                <label>
+                  Bodarin aseen nimi
+                  <input
+                    type="text"
+                    value={areaForm.weaponEvent.strongmanWeaponName}
+                    onChange={(e) => handleAreaNestedChange('weaponEvent', 'strongmanWeaponName', e.target.value)}
+                  />
+                </label>
+                <label>
+                  Vahinkobonus (kaikille sama)
+                  <input
+                    type="number"
+                    value={areaForm.weaponEvent.damageBonus}
+                    onChange={(e) => handleAreaNestedChange('weaponEvent', 'damageBonus', e.target.value)}
+                  />
+                </label>
+              </div>
+              <label className="admin-area-textarea-label">
+                Aseen löytöteksti
+                <textarea
+                  value={areaForm.weaponEvent.discoveryText}
+                  onChange={(e) => handleAreaNestedChange('weaponEvent', 'discoveryText', e.target.value)}
+                  rows={2}
+                />
+              </label>
+
+              <h3>Aarteen löytötapahtuma</h3>
+              <div className="admin-monster-form-grid">
+                <label>
+                  Korjauspisteiden bonus
+                  <input
+                    type="number"
+                    value={areaForm.treasureEvent.repairPointsBonus}
+                    onChange={(e) => handleAreaNestedChange('treasureEvent', 'repairPointsBonus', e.target.value)}
+                  />
+                </label>
+                <label>
+                  Max-HP-bonus
+                  <input
+                    type="number"
+                    value={areaForm.treasureEvent.maxHpBonus}
+                    onChange={(e) => handleAreaNestedChange('treasureEvent', 'maxHpBonus', e.target.value)}
+                  />
+                </label>
+              </div>
+              <label className="admin-area-textarea-label">
+                Aarteen löytöteksti
+                <textarea
+                  value={areaForm.treasureEvent.discoveryText}
+                  onChange={(e) => handleAreaNestedChange('treasureEvent', 'discoveryText', e.target.value)}
+                  rows={2}
+                />
+              </label>
+
+              <h3>Hyvän heiton tekstit (3-5)</h3>
+              {areaForm.goodRollTexts.map((text, i) => (
+                <div className="admin-area-list-row" key={`good-${i}`}>
+                  <input
+                    type="text"
+                    value={text}
+                    onChange={(e) => handleAreaListChange('goodRollTexts', i, e.target.value)}
+                  />
+                  <button type="button" className="admin-action-btn admin-action-danger" onClick={() => removeAreaListRow('goodRollTexts', i)}>
+                    Poista rivi
+                  </button>
+                </div>
+              ))}
+              <button type="button" className="admin-action-btn" onClick={() => addAreaListRow('goodRollTexts')}>
+                + Lisää rivi
+              </button>
+
+              <h3>Huonon heiton tekstit (1-2)</h3>
+              {areaForm.badRollTexts.map((text, i) => (
+                <div className="admin-area-list-row" key={`bad-${i}`}>
+                  <input
+                    type="text"
+                    value={text}
+                    onChange={(e) => handleAreaListChange('badRollTexts', i, e.target.value)}
+                  />
+                  <button type="button" className="admin-action-btn admin-action-danger" onClick={() => removeAreaListRow('badRollTexts', i)}>
+                    Poista rivi
+                  </button>
+                </div>
+              ))}
+              <button type="button" className="admin-action-btn" onClick={() => addAreaListRow('badRollTexts')}>
+                + Lisää rivi
+              </button>
+
+              {areaFormError && <p className="profile-field-error">{areaFormError}</p>}
+
+              <div className="admin-monster-form-buttons">
+                <button type="button" className="profile-cancel-btn" onClick={closeAreaForm}>
+                  Peruuta
+                </button>
+                <button type="submit" className="auth-submit-btn">
+                  Tallenna muutokset
+                </button>
+              </div>
+            </form>
+          )}
+
+          {!areaForm && (
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Nimi</th>
+                  <th>Hirviö</th>
+                  <th>Toiminnot</th>
+                </tr>
+              </thead>
+              <tbody>
+                {areas.map(area => (
+                  <tr key={area._id}>
+                    <td>{area.order}</td>
+                    <td>{area.name}</td>
+                    <td>{area.monsterName}</td>
+                    <td className="admin-actions">
+                      <button className="admin-action-btn" onClick={() => openEditAreaForm(area)}>
+                        Muokkaa
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+          {!areaForm && areas.length === 0 && <p className="admin-loading">Ei alueita.</p>}
         </div>
       )}
 
