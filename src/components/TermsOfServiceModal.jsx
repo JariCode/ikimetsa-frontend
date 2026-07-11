@@ -27,6 +27,16 @@ export default function TermsOfServiceModal({ onClose }) {
             Voit poistaa oman tilisi ja kaikki pelitietosi milloin tahansa
             Profiili-sivulta. Poisto on pysyvä eikä sitä voi perua.
           </p>
+
+          <p>
+            Palvelu tarjotaan sellaisena kuin se on, ilman takuita
+            virheettömyydestä tai keskeytyksettömästä toiminnasta. Ylläpito ei
+            vastaa palvelun käytöstä mahdollisesti aiheutuvista vahingoista.
+          </p>
+
+          <p>
+            Näihin käyttöehtoihin sovelletaan Suomen lainsäädäntöä.
+          </p>
         </div>
 
         <button type="button" className="legal-modal-close-btn" onClick={onClose}>

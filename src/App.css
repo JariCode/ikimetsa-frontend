@@ -147,7 +147,7 @@ button {
 }
 
 .legal-footer-links span:not(.legal-footer-divider) {
-  color: #6b7280;
+  color: #9ca3af;
   cursor: pointer;
   text-decoration: underline;
   text-underline-offset: 2px;
@@ -155,7 +155,7 @@ button {
 }
 
 .legal-footer-links span:not(.legal-footer-divider):hover {
-  color: #9ca3af;
+  color: #d1d5db;
 }
 
 .legal-footer-divider {
@@ -1756,6 +1756,29 @@ div.game-play-screen .player-status-bar {
   0% { opacity: 0; transform: translateY(20%); }
   30% { opacity: 0.8; transform: translateY(0); }
   100% { opacity: 0; transform: translateY(-10%); }
+}
+
+.site-footer {
+  position: fixed;
+  bottom: 16px;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  width: fit-content;
+  z-index: 50;
+  font-size: 0.7rem;
+  color: #9ca3af;
+  letter-spacing: 0.3px;
+}
+
+.site-footer a {
+  color: #9ca3af;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.site-footer a:hover {
+  color: #d1d5db;
 }
 
 /* --- PUHELIN (max 600px) --- */

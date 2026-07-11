@@ -8,6 +8,12 @@ export default function PrivacyPolicyModal({ onClose }) {
 
         <div className="legal-modal-content">
           <p>
+            Tämä seloste kertoo, miten henkilötietojasi käsitellään EU:n
+            yleisen tietosuoja-asetuksen (GDPR) ja Suomen tietosuojalain
+            mukaisesti.
+          </p>
+
+          <p>
             <strong>Rekisterinpitäjä:</strong> Ikimetsä on opiskelijaprojekti.
             Yhteyttä palveluun liittyvissä tietosuoja-asioissa voi ottaa
             osoitteeseen jaricode@elisanet.fi.
@@ -29,7 +35,7 @@ export default function PrivacyPolicyModal({ onClose }) {
 
           <p>
             <strong>Evästeet:</strong> palvelu käyttää yhtä teknistä
-            kirjautumisevästettä (HttpOnly), joka pitää sinut kirjautuneena.
+            kirjautumisevästettä joka pitää sinut kirjautuneena.
             Sivustolla ei ole seuranta- eikä mainosevästeitä.
           </p>
 
