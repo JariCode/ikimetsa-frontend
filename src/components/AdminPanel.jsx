@@ -3,13 +3,18 @@ import './AdminStyles.css';
 import adminMusic from '../assets/audio/music/everything_is_dead-horror-horror-558813.mp3';
 
 export default function AdminPanel({ onError }) {
-  const [activeTab, setActiveTab] = useState(sessionStorage.getItem('ikimetsa_admin_tab') || 'users'); // 'users' | 'logs'
+  const [activeTab, setActiveTab] = useState(sessionStorage.getItem('ikimetsa_admin_tab') || 'users'); // 'users' | 'logs' | 'monsters'
 
   const [users, setUsers] = useState([]);
   const [currentAdminId, setCurrentAdminId] = useState(null);
   const [logs, setLogs] = useState([]);
   const [logSearch, setLogSearch] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // 🐺 Hirviöiden hallinta
+  const [monsters, setMonsters] = useState([]);
+  const [monsterForm, setMonsterForm] = useState(null); // null = lomake kiinni, muuten { ...kentät, _id? }
+  const [monsterFormError, setMonsterFormError] = useState('');
 
   // Vahvistusta odottavat toiminnot: { type: 'role'|'delete', userId, username, newRole? }
   const [pendingAction, setPendingAction] = useState(null);
@@ -85,10 +90,25 @@ export default function AdminPanel({ onError }) {
     }
   };
 
+  const fetchMonsters = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`${apiUrl}/api/auth/admin/monsters`, { credentials: 'include' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Hirviöiden haku epäonnistui.');
+      setMonsters(data.monsters || []);
+    } catch (err) {
+      if (onError) onError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     sessionStorage.setItem('ikimetsa_admin_tab', activeTab);
     if (activeTab === 'users') fetchUsers();
     if (activeTab === 'logs') fetchLogs();
+    if (activeTab === 'monsters') fetchMonsters();
   }, [activeTab]);
 
   const confirmRoleChange = async () => {
@@ -125,6 +145,60 @@ export default function AdminPanel({ onError }) {
     }
   };
 
+  // --- HIRVIÖIDEN CRUD-TOIMINNOT ---
+
+  const openEditMonsterForm = (monster) => {
+    setMonsterFormError('');
+    setMonsterForm({
+      _id: monster._id,
+      name: monster.name || '',
+      hp: monster.hp || '',
+      defense: monster.defense || '',
+      attackBonus: monster.attackBonus ?? '0',
+      damageMax: monster.damageMax || '',
+      xpReward: monster.xpReward || '',
+      cssClass: monster.cssClass || '',
+      level: monster.level ?? '1'
+    });
+  };
+
+  const closeMonsterForm = () => {
+    setMonsterForm(null);
+    setMonsterFormError('');
+  };
+
+  const handleMonsterFormChange = (field, value) => {
+    setMonsterForm(prev => ({ ...prev, [field]: value }));
+  };
+
+  const submitMonsterForm = async (e) => {
+    e.preventDefault();
+    setMonsterFormError('');
+
+    if (!monsterForm.name.trim() || !monsterForm.hp || !monsterForm.defense || !monsterForm.damageMax || !monsterForm.xpReward) {
+      setMonsterFormError('Nimi, HP, puolustus, max-vahinko ja XP-palkkio ovat pakollisia.');
+      return;
+    }
+
+    const url = `${apiUrl}/api/auth/admin/monster/${monsterForm._id}`;
+
+    try {
+      const res = await fetch(url, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(monsterForm),
+        credentials: 'include'
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Hirviön tallennus epäonnistui.');
+
+      closeMonsterForm();
+      fetchMonsters();
+    } catch (err) {
+      setMonsterFormError(err.message);
+    }
+  };
+
   const formatDate = (iso) => {
     if (!iso) return '';
     const d = new Date(iso);
@@ -148,6 +222,12 @@ export default function AdminPanel({ onError }) {
           onClick={() => setActiveTab('users')}
         >
           Käyttäjät
+        </button>
+        <button
+          className={`admin-tab ${activeTab === 'monsters' ? 'active' : ''}`}
+          onClick={() => setActiveTab('monsters')}
+        >
+          Hirviöt
         </button>
         <button
           className={`admin-tab ${activeTab === 'logs' ? 'active' : ''}`}
@@ -214,6 +294,124 @@ export default function AdminPanel({ onError }) {
               })}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {activeTab === 'monsters' && !loading && (
+        <div className="admin-monsters">
+          {monsterForm && (
+            <form className="admin-monster-form" onSubmit={submitMonsterForm}>
+              <h2>Muokkaa: {monsterForm.name}</h2>
+              <div className="admin-monster-form-grid">
+                <label>
+                  Nimi
+                  <input
+                    type="text"
+                    value={monsterForm.name}
+                    onChange={(e) => handleMonsterFormChange('name', e.target.value)}
+                    required
+                  />
+                </label>
+                <label>
+                  Taso
+                  <input
+                    type="number"
+                    value={monsterForm.level}
+                    onChange={(e) => handleMonsterFormChange('level', e.target.value)}
+                  />
+                </label>
+                <label>
+                  HP
+                  <input
+                    type="number"
+                    value={monsterForm.hp}
+                    onChange={(e) => handleMonsterFormChange('hp', e.target.value)}
+                    required
+                  />
+                </label>
+                <label>
+                  Puolustus
+                  <input
+                    type="number"
+                    value={monsterForm.defense}
+                    onChange={(e) => handleMonsterFormChange('defense', e.target.value)}
+                    required
+                  />
+                </label>
+                <label>
+                  Hyökkäysbonus
+                  <input
+                    type="number"
+                    value={monsterForm.attackBonus}
+                    onChange={(e) => handleMonsterFormChange('attackBonus', e.target.value)}
+                  />
+                </label>
+                <label>
+                  Max-vahinko
+                  <input
+                    type="number"
+                    value={monsterForm.damageMax}
+                    onChange={(e) => handleMonsterFormChange('damageMax', e.target.value)}
+                    required
+                  />
+                </label>
+                <label>
+                  XP-palkkio
+                  <input
+                    type="number"
+                    value={monsterForm.xpReward}
+                    onChange={(e) => handleMonsterFormChange('xpReward', e.target.value)}
+                    required
+                  />
+                </label>
+              </div>
+
+              {monsterFormError && <p className="profile-field-error">{monsterFormError}</p>}
+
+              <div className="admin-monster-form-buttons">
+                <button type="button" className="profile-cancel-btn" onClick={closeMonsterForm}>
+                  Peruuta
+                </button>
+                <button type="submit" className="auth-submit-btn">
+                  Tallenna muutokset
+                </button>
+              </div>
+            </form>
+          )}
+
+          {!monsterForm && (
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Nimi</th>
+                  <th>Taso</th>
+                  <th>HP</th>
+                  <th>Puolustus</th>
+                  <th>Max-vah.</th>
+                  <th>XP</th>
+                  <th>Toiminnot</th>
+                </tr>
+              </thead>
+              <tbody>
+                {monsters.map(monster => (
+                  <tr key={monster._id}>
+                    <td>{monster.name}</td>
+                    <td>{monster.level}</td>
+                    <td>{monster.hp}</td>
+                    <td>{monster.defense}</td>
+                    <td>{monster.damageMax}</td>
+                    <td>{monster.xpReward}</td>
+                    <td className="admin-actions">
+                      <button className="admin-action-btn" onClick={() => openEditMonsterForm(monster)}>
+                        Muokkaa
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+          {!monsterForm && monsters.length === 0 && <p className="admin-loading">Ei hirviöitä.</p>}
         </div>
       )}
 

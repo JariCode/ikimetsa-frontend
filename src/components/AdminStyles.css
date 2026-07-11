@@ -243,6 +243,68 @@
   box-shadow: 0 0 12px rgba(251, 191, 36, 0.3);
 }
 
+/* 🐺 Hirviöiden hallinta */
+.admin-add-btn {
+  display: inline-block;
+  margin-bottom: 16px;
+  padding: 8px 16px;
+}
+
+.admin-monster-form {
+  background: rgba(10, 25, 10, 0.5);
+  border: 1px solid #1e3a1e;
+  border-radius: 6px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.admin-monster-form h2 {
+  color: #4ade80;
+  margin: 0 0 16px;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+}
+
+.admin-monster-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.admin-monster-form-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: #9ca3af;
+  font-size: 0.85rem;
+}
+
+.admin-monster-form-grid input {
+  background: rgba(4, 8, 4, 0.9);
+  border: 1px solid #1e3a1e;
+  color: #f3f4f6;
+  padding: 10px 12px;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.admin-monster-form-grid input:focus {
+  border-color: #4ade80;
+  box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.18);
+}
+
+.admin-monster-form-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.admin-monster-form-buttons button {
+  flex: 1;
+}
+
 /* 📱 Mobiili: sama taulukkorakenne, sarakkeet ja toiminnot säilyvät -
    vain fontit/paddingit pienemmiksi, ja loki-taulukon pvm/aika saa
    rivittyä kahdelle riville ettei sarake ole liian leveä. */
@@ -353,5 +415,19 @@
 
   .admin-log-scroll {
     max-height: 55vh;
+  }
+
+  .admin-monster-form {
+    padding: 14px;
+  }
+
+  .admin-monster-form-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .admin-monster-form-grid input {
+    padding: 8px 10px;
+    font-size: 0.85rem;
   }
 }
