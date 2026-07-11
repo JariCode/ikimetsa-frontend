@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import PasswordInput from './PasswordInput';
 import TermsOfServiceModal from './TermsOfServiceModal';
 import PrivacyPolicyModal from './PrivacyPolicyModal';
+import SiteFooter from './SiteFooter';
 
 export default function AuthScreen({ 
   authMode, 
@@ -53,6 +54,7 @@ export default function AuthScreen({
 
       {showTerms && <TermsOfServiceModal onClose={() => setShowTerms(false)} />}
       {showPrivacy && <PrivacyPolicyModal onClose={() => setShowPrivacy(false)} />}
+      <SiteFooter />
     </div>
   );
 }

@@ -14,7 +14,6 @@ import CompanionScreen from './components/CompanionScreen';
 import WeaponScreen from './components/WeaponScreen';
 import TreasureScreen from './components/TreasureScreen';
 import AdminPanel from './components/AdminPanel';
-import SiteFooter from './components/SiteFooter';
 
 export default function App() {
   const [sessionId, setSessionId] = useState(sessionStorage.getItem('ikimetsa_session_id') || null);
@@ -1032,7 +1031,6 @@ export default function App() {
           )}
         </>
       )}
-      <SiteFooter />
     </div>
   );
 }
