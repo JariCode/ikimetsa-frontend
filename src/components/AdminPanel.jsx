@@ -3,7 +3,7 @@ import './AdminStyles.css';
 import adminMusic from '../assets/audio/music/everything_is_dead-horror-horror-558813.mp3';
 
 export default function AdminPanel({ onError }) {
-  const [activeTab, setActiveTab] = useState(sessionStorage.getItem('ikimetsa_admin_tab') || 'users'); // 'users' | 'logs' | 'monsters' | 'areas'
+  const [activeTab, setActiveTab] = useState(sessionStorage.getItem('ikimetsa_admin_tab') || 'users');
 
   const [users, setUsers] = useState([]);
   const [currentAdminId, setCurrentAdminId] = useState(null);
@@ -11,23 +11,18 @@ export default function AdminPanel({ onError }) {
   const [logSearch, setLogSearch] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // 🐺 Hirviöiden hallinta
+  const [characters, setCharacters] = useState([]);
+  const [characterForm, setCharacterForm] = useState(null);
+  const [characterFormError, setCharacterFormError] = useState('');
+
   const [monsters, setMonsters] = useState([]);
-  const [monsterForm, setMonsterForm] = useState(null); // null = lomake kiinni, muuten { ...kentät, _id? }
+  const [monsterForm, setMonsterForm] = useState(null);
   const [monsterFormError, setMonsterFormError] = useState('');
 
-  // 🗺️ Alueiden hallinta
-  const [areas, setAreas] = useState([]);
-  const [areaForm, setAreaForm] = useState(null);
-  const [areaFormError, setAreaFormError] = useState('');
-
-  // Vahvistusta odottavat toiminnot: { type: 'role'|'delete', userId, username, newRole? }
   const [pendingAction, setPendingAction] = useState(null);
 
   const apiUrl = import.meta.env.VITE_API_URL;
 
-  // 🎵 Taustamusiikki soi koko sen ajan kun Admin-paneeli on auki, ja
-  // häivytetään pois kun se poistuu (takaisin peliin / uloskirjautuminen).
   useEffect(() => {
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
     const gainNode = audioContext.createGain();
@@ -95,6 +90,20 @@ export default function AdminPanel({ onError }) {
     }
   };
 
+  const fetchCharacters = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`${apiUrl}/api/auth/admin/characters`, { credentials: 'include' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Pelihahmojen haku epäonnistui.');
+      setCharacters(data.characters || []);
+    } catch (err) {
+      if (onError) onError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const fetchMonsters = async () => {
     setLoading(true);
     try {
@@ -109,26 +118,12 @@ export default function AdminPanel({ onError }) {
     }
   };
 
-  const fetchAreas = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(`${apiUrl}/api/auth/admin/areas`, { credentials: 'include' });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || 'Alueiden haku epäonnistui.');
-      setAreas(data.areas || []);
-    } catch (err) {
-      if (onError) onError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
     sessionStorage.setItem('ikimetsa_admin_tab', activeTab);
     if (activeTab === 'users') fetchUsers();
-    if (activeTab === 'logs') fetchLogs();
+    if (activeTab === 'characters') fetchCharacters();
     if (activeTab === 'monsters') fetchMonsters();
-    if (activeTab === 'areas') fetchAreas();
+    if (activeTab === 'logs') fetchLogs();
   }, [activeTab]);
 
   const confirmRoleChange = async () => {
@@ -165,7 +160,54 @@ export default function AdminPanel({ onError }) {
     }
   };
 
-  // --- HIRVIÖIDEN CRUD-TOIMINNOT ---
+  const openEditCharacterForm = (character) => {
+    setCharacterFormError('');
+    setCharacterForm({
+      _id: character._id,
+      name: character.name,
+      description: character.description || '',
+      baseHp: character.baseHp || '',
+      startingWeaponName: character.startingWeapon?.name || '',
+      startingWeaponMaxDurability: character.startingWeapon?.maxDurability || '',
+      initiativeBonus: character.initiativeBonus ?? '0',
+      baseDefense: character.baseDefense ?? '10'
+    });
+  };
+
+  const closeCharacterForm = () => {
+    setCharacterForm(null);
+    setCharacterFormError('');
+  };
+
+  const handleCharacterFormChange = (field, value) => {
+    setCharacterForm(prev => ({ ...prev, [field]: value }));
+  };
+
+  const submitCharacterForm = async (e) => {
+    e.preventDefault();
+    setCharacterFormError('');
+
+    if (!characterForm.baseHp || !characterForm.startingWeaponMaxDurability) {
+      setCharacterFormError('HP ja aseen kestävyys ovat pakollisia.');
+      return;
+    }
+
+    try {
+      const res = await fetch(`${apiUrl}/api/auth/admin/character/${characterForm._id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(characterForm),
+        credentials: 'include'
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Pelihahmon tallennus epäonnistui.');
+
+      closeCharacterForm();
+      fetchCharacters();
+    } catch (err) {
+      setCharacterFormError(err.message);
+    }
+  };
 
   const openEditMonsterForm = (monster) => {
     setMonsterFormError('');
@@ -177,7 +219,6 @@ export default function AdminPanel({ onError }) {
       attackBonus: monster.attackBonus ?? '0',
       damageMax: monster.damageMax || '',
       xpReward: monster.xpReward || '',
-      cssClass: monster.cssClass || '',
       level: monster.level ?? '1'
     });
   };
@@ -195,15 +236,13 @@ export default function AdminPanel({ onError }) {
     e.preventDefault();
     setMonsterFormError('');
 
-    if (!monsterForm.name.trim() || !monsterForm.hp || !monsterForm.defense || !monsterForm.damageMax || !monsterForm.xpReward) {
-      setMonsterFormError('Nimi, HP, puolustus, max-vahinko ja XP-palkkio ovat pakollisia.');
+    if (!monsterForm.hp || !monsterForm.defense || !monsterForm.damageMax || !monsterForm.xpReward) {
+      setMonsterFormError('HP, puolustus, max-vahinko ja XP-palkkio ovat pakollisia.');
       return;
     }
 
-    const url = `${apiUrl}/api/auth/admin/monster/${monsterForm._id}`;
-
     try {
-      const res = await fetch(url, {
+      const res = await fetch(`${apiUrl}/api/auth/admin/monster/${monsterForm._id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(monsterForm),
@@ -219,107 +258,12 @@ export default function AdminPanel({ onError }) {
     }
   };
 
-  // --- ALUEIDEN CRUD-TOIMINNOT ---
-
-  const openEditAreaForm = (area) => {
-    setAreaFormError('');
-    setAreaForm({
-      _id: area._id,
-      order: area.order,
-      name: area.name || '',
-      locationLabel: area.locationLabel || '',
-      monsterName: area.monsterName || '',
-      encounterText: area.encounterText || '',
-      backgroundClass: area.backgroundClass || '',
-      mechanic: area.mechanic || 'normal',
-      companionEvent: {
-        name: area.companionEvent?.name || '',
-        discoveryText: area.companionEvent?.discoveryText || '',
-        weaponName: area.companionEvent?.weaponName || ''
-      },
-      weaponEvent: {
-        discoveryText: area.weaponEvent?.discoveryText || '',
-        hunterWeaponName: area.weaponEvent?.hunterWeaponName || '',
-        mechanicWeaponName: area.weaponEvent?.mechanicWeaponName || '',
-        thiefWeaponName: area.weaponEvent?.thiefWeaponName || '',
-        strongmanWeaponName: area.weaponEvent?.strongmanWeaponName || '',
-        damageBonus: area.weaponEvent?.damageBonus ?? 0
-      },
-      treasureEvent: {
-        discoveryText: area.treasureEvent?.discoveryText || '',
-        repairPointsBonus: area.treasureEvent?.repairPointsBonus ?? 0,
-        maxHpBonus: area.treasureEvent?.maxHpBonus ?? 0
-      },
-      goodRollTexts: area.goodRollTexts && area.goodRollTexts.length ? [...area.goodRollTexts] : [''],
-      badRollTexts: area.badRollTexts && area.badRollTexts.length ? [...area.badRollTexts] : ['']
-    });
-  };
-
-  const closeAreaForm = () => {
-    setAreaForm(null);
-    setAreaFormError('');
-  };
-
-  const handleAreaFieldChange = (field, value) => {
-    setAreaForm(prev => ({ ...prev, [field]: value }));
-  };
-
-  const handleAreaNestedChange = (section, field, value) => {
-    setAreaForm(prev => ({ ...prev, [section]: { ...prev[section], [field]: value } }));
-  };
-
-  const handleAreaListChange = (listName, index, value) => {
-    setAreaForm(prev => {
-      const updated = [...prev[listName]];
-      updated[index] = value;
-      return { ...prev, [listName]: updated };
-    });
-  };
-
-  const addAreaListRow = (listName) => {
-    setAreaForm(prev => ({ ...prev, [listName]: [...prev[listName], ''] }));
-  };
-
-  const removeAreaListRow = (listName, index) => {
-    setAreaForm(prev => {
-      const updated = prev[listName].filter((_, i) => i !== index);
-      return { ...prev, [listName]: updated.length ? updated : [''] };
-    });
-  };
-
-  const submitAreaForm = async (e) => {
-    e.preventDefault();
-    setAreaFormError('');
-
-    if (!areaForm.name.trim() || !areaForm.locationLabel.trim() || !areaForm.monsterName.trim() || !areaForm.encounterText.trim()) {
-      setAreaFormError('Nimi, sijaintiteksti, hirviön nimi ja kohtaamisteksti ovat pakollisia.');
-      return;
-    }
-
-    try {
-      const res = await fetch(`${apiUrl}/api/auth/admin/area/${areaForm._id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(areaForm),
-        credentials: 'include'
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || 'Alueen tallennus epäonnistui.');
-
-      closeAreaForm();
-      fetchAreas();
-    } catch (err) {
-      setAreaFormError(err.message);
-    }
-  };
-
   const formatDate = (iso) => {
     if (!iso) return '';
     const d = new Date(iso);
     return d.toLocaleString('fi-FI', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
   };
 
-  // Lokien suodatus käyttäjänimihaulla (performedBy tai details sisältää haun)
   const filteredLogs = logs.filter(log => {
     if (!logSearch.trim()) return true;
     const q = logSearch.trim().toLowerCase();
@@ -331,30 +275,10 @@ export default function AdminPanel({ onError }) {
       <h1 className="admin-title">Ylläpito</h1>
 
       <div className="admin-tabs">
-        <button
-          className={`admin-tab ${activeTab === 'users' ? 'active' : ''}`}
-          onClick={() => setActiveTab('users')}
-        >
-          Käyttäjät
-        </button>
-        <button
-          className={`admin-tab ${activeTab === 'monsters' ? 'active' : ''}`}
-          onClick={() => setActiveTab('monsters')}
-        >
-          Hirviöt
-        </button>
-        <button
-          className={`admin-tab ${activeTab === 'areas' ? 'active' : ''}`}
-          onClick={() => setActiveTab('areas')}
-        >
-          Alueet
-        </button>
-        <button
-          className={`admin-tab ${activeTab === 'logs' ? 'active' : ''}`}
-          onClick={() => setActiveTab('logs')}
-        >
-          Loki
-        </button>
+        <button className={`admin-tab ${activeTab === 'users' ? 'active' : ''}`} onClick={() => setActiveTab('users')}>Käyttäjät</button>
+        <button className={`admin-tab ${activeTab === 'characters' ? 'active' : ''}`} onClick={() => setActiveTab('characters')}>Pelihahmot</button>
+        <button className={`admin-tab ${activeTab === 'monsters' ? 'active' : ''}`} onClick={() => setActiveTab('monsters')}>Hirviöt</button>
+        <button className={`admin-tab ${activeTab === 'logs' ? 'active' : ''}`} onClick={() => setActiveTab('logs')}>Loki</button>
       </div>
 
       {loading && <p className="admin-loading">Ladataan...</p>}
@@ -363,12 +287,7 @@ export default function AdminPanel({ onError }) {
         <div className="admin-users">
           <table className="admin-table">
             <thead>
-              <tr>
-                <th>Käyttäjä</th>
-                <th>Rooli</th>
-                <th>Luotu</th>
-                <th>Toiminnot</th>
-              </tr>
+              <tr><th>Käyttäjä</th><th>Rooli</th><th>Luotu</th><th>Toiminnot</th></tr>
             </thead>
             <tbody>
               {users.map(user => {
@@ -376,38 +295,15 @@ export default function AdminPanel({ onError }) {
                 return (
                   <tr key={user._id} className={isSelf ? 'admin-row-self' : ''}>
                     <td>{user.username}{isSelf && <span className="admin-self-tag"> (sinä)</span>}</td>
-                    <td>
-                      <span className={`admin-role-badge role-${user.role}`}>
-                        {user.role === 'user' ? 'Käyttäjä' : 'Admin'}
-                      </span>
-                    </td>
+                    <td><span className={`admin-role-badge role-${user.role}`}>{user.role === 'user' ? 'Käyttäjä' : 'Admin'}</span></td>
                     <td>{formatDate(user.createdAt)}</td>
                     <td className="admin-actions">
                       {user.role === 'admin' ? (
-                        <button
-                          className="admin-action-btn"
-                          disabled={isSelf}
-                          title={isSelf ? 'Et voi alentaa itseäsi' : 'Alenna tavalliseksi käyttäjäksi'}
-                          onClick={() => setPendingAction({ type: 'role', userId: user._id, username: user.username, newRole: 'user' })}
-                        >
-                          Vaihda rooli
-                        </button>
+                        <button className="admin-action-btn" disabled={isSelf} title={isSelf ? 'Et voi alentaa itseäsi' : 'Alenna tavalliseksi käyttäjäksi'} onClick={() => setPendingAction({ type: 'role', userId: user._id, username: user.username, newRole: 'user' })}>Vaihda rooli</button>
                       ) : (
-                        <button
-                          className="admin-action-btn"
-                          onClick={() => setPendingAction({ type: 'role', userId: user._id, username: user.username, newRole: 'admin' })}
-                        >
-                          Vaihda rooli
-                        </button>
+                        <button className="admin-action-btn" onClick={() => setPendingAction({ type: 'role', userId: user._id, username: user.username, newRole: 'admin' })}>Vaihda rooli</button>
                       )}
-                      <button
-                        className="admin-action-btn admin-action-danger"
-                        disabled={isSelf}
-                        title={isSelf ? 'Et voi poistaa itseäsi' : 'Poista käyttäjä'}
-                        onClick={() => setPendingAction({ type: 'delete', userId: user._id, username: user.username })}
-                      >
-                        Poista
-                      </button>
+                      <button className="admin-action-btn admin-action-danger" disabled={isSelf} title={isSelf ? 'Et voi poistaa itseäsi' : 'Poista käyttäjä'} onClick={() => setPendingAction({ type: 'delete', userId: user._id, username: user.username })}>Poista</button>
                     </td>
                   </tr>
                 );
@@ -417,84 +313,93 @@ export default function AdminPanel({ onError }) {
         </div>
       )}
 
+      {activeTab === 'characters' && !loading && (
+        <div className="admin-characters">
+          {characterForm && (
+            <form className="admin-monster-form" onSubmit={submitCharacterForm}>
+              <h2>Muokkaa: {characterForm.name}</h2>
+              <p className="admin-monster-form-subtitle">Hahmon aloitusarvot, joilla peli alkaa</p>
+
+              <div className="admin-monster-form-grid">
+                <label>HP
+                  <input type="number" value={characterForm.baseHp} onChange={(e) => handleCharacterFormChange('baseHp', e.target.value)} required />
+                </label>
+                <label>Aloitebonus
+                  <input type="number" value={characterForm.initiativeBonus} onChange={(e) => handleCharacterFormChange('initiativeBonus', e.target.value)} />
+                </label>
+                <label>Puolustus
+                  <input type="number" value={characterForm.baseDefense} onChange={(e) => handleCharacterFormChange('baseDefense', e.target.value)} />
+                </label>
+                <label>Aseen kestävyys
+                  <input type="number" value={characterForm.startingWeaponMaxDurability} onChange={(e) => handleCharacterFormChange('startingWeaponMaxDurability', e.target.value)} required />
+                </label>
+              </div>
+
+              {characterFormError && <p className="profile-field-error">{characterFormError}</p>}
+
+              <div className="admin-monster-form-buttons">
+                <button type="button" className="profile-cancel-btn" onClick={closeCharacterForm}>Peruuta</button>
+                <button type="submit" className="auth-submit-btn">Tallenna muutokset</button>
+              </div>
+            </form>
+          )}
+
+          {!characterForm && (
+            <table className="admin-table">
+              <thead>
+                <tr><th>Nimi</th><th>HP</th><th>Aloite</th><th>Puolustus</th><th>Ase</th><th>Toiminnot</th></tr>
+              </thead>
+              <tbody>
+                {characters.map(character => (
+                  <tr key={character._id}>
+                    <td>{character.name}</td>
+                    <td>{character.baseHp}</td>
+                    <td>{character.initiativeBonus}</td>
+                    <td>{character.baseDefense}</td>
+                    <td>{character.startingWeapon?.name}</td>
+                    <td className="admin-actions">
+                      <button className="admin-action-btn" onClick={() => openEditCharacterForm(character)}>Muokkaa</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+          {!characterForm && characters.length === 0 && <p className="admin-loading">Ei pelihahmoja.</p>}
+        </div>
+      )}
+
       {activeTab === 'monsters' && !loading && (
         <div className="admin-monsters">
           {monsterForm && (
             <form className="admin-monster-form" onSubmit={submitMonsterForm}>
               <h2>Muokkaa: {monsterForm.name}</h2>
               <div className="admin-monster-form-grid">
-                <label>
-                  Nimi
-                  <input
-                    type="text"
-                    value={monsterForm.name}
-                    onChange={(e) => handleMonsterFormChange('name', e.target.value)}
-                    required
-                  />
+                <label>Taso
+                  <input type="number" value={monsterForm.level} onChange={(e) => handleMonsterFormChange('level', e.target.value)} />
                 </label>
-                <label>
-                  Taso
-                  <input
-                    type="number"
-                    value={monsterForm.level}
-                    onChange={(e) => handleMonsterFormChange('level', e.target.value)}
-                  />
+                <label>HP
+                  <input type="number" value={monsterForm.hp} onChange={(e) => handleMonsterFormChange('hp', e.target.value)} required />
                 </label>
-                <label>
-                  HP
-                  <input
-                    type="number"
-                    value={monsterForm.hp}
-                    onChange={(e) => handleMonsterFormChange('hp', e.target.value)}
-                    required
-                  />
+                <label>Puolustus
+                  <input type="number" value={monsterForm.defense} onChange={(e) => handleMonsterFormChange('defense', e.target.value)} required />
                 </label>
-                <label>
-                  Puolustus
-                  <input
-                    type="number"
-                    value={monsterForm.defense}
-                    onChange={(e) => handleMonsterFormChange('defense', e.target.value)}
-                    required
-                  />
+                <label>Hyökkäysbonus
+                  <input type="number" value={monsterForm.attackBonus} onChange={(e) => handleMonsterFormChange('attackBonus', e.target.value)} />
                 </label>
-                <label>
-                  Hyökkäysbonus
-                  <input
-                    type="number"
-                    value={monsterForm.attackBonus}
-                    onChange={(e) => handleMonsterFormChange('attackBonus', e.target.value)}
-                  />
+                <label>Max-vahinko
+                  <input type="number" value={monsterForm.damageMax} onChange={(e) => handleMonsterFormChange('damageMax', e.target.value)} required />
                 </label>
-                <label>
-                  Max-vahinko
-                  <input
-                    type="number"
-                    value={monsterForm.damageMax}
-                    onChange={(e) => handleMonsterFormChange('damageMax', e.target.value)}
-                    required
-                  />
-                </label>
-                <label>
-                  XP-palkkio
-                  <input
-                    type="number"
-                    value={monsterForm.xpReward}
-                    onChange={(e) => handleMonsterFormChange('xpReward', e.target.value)}
-                    required
-                  />
+                <label>XP-palkkio
+                  <input type="number" value={monsterForm.xpReward} onChange={(e) => handleMonsterFormChange('xpReward', e.target.value)} required />
                 </label>
               </div>
 
               {monsterFormError && <p className="profile-field-error">{monsterFormError}</p>}
 
               <div className="admin-monster-form-buttons">
-                <button type="button" className="profile-cancel-btn" onClick={closeMonsterForm}>
-                  Peruuta
-                </button>
-                <button type="submit" className="auth-submit-btn">
-                  Tallenna muutokset
-                </button>
+                <button type="button" className="profile-cancel-btn" onClick={closeMonsterForm}>Peruuta</button>
+                <button type="submit" className="auth-submit-btn">Tallenna muutokset</button>
               </div>
             </form>
           )}
@@ -502,15 +407,7 @@ export default function AdminPanel({ onError }) {
           {!monsterForm && (
             <table className="admin-table">
               <thead>
-                <tr>
-                  <th>Nimi</th>
-                  <th>Taso</th>
-                  <th>HP</th>
-                  <th>Puolustus</th>
-                  <th>Max-vah.</th>
-                  <th>XP</th>
-                  <th>Toiminnot</th>
-                </tr>
+                <tr><th>Nimi</th><th>Taso</th><th>HP</th><th>Puolustus</th><th>Max-vah.</th><th>XP</th><th>Toiminnot</th></tr>
               </thead>
               <tbody>
                 {monsters.map(monster => (
@@ -522,9 +419,7 @@ export default function AdminPanel({ onError }) {
                     <td>{monster.damageMax}</td>
                     <td>{monster.xpReward}</td>
                     <td className="admin-actions">
-                      <button className="admin-action-btn" onClick={() => openEditMonsterForm(monster)}>
-                        Muokkaa
-                      </button>
+                      <button className="admin-action-btn" onClick={() => openEditMonsterForm(monster)}>Muokkaa</button>
                     </td>
                   </tr>
                 ))}
@@ -535,262 +430,13 @@ export default function AdminPanel({ onError }) {
         </div>
       )}
 
-      {activeTab === 'areas' && !loading && (
-        <div className="admin-areas">
-          {areaForm && (
-            <form className="admin-area-form" onSubmit={submitAreaForm}>
-              <h2>Muokkaa aluetta {areaForm.order}: {areaForm.name}</h2>
-
-              <div className="admin-monster-form-grid">
-                <label>
-                  Nimi
-                  <input
-                    type="text"
-                    value={areaForm.name}
-                    onChange={(e) => handleAreaFieldChange('name', e.target.value)}
-                    required
-                  />
-                </label>
-                <label>
-                  Sijaintiteksti
-                  <input
-                    type="text"
-                    value={areaForm.locationLabel}
-                    onChange={(e) => handleAreaFieldChange('locationLabel', e.target.value)}
-                    required
-                  />
-                </label>
-                <label>
-                  Hirviön nimi
-                  <input
-                    type="text"
-                    value={areaForm.monsterName}
-                    onChange={(e) => handleAreaFieldChange('monsterName', e.target.value)}
-                    required
-                  />
-                </label>
-                <label>
-                  Tausta-CSS-luokka
-                  <input
-                    type="text"
-                    value={areaForm.backgroundClass}
-                    onChange={(e) => handleAreaFieldChange('backgroundClass', e.target.value)}
-                  />
-                </label>
-              </div>
-
-              <label className="admin-area-textarea-label">
-                Kohtaamisteksti (taistelun alkaessa)
-                <textarea
-                  value={areaForm.encounterText}
-                  onChange={(e) => handleAreaFieldChange('encounterText', e.target.value)}
-                  rows={3}
-                  required
-                />
-              </label>
-
-              <h3>Kumppanin löytötapahtuma</h3>
-              <div className="admin-monster-form-grid">
-                <label>
-                  Kumppanin nimi
-                  <input
-                    type="text"
-                    value={areaForm.companionEvent.name}
-                    onChange={(e) => handleAreaNestedChange('companionEvent', 'name', e.target.value)}
-                  />
-                </label>
-                <label>
-                  Kumppanin aseen nimi
-                  <input
-                    type="text"
-                    value={areaForm.companionEvent.weaponName}
-                    onChange={(e) => handleAreaNestedChange('companionEvent', 'weaponName', e.target.value)}
-                  />
-                </label>
-              </div>
-              <label className="admin-area-textarea-label">
-                Kumppanin löytöteksti
-                <textarea
-                  value={areaForm.companionEvent.discoveryText}
-                  onChange={(e) => handleAreaNestedChange('companionEvent', 'discoveryText', e.target.value)}
-                  rows={2}
-                />
-              </label>
-
-              <h3>Aseen löytötapahtuma</h3>
-              <div className="admin-monster-form-grid">
-                <label>
-                  Metsästäjän aseen nimi
-                  <input
-                    type="text"
-                    value={areaForm.weaponEvent.hunterWeaponName}
-                    onChange={(e) => handleAreaNestedChange('weaponEvent', 'hunterWeaponName', e.target.value)}
-                  />
-                </label>
-                <label>
-                  Mekaanikon aseen nimi
-                  <input
-                    type="text"
-                    value={areaForm.weaponEvent.mechanicWeaponName}
-                    onChange={(e) => handleAreaNestedChange('weaponEvent', 'mechanicWeaponName', e.target.value)}
-                  />
-                </label>
-                <label>
-                  Varkaan aseen nimi
-                  <input
-                    type="text"
-                    value={areaForm.weaponEvent.thiefWeaponName}
-                    onChange={(e) => handleAreaNestedChange('weaponEvent', 'thiefWeaponName', e.target.value)}
-                  />
-                </label>
-                <label>
-                  Bodarin aseen nimi
-                  <input
-                    type="text"
-                    value={areaForm.weaponEvent.strongmanWeaponName}
-                    onChange={(e) => handleAreaNestedChange('weaponEvent', 'strongmanWeaponName', e.target.value)}
-                  />
-                </label>
-                <label>
-                  Vahinkobonus (kaikille sama)
-                  <input
-                    type="number"
-                    value={areaForm.weaponEvent.damageBonus}
-                    onChange={(e) => handleAreaNestedChange('weaponEvent', 'damageBonus', e.target.value)}
-                  />
-                </label>
-              </div>
-              <label className="admin-area-textarea-label">
-                Aseen löytöteksti
-                <textarea
-                  value={areaForm.weaponEvent.discoveryText}
-                  onChange={(e) => handleAreaNestedChange('weaponEvent', 'discoveryText', e.target.value)}
-                  rows={2}
-                />
-              </label>
-
-              <h3>Aarteen löytötapahtuma</h3>
-              <div className="admin-monster-form-grid">
-                <label>
-                  Korjauspisteiden bonus
-                  <input
-                    type="number"
-                    value={areaForm.treasureEvent.repairPointsBonus}
-                    onChange={(e) => handleAreaNestedChange('treasureEvent', 'repairPointsBonus', e.target.value)}
-                  />
-                </label>
-                <label>
-                  Max-HP-bonus
-                  <input
-                    type="number"
-                    value={areaForm.treasureEvent.maxHpBonus}
-                    onChange={(e) => handleAreaNestedChange('treasureEvent', 'maxHpBonus', e.target.value)}
-                  />
-                </label>
-              </div>
-              <label className="admin-area-textarea-label">
-                Aarteen löytöteksti
-                <textarea
-                  value={areaForm.treasureEvent.discoveryText}
-                  onChange={(e) => handleAreaNestedChange('treasureEvent', 'discoveryText', e.target.value)}
-                  rows={2}
-                />
-              </label>
-
-              <h3>Hyvän heiton tekstit (3-5)</h3>
-              {areaForm.goodRollTexts.map((text, i) => (
-                <div className="admin-area-list-row" key={`good-${i}`}>
-                  <input
-                    type="text"
-                    value={text}
-                    onChange={(e) => handleAreaListChange('goodRollTexts', i, e.target.value)}
-                  />
-                  <button type="button" className="admin-action-btn admin-action-danger" onClick={() => removeAreaListRow('goodRollTexts', i)}>
-                    Poista rivi
-                  </button>
-                </div>
-              ))}
-              <button type="button" className="admin-action-btn" onClick={() => addAreaListRow('goodRollTexts')}>
-                + Lisää rivi
-              </button>
-
-              <h3>Huonon heiton tekstit (1-2)</h3>
-              {areaForm.badRollTexts.map((text, i) => (
-                <div className="admin-area-list-row" key={`bad-${i}`}>
-                  <input
-                    type="text"
-                    value={text}
-                    onChange={(e) => handleAreaListChange('badRollTexts', i, e.target.value)}
-                  />
-                  <button type="button" className="admin-action-btn admin-action-danger" onClick={() => removeAreaListRow('badRollTexts', i)}>
-                    Poista rivi
-                  </button>
-                </div>
-              ))}
-              <button type="button" className="admin-action-btn" onClick={() => addAreaListRow('badRollTexts')}>
-                + Lisää rivi
-              </button>
-
-              {areaFormError && <p className="profile-field-error">{areaFormError}</p>}
-
-              <div className="admin-monster-form-buttons">
-                <button type="button" className="profile-cancel-btn" onClick={closeAreaForm}>
-                  Peruuta
-                </button>
-                <button type="submit" className="auth-submit-btn">
-                  Tallenna muutokset
-                </button>
-              </div>
-            </form>
-          )}
-
-          {!areaForm && (
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Nimi</th>
-                  <th>Hirviö</th>
-                  <th>Toiminnot</th>
-                </tr>
-              </thead>
-              <tbody>
-                {areas.map(area => (
-                  <tr key={area._id}>
-                    <td>{area.order}</td>
-                    <td>{area.name}</td>
-                    <td>{area.monsterName}</td>
-                    <td className="admin-actions">
-                      <button className="admin-action-btn" onClick={() => openEditAreaForm(area)}>
-                        Muokkaa
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-          {!areaForm && areas.length === 0 && <p className="admin-loading">Ei alueita.</p>}
-        </div>
-      )}
-
       {activeTab === 'logs' && !loading && (
         <div className="admin-logs">
-          <input
-            type="text"
-            className="admin-log-search"
-            placeholder="Suodata käyttäjänimellä tai tekstillä..."
-            value={logSearch}
-            onChange={(e) => setLogSearch(e.target.value)}
-          />
+          <input type="text" className="admin-log-search" placeholder="Suodata käyttäjänimellä tai tekstillä..." value={logSearch} onChange={(e) => setLogSearch(e.target.value)} />
           <div className="admin-log-scroll">
             <table className="admin-table">
               <thead>
-                <tr>
-                  <th>Aika</th>
-                  <th>Käyttäjä</th>
-                  <th>Tapahtuma</th>
-                </tr>
+                <tr><th>Aika</th><th>Käyttäjä</th><th>Tapahtuma</th></tr>
               </thead>
               <tbody>
                 {filteredLogs.map(log => (
@@ -807,7 +453,6 @@ export default function AdminPanel({ onError }) {
         </div>
       )}
 
-      {/* Vahvistuslaatikko - sama kaava kuin profiilin muokkauksessa */}
       {pendingAction && (
         <div className="admin-confirm-overlay">
           <div className={`profile-confirm-box ${pendingAction.type === 'delete' ? 'profile-confirm-box-danger' : ''}`}>
@@ -819,17 +464,11 @@ export default function AdminPanel({ onError }) {
                   : `Vahvista: haluatko alentaa käyttäjän "${pendingAction.username}" tavalliseksi käyttäjäksi?`}
             </p>
             <div className="profile-confirm-buttons">
-              <button type="button" className="profile-cancel-btn" onClick={() => setPendingAction(null)}>
-                Peruuta
-              </button>
+              <button type="button" className="profile-cancel-btn" onClick={() => setPendingAction(null)}>Peruuta</button>
               {pendingAction.type === 'delete' ? (
-                <button type="button" className="danger-btn" onClick={confirmDelete}>
-                  Vahvista poisto
-                </button>
+                <button type="button" className="danger-btn" onClick={confirmDelete}>Vahvista poisto</button>
               ) : (
-                <button type="button" className="auth-submit-btn" onClick={confirmRoleChange}>
-                  Vahvista
-                </button>
+                <button type="button" className="auth-submit-btn" onClick={confirmRoleChange}>Vahvista</button>
               )}
             </div>
           </div>

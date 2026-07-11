@@ -60,19 +60,17 @@
   padding: 20px;
 }
 
-/* Yhteiset skrollausraamit kaikille listoille (Käyttäjät, Hirviöt, Alueet, Loki) */
 .admin-logs,
 .admin-users,
 .admin-monsters,
-.admin-areas {
+.admin-characters {
   width: 100%;
 }
 
-/* Annetaan kaikille päänäkymien listapohjille (kun lomake ei ole auki) 50vh korkeus ja skrollaus */
 .admin-log-scroll,
 .admin-users > .admin-table,
 .admin-monsters > .admin-table,
-.admin-areas > .admin-table {
+.admin-characters > .admin-table {
   display: block;
   max-height: 50vh;
   overflow-y: auto;
@@ -89,7 +87,6 @@
   table-layout: fixed;
 }
 
-/* Tehdään taulukkorakenteesta toimiva block-skrollauksessa */
 .admin-table thead, 
 .admin-table tbody, 
 .admin-table tr {
@@ -122,7 +119,6 @@
   overflow-wrap: break-word;
 }
 
-/* Lokisarakkeiden suhteet */
 .admin-logs .admin-table th:nth-child(1),
 .admin-logs .admin-table td:nth-child(1) { width: 25%; }
 .admin-logs .admin-table th:nth-child(2),
@@ -231,7 +227,6 @@
   font-size: 0.9rem;
 }
 
-/* Vahvistuslaatikon peittotausta */
 .admin-confirm-overlay {
   position: fixed;
   inset: 0;
@@ -259,19 +254,18 @@
   box-shadow: 0 0 12px rgba(251, 191, 36, 0.3);
 }
 
-/* 🐺 Hirviöiden hallinta */
-.admin-add-btn {
-  display: inline-block;
-  margin-bottom: 16px;
-  padding: 8px 16px;
-}
-
 .admin-monster-form {
   background: rgba(10, 25, 10, 0.5);
   border: 1px solid #1e3a1e;
   border-radius: 6px;
   padding: 20px;
   margin-bottom: 20px;
+  max-height: 65vh;
+  overflow-y: auto;
+  padding-right: 12px;
+  scrollbar-width: thin;
+  scrollbar-color: #1e3a1e #091209;
+  box-sizing: border-box;
 }
 
 .admin-monster-form h2 {
@@ -279,6 +273,12 @@
   margin: 0 0 16px;
   font-size: 1.1rem;
   letter-spacing: 1px;
+}
+
+.admin-monster-form-subtitle {
+  color: #9ca3af;
+  font-size: 0.8rem;
+  margin: 0 0 16px;
 }
 
 .admin-monster-form-grid {
@@ -293,6 +293,7 @@
   gap: 6px;
   color: #9ca3af;
   font-size: 0.85rem;
+  min-width: 0;
 }
 
 .admin-monster-form-grid input {
@@ -304,6 +305,8 @@
   font-family: inherit;
   font-size: 0.95rem;
   outline: none;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .admin-monster-form-grid input:focus {
@@ -313,37 +316,28 @@
 
 .admin-monster-form-buttons {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   margin-top: 18px;
 }
 
 .admin-monster-form-buttons button {
   flex: 1;
+  min-width: 120px;
 }
 
-/* 🗺️ Alueiden hallinta - laajempi lomake väliotsikoilla ja tekstialueilla */
-.admin-area-form {
-  max-height: 70vh;
-  overflow-y: auto;
-  padding-right: 8px;
-  scrollbar-width: thin;
-  scrollbar-color: #1e3a1e #091209;
-}
+.admin-monsters .admin-table th:nth-child(1),
+.admin-monsters .admin-table td:nth-child(1) { width: 18%; }
 
-.admin-area-form .admin-monster-form-grid {
-  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-  gap: 16px;
-}
+.admin-monsters .admin-table th:nth-child(7),
+.admin-monsters .admin-table td:nth-child(7) { width: 12%; }
 
-.admin-area-form h3 {
-  color: #9ca3af;
-  font-size: 0.9rem;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  margin: 20px 0 10px;
-  border-top: 1px dashed #1e3a1e;
-  padding-top: 14px;
-}
+.admin-characters .admin-table th:nth-child(5),
+.admin-characters .admin-table td:nth-child(5) { width: 26%; }
+
+.admin-characters .admin-table th:nth-child(6),
+.admin-characters .admin-table td:nth-child(6) { width: 14%; }
+
 
 .admin-area-textarea-label {
   display: flex;
@@ -373,32 +367,6 @@
   box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.18);
 }
 
-.admin-area-list-row {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 8px;
-  align-items: center;
-}
-
-.admin-area-list-row input {
-  flex: 1;
-  background: rgba(4, 8, 4, 0.9);
-  border: 1px solid #1e3a1e;
-  color: #f3f4f6;
-  padding: 8px 10px;
-  border-radius: 4px;
-  font-family: inherit;
-  font-size: 0.9rem;
-  outline: none;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.admin-area-list-row input:focus {
-  border-color: #4ade80;
-}
-
-/* 📱 Mobiiliresponsiivisuus */
 @media (max-width: 600px) {
   .admin-panel {
     max-width: 96vw;
@@ -421,11 +389,10 @@
     font-size: 0.85rem;
   }
 
-  /* Rajataan korkeutta mobiilissa hieman enemmän tilan säästämiseksi */
   .admin-log-scroll,
   .admin-users > .admin-table,
   .admin-monsters > .admin-table,
-  .admin-areas > .admin-table {
+  .admin-characters > .admin-table {
     max-height: 45vh;
   }
 
@@ -449,7 +416,6 @@
     line-height: 1.3;
   }
 
-  /* Käyttäjät-taulukon sarakkeet mobiilissa */
   .admin-users .admin-table th:nth-child(1),
   .admin-users .admin-table td:nth-child(1) { width: 22%; }
   .admin-users .admin-table th:nth-child(2),
@@ -459,7 +425,6 @@
   .admin-users .admin-table th:nth-child(4),
   .admin-users .admin-table td:nth-child(4) { width: 36%; }
 
-  /* Lokitaulukon sarakkeet mobiilissa */
   .admin-logs .admin-table th:nth-child(1),
   .admin-logs .admin-table td:nth-child(1) { width: 24%; }
   .admin-logs .admin-table th:nth-child(2),
@@ -514,51 +479,49 @@
     font-size: 0.85rem;
   }
 
-  .admin-area-list-row {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 6px;
+  .admin-monster-form-buttons button {
+    min-width: 100%;
   }
 
-  .admin-area-list-row button {
-    align-self: flex-end;
-  }
-/* 🐺 Hirviötaulukon sarakkeet toimivilla prosenteillasi */
   .admin-monsters .admin-table th:nth-child(2),
-  .admin-monsters .admin-table td:nth-child(2) { width: 9%; }  /* TASO */
-  
-  .admin-monsters .admin-table th:nth-child(3),
-  .admin-monsters .admin-table td:nth-child(3) { width: 8%; }  /* HP */
-  
-  .admin-monsters .admin-table th:nth-child(4),
-  .admin-monsters .admin-table td:nth-child(4) { width: 8%; }  /* PUOLUSTUS */
-  
-  .admin-monsters .admin-table th:nth-child(5),
-  .admin-monsters .admin-table td:nth-child(5) { width: 9%; }  /* MAX-VAH. */
-  
-  .admin-monsters .admin-table th:nth-child(6),
-  .admin-monsters .admin-table td:nth-child(6) { width: 8%; }  /* XP */
+  .admin-monsters .admin-table td:nth-child(2) { width: 9%; }
 
-/* Pakotetaan hirviöiden ja alueiden otsikot rivittymään ja keskittymään */
+  .admin-monsters .admin-table th:nth-child(3),
+  .admin-monsters .admin-table td:nth-child(3) { width: 8%; }
+
+  .admin-monsters .admin-table th:nth-child(4),
+  .admin-monsters .admin-table td:nth-child(4) { width: 8%; }
+
+  .admin-monsters .admin-table th:nth-child(5),
+  .admin-monsters .admin-table td:nth-child(5) { width: 9%; }
+
+  .admin-monsters .admin-table th:nth-child(6),
+  .admin-monsters .admin-table td:nth-child(6) { width: 8%; }
+
   .admin-monsters .admin-table th,
-  .admin-areas .admin-table th {
-    word-break: break-all;      /* Sallii sanan katkeamisen mistä tahansa kohdasta */
-    white-space: normal;        /* Sallii tekstin jakautumisen useammalle riville */
+  .admin-characters .admin-table th {
+    word-break: break-all;
+    white-space: normal;
     line-height: 1.1;   
     text-align: center; 
   }
 
-  /* 🗺️ Alueet-taulukon sarakeleveydet mobiilissa */
-  .admin-areas .admin-table th:nth-child(1),
-  .admin-areas .admin-table td:nth-child(1) { width: 8%; }  /* # (Numerosarake) */
-  
-  .admin-areas .admin-table th:nth-child(2),
-  .admin-areas .admin-table td:nth-child(2) { width: 30%; } /* Nimi */
-  
-  .admin-areas .admin-table th:nth-child(3),
-  .admin-areas .admin-table td:nth-child(3) { width: 30%; } /* Hirviö */
-  
-  .admin-areas .admin-table th:nth-child(4),
-  .admin-areas .admin-table td:nth-child(4) { width: 32%; } /* Toiminnot */
-  
+  .admin-characters .admin-table th:nth-child(1),
+  .admin-characters .admin-table td:nth-child(1) { width: 16%; }
+
+  .admin-characters .admin-table th:nth-child(2),
+  .admin-characters .admin-table td:nth-child(2) { width: 8%; }
+
+  .admin-characters .admin-table th:nth-child(3),
+  .admin-characters .admin-table td:nth-child(3) { width: 10%; }
+
+  .admin-characters .admin-table th:nth-child(4),
+  .admin-characters .admin-table td:nth-child(4) { width: 12%; }
+
+  .admin-characters .admin-table th:nth-child(5),
+  .admin-characters .admin-table td:nth-child(5) { width: 22%; }
+
+  .admin-characters .admin-table th:nth-child(6),
+  .admin-characters .admin-table td:nth-child(6) { width: 32%; }
+
 }
