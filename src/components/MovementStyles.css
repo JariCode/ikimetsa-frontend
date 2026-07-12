@@ -27,7 +27,7 @@
   top: 0; left: 0; width: 200%; height: 78%;
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 100' preserveAspectRatio='none'><polygon points='10,100 25,58 40,100' fill='%230a1f0e'/><polygon points='15,72 25,40 35,72' fill='%230a1f0e'/><polygon points='18,48 25,15 32,48' fill='%230a1f0e'/><polygon points='70,100 85,60 100,100' fill='%23081a0c'/><polygon points='75,74 85,44 95,74' fill='%23081a0c'/><polygon points='78,50 85,20 92,50' fill='%23081a0c'/><polygon points='130,100 148,55 166,100' fill='%230a1f0e'/><polygon points='136,70 148,38 160,70' fill='%230a1f0e'/><polygon points='140,45 148,10 156,45' fill='%230a1f0e'/><polygon points='195,100 210,62 225,100' fill='%23081a0c'/><polygon points='200,75 210,47 220,75' fill='%23081a0c'/><polygon points='203,52 210,25 217,52' fill='%23081a0c'/><polygon points='255,100 272,57 289,100' fill='%230a1f0e'/><polygon points='261,71 272,40 283,71' fill='%230a1f0e'/><polygon points='265,47 272,12 279,47' fill='%230a1f0e'/></svg>");
   background-repeat: repeat-x;
-  background-size: 32% 100%;
+  background-size: 25% 100%;
   background-position: bottom;
   opacity: 0.1;
   animation: walkTreesFar 10s linear infinite;
@@ -42,7 +42,7 @@
     url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 100' preserveAspectRatio='none'><polygon points='10,100 35,45 60,100' fill='%23000000'/><polygon points='18,68 35,25 52,68' fill='%23000000'/><polygon points='23,40 35,5 47,40' fill='%23000000'/><polygon points='90,100 115,50 140,100' fill='%23010601'/><polygon points='98,72 115,32 132,72' fill='%23010601'/><polygon points='103,46 115,10 127,46' fill='%23010601'/><polygon points='160,100 185,42 210,100' fill='%23000000'/><polygon points='168,65 185,22 202,65' fill='%23000000'/><polygon points='173,38 185,2 197,38' fill='%23000000'/></svg>"),
     linear-gradient(90deg, rgba(74,222,128,0) 0%, rgba(22,101,52,0.3) 50%, rgba(74,222,128,0) 100%);
   background-repeat: repeat-x, no-repeat;
-  background-size: 42% 100%, 100% 100%;
+  background-size: 50% 100%, 100% 100%;
   background-position: bottom, bottom;
   animation: walkTreesNear 3.4s linear infinite, walkFogBg 2s ease-in-out infinite alternate;
 }
@@ -114,7 +114,7 @@
   top: 0; left: 0; width: 200%; height: 75%;
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 100' preserveAspectRatio='none'><path d='M20,100 L22,50 M22,60 L15,45 M22,55 L29,42' stroke='%23161708' stroke-width='2' fill='none'/><path d='M60,100 L58,35 M58,50 L48,32 M58,45 L68,30 M58,60 L50,50' stroke='%23161708' stroke-width='2.5' fill='none'/><path d='M110,100 L112,55 M112,65 L104,50' stroke='%23161708' stroke-width='2' fill='none'/><path d='M160,100 L157,40 M157,55 L146,38 M157,50 L168,36' stroke='%23161708' stroke-width='2.5' fill='none'/><path d='M210,100 L212,52' stroke='%23161708' stroke-width='2' fill='none'/><path d='M250,100 L248,38 M248,52 L238,35 M248,48 L258,33' stroke='%23161708' stroke-width='2.5' fill='none'/></svg>");
   background-repeat: repeat-x;
-  background-size: 32% 100%;
+  background-size: 25% 100%;
   background-position: bottom;
   opacity: 0.85;
   animation: swampTreesFar 14s linear infinite;
@@ -616,7 +616,7 @@
   /* Puvut luotu pinoamalla 3 kolmiota per puu, muodostaen tuuhean havupuun oksiston */
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 100' preserveAspectRatio='none'><polygon points='10,100 25,58 40,100' fill='%23050000'/><polygon points='15,72 25,40 35,72' fill='%23050000'/><polygon points='18,48 25,15 32,48' fill='%23050000'/><polygon points='70,100 85,60 100,100' fill='%23000000'/><polygon points='75,74 85,44 95,74' fill='%23000000'/><polygon points='78,50 85,20 92,50' fill='%23000000'/><polygon points='130,100 148,55 166,100' fill='%23050000'/><polygon points='136,70 148,38 160,70' fill='%23050000'/><polygon points='140,45 148,10 156,45' fill='%23050000'/><polygon points='195,100 210,62 225,100' fill='%23000000'/><polygon points='200,75 210,47 220,75' fill='%23000000'/><polygon points='203,52 210,25 217,52' fill='%23000000'/><polygon points='255,100 272,57 289,100' fill='%23050000'/><polygon points='261,71 272,40 283,71' fill='%23050000'/><polygon points='265,47 272,12 279,47' fill='%23050000'/></svg>");
   background-repeat: repeat-x;
-  background-size: 32% 100%;
+  background-size: 25% 100%;
   background-position: bottom;
   opacity: 0.95;
   animation: heartTreesFar 7s linear infinite;
@@ -705,7 +705,7 @@
   /* SVG:n leveys nostettu arvoon 600. Ensimmäinen mökki tehty jättikokoiseksi ja toinen mökki poistettu. */
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 100' preserveAspectRatio='none'><polygon points='20,100 45,45 95,52 120,100' fill='%230b0510'/><rect x='60' y='60' width='14' height='14' fill='%23a855f7' opacity='0.85'/><rect x='35' y='26' width='10' height='22' transform='rotate(-15 35 26)' fill='%23050208'/><path d='M170,100 Q165,60 175,30 T165,5 M175,55 Q190,45 200,40 M170,40 Q155,35 150,25' stroke='%23050208' stroke-width='2.5' fill='none'/><path d='M290,100 Q298,50 285,25 M288,60 Q275,50 268,45 M287,45 Q305,35 310,25' stroke='%230b0510' stroke-width='2' fill='none'/><path d='M410,100 Q405,60 415,30 T405,5' stroke='%23050208' stroke-width='2.5' fill='none'/><path d='M520,100 Q528,50 515,25' stroke='%230b0510' stroke-width='2' fill='none'/></svg>");
   background-repeat: repeat-x;
-  background-size: 55% 100%; /* Pitää kuvion tarpeeksi leveänä pitkiä välimatkoja varten */
+  background-size: 50% 100%; /* Jakaa tasan 200%-leveän elementin, saumaton silmukka */
   background-position: bottom;
   opacity: 0.95;
   animation: cabinScrollFar 15s linear infinite;
@@ -720,7 +720,7 @@
   bottom: 0; left: 0; width: 200%; height: 45%;
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 100' preserveAspectRatio='none'><line x1='15' y1='100' x2='10' y2='45' stroke='%23000000' stroke-width='4'/><line x1='10' y1='65' x2='45' y2='75' stroke='%23000000' stroke-width='3'/><line x1='85' y1='100' x2='92' y2='50' stroke='%23000000' stroke-width='3.5'/><line x1='150' y1='100' x2='140' y2='40' stroke='%23000000' stroke-width='4'/></svg>");
   background-repeat: repeat-x;
-  background-size: 38% 100%;
+  background-size: 25% 100%;
   background-position: bottom;
   animation: cabinScrollNear 4.2s linear infinite;
 }
