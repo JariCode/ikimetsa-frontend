@@ -719,8 +719,8 @@
   width: 13px;
   height: 20px;
   border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
- background: radial-gradient(circle at 35% 30%, rgba(180, 25, 25, 0.8), rgba(115, 0, 0, 0.7) 70%);
-  animation: bloodDropFall 4s linear infinite;
+  background: radial-gradient(circle at 35% 30%, rgba(180, 25, 25, 0.8), rgba(115, 0, 0, 0.7) 70%);
+  animation: bloodDropFall 2s linear infinite;
 }
 
 .blood-drop.bd1 { left: 8%; animation-delay: 0s; }
@@ -733,7 +733,7 @@
   0%   { margin-top: 0; opacity: 0; }
   10%  { opacity: 0.95; }
   85%  { opacity: 0.7; }
-  100% { margin-top: 140px; opacity: 0; }
+  100% { margin-top: 50px; opacity: 0; }
 }
 
 /* 📱 RESPONSIIVISUUS - hirviön paljastuskortti ja verivaluma skaalautuvat ruudun kokoon */
@@ -757,7 +757,7 @@
     0%   { margin-top: 0; opacity: 0; }
     10%  { opacity: 0.95; }
     85%  { opacity: 0.7; }
-    100% { margin-top: 90px; opacity: 0; }
+    100% { margin-top: 30px; opacity: 0; }
   }
 
   .blood-drop {
