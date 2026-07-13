@@ -76,7 +76,7 @@ useEffect(() => {
       cancelled = true;
 
       // 🔉 Häivytys pois töksähtämisen sijaan
-      const fadeStep = gainNode.gain.value / 24;
+      const fadeStep = gainNode.gain.value / 48;
       const fadeInterval = setInterval(() => {
         if (gainNode.gain.value - fadeStep <= 0) {
           gainNode.gain.value = 0;
@@ -96,6 +96,7 @@ useEffect(() => {
   const monsterCardClass = `${monsterCssClass}-card`;
 
   return (
+    <div className="combat-wrapper">
     <div className="game-play-screen">
       {showMonsterReveal && (
         <div className={`jumpscare-overlay ${monsterRevealClass}`}>
@@ -234,6 +235,15 @@ useEffect(() => {
           </button>
         </div>
       </div>
+    </div>
+   {/* 🩸 Kortin ulkoreunasta alaspäin valuvia veripisaroita taistelun ajaksi */}
+    <div className="combat-card-blood-edge">
+      <div className="blood-drop bd1"></div>
+      <div className="blood-drop bd2"></div>
+      <div className="blood-drop bd3"></div>
+      <div className="blood-drop bd4"></div>
+      <div className="blood-drop bd5"></div>
+    </div>
     </div>
   );
 }

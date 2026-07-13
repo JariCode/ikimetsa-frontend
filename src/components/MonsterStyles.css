@@ -683,7 +683,60 @@
   text-shadow: none;
 }
 
-/* 📱 RESPONSIIVISUUS - hirviön paljastuskortti skaalautuu ruudun kokoon */
+/* ==========================================================================
+   TAISTELUKORTIN VERISÄVY (KOROSTUS)
+   ========================================================================== */
+.combat-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+}
+
+.combat-card-blood-edge {
+  position: absolute;
+  left: 0;
+  top: 100%;
+  width: 100%;
+  height: 10px;
+  pointer-events: none;
+  overflow: visible;
+  background:
+    radial-gradient(ellipse 11% 100% at 4% 0%, rgba(150, 0, 0, 0.95), transparent 78%),
+    radial-gradient(ellipse 10% 100% at 14% 0%, rgba(125, 0, 0, 0.85), transparent 74%),
+    radial-gradient(ellipse 12% 100% at 26% 0%, rgba(145, 0, 0, 0.92), transparent 78%),
+    radial-gradient(ellipse 10% 100% at 38% 0%, rgba(120, 0, 0, 0.8), transparent 74%),
+    radial-gradient(ellipse 13% 100% at 50% 0%, rgba(160, 0, 0, 0.95), transparent 78%),
+    radial-gradient(ellipse 10% 100% at 62% 0%, rgba(125, 0, 0, 0.82), transparent 74%),
+    radial-gradient(ellipse 12% 100% at 74% 0%, rgba(150, 0, 0, 0.92), transparent 78%),
+    radial-gradient(ellipse 10% 100% at 86% 0%, rgba(125, 0, 0, 0.85), transparent 74%),
+    radial-gradient(ellipse 11% 100% at 96% 0%, rgba(150, 0, 0, 0.95), transparent 78%),
+    linear-gradient(180deg, rgba(110, 0, 0, 0.7) 0%, rgba(80, 0, 0, 0.35) 55%, transparent 100%);
+}
+
+.blood-drop {
+  position: absolute;
+  top: 100%;
+  width: 13px;
+  height: 20px;
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+ background: radial-gradient(circle at 35% 30%, rgba(180, 25, 25, 0.8), rgba(115, 0, 0, 0.7) 70%);
+  animation: bloodDropFall 4s linear infinite;
+}
+
+.blood-drop.bd1 { left: 8%; animation-delay: 0s; }
+.blood-drop.bd2 { left: 22%; animation-delay: 1.3s; }
+.blood-drop.bd3 { left: 45%; animation-delay: 2.5s; width: 8px; height: 14px; }
+.blood-drop.bd4 { left: 78%; animation-delay: 0.7s; }
+.blood-drop.bd5 { left: 90%; animation-delay: 2s; width: 8px; height: 14px; }
+
+@keyframes bloodDropFall {
+  0%   { margin-top: 0; opacity: 0; }
+  10%  { opacity: 0.95; }
+  85%  { opacity: 0.7; }
+  100% { margin-top: 140px; opacity: 0; }
+}
+
+/* 📱 RESPONSIIVISUUS - hirviön paljastuskortti ja verivaluma skaalautuvat ruudun kokoon */
 @media (max-width: 600px) {
   .monster-reveal-card {
     width: 100%;
@@ -691,4 +744,24 @@
     height: auto;
     aspect-ratio: 8 / 9;
   }
+
+  .combat-wrapper {
+    max-width: 94vw;
+  }
+
+  .combat-card-blood-edge {
+    height: 7px;
+  }
+
+  @keyframes bloodDropFall {
+    0%   { margin-top: 0; opacity: 0; }
+    10%  { opacity: 0.95; }
+    85%  { opacity: 0.7; }
+    100% { margin-top: 90px; opacity: 0; }
+  }
+
+  .blood-drop {
+  width: 3px;
+  height: 10px;
+}
 }
