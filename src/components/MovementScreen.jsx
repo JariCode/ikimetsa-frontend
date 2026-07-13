@@ -357,6 +357,20 @@ export default function MovementScreen({
             <div className="cave-drip d3"></div>
           </>
         )}
+       {currentArea?.name === 'Luolasto (syvemmällä)' && (
+          <>
+            <div className="cave-web cw1">
+              <div className="cave-web-spider">
+                <div className="cave-web-spider-icon"></div>
+              </div>
+            </div>
+            <div className="cave-web cw2">
+              <div className="cave-web-spider">
+                <div className="cave-web-spider-icon"></div>
+              </div>
+            </div>
+          </>
+        )}
         {currentArea?.backgroundClass === 'traveling-background-metsa' && (
           <>
             <div className="forest-leaf l1"></div>
