@@ -100,7 +100,7 @@
   width: 90%;
   text-align: center;
   padding: 40px 0;
-  animation: victoryScrollText 25s linear forwards;
+  animation: victoryScrollText 50s linear forwards;
 }
 
 .victory-title {
@@ -139,8 +139,7 @@
   transform: scale(1.05);
 }
 
-/* 🎵 Musiikki-/äänitehostekrediitit - samat katkoviivat ylä- ja alareunassa,
-   symmetrinen 30px marginaali kumpaankin suuntaan. */
+/* 🎵 Musiikki-/äänitehostekrediitit */
 .victory-music-credits {
   margin-top: 30px;
   margin-bottom: 30px;
@@ -151,37 +150,56 @@
 }
 
 .victory-music-credits-title {
-  color: #9ca3af;
+  color: #d1d5db;
   font-size: 0.8rem;
   letter-spacing: 2px;
   text-transform: uppercase;
   margin: 0 0 24px;
 }
 
+/* Muutettu: Listan tyylittely, keskitys ja sisennykset palluroille */
+.victory-music-list {
+  list-style-type: disc;
+  display: inline-block;
+  text-align: left;
+  padding-left: 20px;
+  margin: 0 0 10px 0;
+}
+
+/* Muutettu: Enemmän ilmaa biisien välille, jotta ne eivät ole sumpussa */
 .victory-music-credit {
-  margin: 10px 0;
+  margin-bottom: 20px;
+  color: #4ade80; /* Listaelementin eli palluran väri */
+}
+
+.victory-music-credit:last-child {
+  margin-bottom: 0;
 }
 
 .victory-music-credit-name {
   display: block;
-  color: #d1d5db;
-  font-size: 0.78rem;
+  color: #f3f4f6;
+  font-size: 0.85rem;
   line-height: 1.4;
+  font-weight: 550;
 }
 
 .victory-music-credit-source {
   display: block;
-  color: #9ca3af;
-  font-size: 0.7rem;
+  color: #a1a1aa;
+  font-size: 0.75rem;
   letter-spacing: 0.5px;
-  margin-top: 3px;
+  margin-top: 2px;
 }
 
+/* Muutettu: reilusti margin-topia, ettei Pixabay-footer ole liian kiinni biisin nimissä */
 .victory-music-credits-footer {
-  color: #9ca3af;
-  font-size: 0.7rem;
+  display: block;
+  color: #d1d5db;
+  font-size: 0.75rem;
   letter-spacing: 0.5px;
-  margin-top: 0;
+  margin-top: 30px;
+  text-align: center;
   font-style: italic;
 }
 
@@ -192,7 +210,7 @@
 /* Rullaavat lopputekstit */
 @keyframes victoryScrollText {
   0% { top: 80%; }
-  100% { top: -162%; } 
+  100% { top: -280%; } 
 }
 
 /* 🎬 LOPPUTEKSTIT - tekijätiedot voittoruudun tarinan päätteeksi. */
@@ -212,7 +230,7 @@
 }
 
 .victory-credits-role {
-  color: #9ca3af;
+  color: #d1d5db;
   font-size: 0.85rem;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -227,7 +245,7 @@
 }
 
 .victory-credits-published {
-  color: #9ca3af;
+  color: #d1d5db;
   font-size: 0.85rem;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -317,7 +335,7 @@
   }
 
   @keyframes victoryScrollText {
-  0% { top: 80%; }
-  100% { top: -180%; } 
-}
+    0% { top: 80%; }
+    100% { top: -300%; } 
+  }
 }

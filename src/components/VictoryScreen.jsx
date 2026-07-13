@@ -69,35 +69,37 @@ export default function VictoryScreen({ activeSession, handleLogout }) {
             <p className="victory-text">Uljas {activeSession?.characterType || 'seikkailija'} muistetaan ikuisesti sankarina, joka toi auringon takaisin.</p>
 
            <div className="victory-music-credits">
-              <p className="victory-music-credits-title">Musiikki ja äänitehosteet</p>
+            <p className="victory-music-credits-title">Musiikki ja äänitehosteet</p>
 
-              <p className="victory-music-credit">
+            <ul className="victory-music-list">
+              <li className="victory-music-credit">
                 <span className="victory-music-credit-name">"Fantasy Cinematic Background – Epic Journey"</span>
                 <span className="victory-music-credit-source">OpenMindAudio</span>
-              </p>
-              <p className="victory-music-credit">
+              </li>
+              <li className="victory-music-credit">
                 <span className="victory-music-credit-name">"Rise Of The Zombies"</span>
                 <span className="victory-music-credit-source">Emmraan</span>
-              </p>
-              <p className="victory-music-credit">
+              </li>
+              <li className="victory-music-credit">
                 <span className="victory-music-credit-name">"Horror Horror"</span>
                 <span className="victory-music-credit-source">everything_is_dead</span>
-              </p>
-              <p className="victory-music-credit">
+              </li>
+              <li className="victory-music-credit">
                 <span className="victory-music-credit-name">"Scary - Horror"</span>
                 <span className="victory-music-credit-source">everything_is_dead</span>
-              </p>
-              <p className="victory-music-credit">
+              </li>
+              <li className="victory-music-credit">
                 <span className="victory-music-credit-name">"Elemental Magic Spell Impact Outgoing"</span>
                 <span className="victory-music-credit-source">RescopicSound</span>
-              </p>
-              <p className="victory-music-credit">
+              </li>
+              <li className="victory-music-credit">
                 <span className="victory-music-credit-name">"Riser (7)"</span>
                 <span className="victory-music-credit-source">u_1pruylktlg</span>
-              </p>
+              </li>
+            </ul>
 
-              <p className="victory-music-credits-footer">Kaikki äänet ja musiikki: Pixabay</p>
-            </div>
+            <p className="victory-music-credits-footer">Kaikki äänet ja musiikki: Pixabay</p>
+          </div>
             
             <div className="victory-credits">
               <h2 className="victory-credits-title">IKIMETSÄ</h2>
