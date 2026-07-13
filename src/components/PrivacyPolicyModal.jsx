@@ -5,6 +5,7 @@ export default function PrivacyPolicyModal({ onClose }) {
     <div className="legal-modal-overlay" onClick={onClose}>
       <div className="legal-modal-box" onClick={(e) => e.stopPropagation()}>
         <h2 className="legal-modal-title">Tietosuojaseloste</h2>
+        <p className="legal-modal-updated">Päivitetty: 13.7.2026</p>
 
         <div className="legal-modal-content">
           <p>
@@ -39,9 +40,11 @@ export default function PrivacyPolicyModal({ onClose }) {
             Sivustolla ei ole seuranta- eikä mainosevästeitä.
           </p>
 
-          <p>
-            <strong>Säilytys:</strong> tiedot säilytetään tietokannassa siihen
-            asti kunnes poistat tilisi.
+         <p>
+            <strong>Säilytys:</strong> käyttäjä- ja pelitietosi säilytetään
+            tietokannassa siihen asti kunnes poistat tilisi. Palvelun tapahtumalokit
+            (esim. kirjautumiset, rekisteröinnit, uloskirjautumiset yms.) poistetaan automaattisesti 12
+            kuukauden kuluttua niiden syntymisestä.
           </p>
 
           <p>

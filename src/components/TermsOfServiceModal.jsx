@@ -5,6 +5,7 @@ export default function TermsOfServiceModal({ onClose }) {
     <div className="legal-modal-overlay" onClick={onClose}>
       <div className="legal-modal-box" onClick={(e) => e.stopPropagation()}>
         <h2 className="legal-modal-title">Käyttöehdot</h2>
+        <p className="legal-modal-updated">Päivitetty: 13.7.2026</p>
 
         <div className="legal-modal-content">
           <p>
@@ -17,11 +18,12 @@ export default function TermsOfServiceModal({ onClose }) {
             salasanasi säilyttämisestä äläkä jaa niitä muille.
           </p>
 
-          <p>
-            Palvelua ei saa käyttää muiden häiritsemiseen, haitallisen koodin
-            levittämiseen tai muiden käyttäjien tietojen urkkimiseen. Ylläpito
-            voi tarvittaessa poistaa tunnuksia, joita käytetään väärin.
-          </p>
+        <p>
+          Palvelua ei saa käyttää muiden häiritsemiseen, haitallisen koodin
+          levittämiseen tai muiden käyttäjien tietojen urkkimiseen. Ylläpito
+          voi tarvittaessa poistaa tunnuksia, joita käytetään väärin, tai
+          jotka ovat olleet pitkään käyttämättöminä.
+        </p>
 
           <p>
             Voit poistaa oman tilisi ja kaikki pelitietosi milloin tahansa
