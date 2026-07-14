@@ -76,7 +76,7 @@ useEffect(() => {
       cancelled = true;
 
       // 🔉 Häivytys pois töksähtämisen sijaan
-      const fadeStep = gainNode.gain.value / 48;
+      const fadeStep = gainNode.gain.value / 24;
       const fadeInterval = setInterval(() => {
         if (gainNode.gain.value - fadeStep <= 0) {
           gainNode.gain.value = 0;
@@ -96,8 +96,25 @@ useEffect(() => {
   const monsterCardClass = `${monsterCssClass}-card`;
 
   return (
-    <div className="combat-wrapper">
-    <div className="game-play-screen">
+    <>
+      {/* 🩸 Verinen taustakerros koko sivulle taistelun ajaksi - valuvia
+        verinauhoja ja tippuvia veripisaroita nykyisen tumman metsätaustan päällä.
+        Renderöidään vasta kun jumpscare on ohi, ettei se vilahda paljastuksen aikana. */}
+      {!showMonsterReveal && (
+        <div className="combat-blood-bg">
+          <div className="blood-streak bs1"></div>
+          <div className="blood-streak bs2"></div>
+          <div className="blood-streak bs3"></div>
+          <div className="blood-streak bs4"></div>
+          <div className="blood-drop bd1"></div>
+          <div className="blood-drop bd2"></div>
+          <div className="blood-drop bd3"></div>
+          <div className="blood-drop bd4"></div>
+          <div className="blood-drop bd5"></div>
+        </div>
+      )}
+
+      <div className="game-play-screen">
       {showMonsterReveal && (
         <div className={`jumpscare-overlay ${monsterRevealClass}`}>
           <div className={`monster-reveal-card ${monsterCardClass}`}>
@@ -236,14 +253,6 @@ useEffect(() => {
         </div>
       </div>
     </div>
-   {/* 🩸 Kortin ulkoreunasta alaspäin valuvia veripisaroita taistelun ajaksi */}
-    <div className="combat-card-blood-edge">
-      <div className="blood-drop bd1"></div>
-      <div className="blood-drop bd2"></div>
-      <div className="blood-drop bd3"></div>
-      <div className="blood-drop bd4"></div>
-      <div className="blood-drop bd5"></div>
-    </div>
-    </div>
+    </>
   );
 }

@@ -684,59 +684,62 @@
 }
 
 /* ==========================================================================
-   TAISTELUKORTIN VERISÄVY (KOROSTUS)
+   🩸 TAISTELUN VERINEN TAUSTAKERROS - valuvia verinauhoja ja tippuvia
+   veripisaroita koko sivulla, näkyy nykyisen tumman metsätaustan päällä
+   VAIN taistelun aikana (GamePlay.jsx). Sama kerrostekniikka kuin
+   liikkumisruudun .traveling-background-* -taustoilla.
    ========================================================================== */
-.combat-wrapper {
-  position: relative;
-  width: 100%;
-  max-width: 800px;
-}
 
-.combat-card-blood-edge {
-  position: absolute;
+.combat-blood-bg {
+  position: fixed;
+  top: 0;
   left: 0;
-  top: 100%;
-  width: 100%;
-  height: 10px;
+  width: 100vw;
+  height: 100vh;
+  z-index: 2;
+  overflow: hidden;
   pointer-events: none;
-  overflow: visible;
-  background:
-    radial-gradient(ellipse 11% 100% at 4% 0%, rgba(150, 0, 0, 0.95), transparent 78%),
-    radial-gradient(ellipse 10% 100% at 14% 0%, rgba(125, 0, 0, 0.85), transparent 74%),
-    radial-gradient(ellipse 12% 100% at 26% 0%, rgba(145, 0, 0, 0.92), transparent 78%),
-    radial-gradient(ellipse 10% 100% at 38% 0%, rgba(120, 0, 0, 0.8), transparent 74%),
-    radial-gradient(ellipse 13% 100% at 50% 0%, rgba(160, 0, 0, 0.95), transparent 78%),
-    radial-gradient(ellipse 10% 100% at 62% 0%, rgba(125, 0, 0, 0.82), transparent 74%),
-    radial-gradient(ellipse 12% 100% at 74% 0%, rgba(150, 0, 0, 0.92), transparent 78%),
-    radial-gradient(ellipse 10% 100% at 86% 0%, rgba(125, 0, 0, 0.85), transparent 74%),
-    radial-gradient(ellipse 11% 100% at 96% 0%, rgba(150, 0, 0, 0.95), transparent 78%),
-    linear-gradient(180deg, rgba(110, 0, 0, 0.7) 0%, rgba(80, 0, 0, 0.35) 55%, transparent 100%);
 }
 
+/* Kiinteät, jo valuneet verinauhat - ohuita pystysuoria liukuvärejä ylhäältä */
+.blood-streak {
+  position: absolute;
+  top: 0;
+  width: 4px;
+  background: linear-gradient(180deg, rgba(139, 0, 0, 0.6) 0%, rgba(90, 0, 0, 0.35) 40%, rgba(60, 0, 0, 0.1) 75%, transparent 100%);
+  border-radius: 0 0 2px 2px;
+}
+
+.blood-streak.bs1 { left: 8%; height: 68vh; }
+.blood-streak.bs2 { left: 22%; height: 54vh; width: 4px; }
+.blood-streak.bs3 { left: 78%; height: 75vh; }
+.blood-streak.bs4 { left: 90%; height: 50vh; width: 4px; }
+
+/* Tippuvat veripisarat - putoavat ja häviävät, toistuu silmukassa */
 .blood-drop {
   position: absolute;
-  top: 100%;
-  width: 13px;
-  height: 20px;
+  top: 0;
+  width: 8px;
+  height: 10px;
   border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-  background: radial-gradient(circle at 35% 30%, rgba(180, 25, 25, 0.8), rgba(115, 0, 0, 0.7) 70%);
-  animation: bloodDropFall 2s linear infinite;
+  background: radial-gradient(circle at 35% 30%, rgba(200, 30, 30, 0.9), rgba(110, 0, 0, 0.7) 70%);
+  animation: bloodDropFall 5.5s linear infinite;
 }
 
 .blood-drop.bd1 { left: 8%; animation-delay: 0s; }
-.blood-drop.bd2 { left: 22%; animation-delay: 1.3s; }
-.blood-drop.bd3 { left: 45%; animation-delay: 2.5s; width: 8px; height: 14px; }
-.blood-drop.bd4 { left: 78%; animation-delay: 0.7s; }
-.blood-drop.bd5 { left: 90%; animation-delay: 2s; width: 8px; height: 14px; }
+.blood-drop.bd2 { left: 22%; animation-delay: -1.3s; }
+.blood-drop.bd3 { left: 45%; animation-delay: -2.5s; width: 7px; height: 9px; }
+.blood-drop.bd4 { left: 78%; animation-delay: -0.7s; width: 7px; height: 9px; }
+.blood-drop.bd5 { left: 90%; animation-delay: -2s; width: 7px; height: 9px; }
 
 @keyframes bloodDropFall {
-  0%   { margin-top: 0; opacity: 0; }
-  10%  { opacity: 0.95; }
+  0%   { top: -2%; opacity: 0; }
+  10%  { opacity: 0.9; }
   85%  { opacity: 0.7; }
-  100% { margin-top: 50px; opacity: 0; }
+  100% { top: 85vh; opacity: 0; }
 }
 
-/* 📱 RESPONSIIVISUUS - hirviön paljastuskortti ja verivaluma skaalautuvat ruudun kokoon */
+/* 📱 RESPONSIIVISUUS - hirviön paljastuskortti skaalautuu ruudun kokoon */
 @media (max-width: 600px) {
   .monster-reveal-card {
     width: 100%;
@@ -745,23 +748,14 @@
     aspect-ratio: 8 / 9;
   }
 
-  .combat-wrapper {
-    max-width: 94vw;
-  }
-
-  .combat-card-blood-edge {
-    height: 7px;
-  }
-
-  @keyframes bloodDropFall {
-    0%   { margin-top: 0; opacity: 0; }
-    10%  { opacity: 0.95; }
-    85%  { opacity: 0.7; }
-    100% { margin-top: 30px; opacity: 0; }
+   .blood-streak.bs2,
+  .blood-streak.bs4 {
+    display: none;
   }
 
   .blood-drop {
-  width: 3px;
-  height: 10px;
-}
+    width: 4px;
+    height: 6px;
+  }
+
 }
