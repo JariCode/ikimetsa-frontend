@@ -41,6 +41,14 @@ export default function App() {
     const errorTimer = setTimeout(() => setError(''), 4000);
     return () => clearTimeout(errorTimer);
   }, [error]);
+
+  const [isServerWaking, setIsServerWaking] = useState(true);
+
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_API_URL}/`, { method: 'GET' })
+      .catch(() => {})
+      .finally(() => setIsServerWaking(false));
+  }, []);
   
   const [gameLogs, setGameLogs] = useState([]);
   const [monsterHp, setMonsterHp] = useState(25);
@@ -866,6 +874,12 @@ export default function App() {
 
   return (
     <div className={`game-container ${isShaking ? 'screen-hit-shake' : ''}`}>
+      {isServerWaking && (
+        <div className="server-waking-overlay">
+          <div className="server-waking-text">Ikimetsän kansaa herätellään...</div>
+          <div className="server-waking-subtext">Metsä havahtuu unestaan, tämä voi kestää hetken.</div>
+        </div>
+      )}
       <div className="dark-forest-bg">
         {!activeSession?.isGameCompleted && (
           <>

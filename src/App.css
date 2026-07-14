@@ -1788,6 +1788,44 @@ div.game-play-screen .player-status-bar {
   color: #d1d5db;
 }
 
+/* --- SERVER WAKING OVERLAY - kun serveri on heräämässä, näytetään
+   käyttäjälle tämä overlay, ettei hän klikkaile mitään ennen kuin serveri
+   on valmis. Kesto 1.8s, animaatio toistuu kunnes serveri on hereillä. */
+.server-waking-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: #040804;
+  text-align: center;
+  padding: 20px;
+}
+
+.server-waking-text {
+  color: #4ade80;
+  font-size: 1.6rem;
+  letter-spacing: 2px;
+  text-shadow: 0 0 14px rgba(74, 222, 128, 0.5);
+  animation: serverWakingPulse 1.8s ease-in-out infinite;
+}
+
+.server-waking-subtext {
+  color: #6b7280;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  max-width: 320px;
+  line-height: 1.5;
+}
+
+@keyframes serverWakingPulse {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+
 /* --- PUHELIN (max 600px) --- */
 @media (max-width: 600px) {
   /* Kuu pienemmäksi ja siistiin kohtaan mobiilissa */
