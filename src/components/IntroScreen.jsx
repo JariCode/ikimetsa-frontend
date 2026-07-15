@@ -67,8 +67,25 @@ export default function IntroScreen({ hasSavedSession, onStart }) {
   }, []);
 
   return (
-    <div className="intro-screen">
-      <h1 className="game-title">IKIMETSÄ</h1>
+    <>
+      {/* 🔥 Purppurainen loitsutuli nousee hitaasti tarinan taustalle. */}
+      <div className="spell-fire-bg" aria-hidden="true">
+        <div className="spell-fire-glow"></div>
+        <div className="spell-flame sf1"></div>
+        <div className="spell-flame sf2"></div>
+        <div className="spell-flame sf3"></div>
+        <div className="spell-flame sf4"></div>
+        <div className="spell-flame sf5"></div>
+        <div className="spell-ember se1"></div>
+        <div className="spell-ember se2"></div>
+        <div className="spell-ember se3"></div>
+        <div className="spell-ember se4"></div>
+        <div className="spell-ember se5"></div>
+        <div className="spell-ember se6"></div>
+      </div>
+
+      <div className="intro-screen">
+        <h1 className="game-title">IKIMETSÄ</h1>
 
       {hasSavedSession ? (
         // Jatkava pelaaja: ei pitkää tarinaa uudelleen, vain lyhyt tervehdys
@@ -90,8 +107,9 @@ export default function IntroScreen({ hasSavedSession, onStart }) {
         className={hasSavedSession ? 'start-btn start-btn-continue' : 'start-btn start-btn-story'}
         onClick={onStart}
       >
-        {hasSavedSession ? 'Jatka taivalta' : 'Aloita Taival'}
+       {hasSavedSession ? 'Jatka taivalta' : 'Aloita Taival'}
       </button>
-    </div>
+      </div>
+    </>
   );
 }

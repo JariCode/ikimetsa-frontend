@@ -402,6 +402,7 @@ button {
 
 /* --- ALKURUUTU TEKSTIT --- */
 .intro-screen {
+  position: relative;
   text-align: center;
   max-width: 760px;
   width: 100%;
@@ -435,6 +436,113 @@ button {
 
 .movement-scroll-window {
   margin: 40px auto;
+}
+
+/* ==========================================================================
+   🔥 PURPPURAINEN LOITSUTULI (IntroScreen) - kasvaa tarinan mukana: alussa
+   olematon, ja rullauksen edetessä roihu nousee täyteen voimaansa.
+   Kerroksittainen: hehku pohjalla, roihuavat liekit, kipinät.
+   ========================================================================== */
+
+.spell-fire-bg {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 3;
+  pointer-events: none;
+  overflow: hidden;
+  transform-origin: bottom center;
+  animation: spellFireGrow 20s ease-out 1.2s 1 both;
+  -webkit-mask-image: linear-gradient(0deg, #000 55%, transparent 100%);
+  mask-image: linear-gradient(0deg, #000 55%, transparent 100%);
+}
+
+@keyframes spellFireGrow {
+  0%   { opacity: 0; transform: scaleY(0.1); }
+  20%  { opacity: 0.5; transform: scaleY(0.45); }
+  45%  { opacity: 0.8; transform: scaleY(0.8); }
+  70%  { opacity: 1; transform: scaleY(1); }
+  100% { opacity: 1; transform: scaleY(1.15); }
+}
+
+/* Laaja purppurainen hehku - koko taivaanranta kajastaa kirouksesta */
+.spell-fire-glow {
+  position: absolute;
+  bottom: -10%;
+  left: 0;
+  width: 100%;
+  height: 70%;
+  transform-origin: bottom;
+  background:
+    radial-gradient(ellipse 70% 100% at 50% 100%, rgba(192, 132, 252, 0.15), transparent 72%),
+    radial-gradient(ellipse 45% 90% at 18% 100%, rgba(168, 85, 247, 0.12), transparent 70%),
+    radial-gradient(ellipse 50% 95% at 82% 100%, rgba(147, 51, 234, 0.13), transparent 70%),
+    linear-gradient(0deg, rgba(107, 33, 168, 0.18) 0%, rgba(88, 28, 135, 0.07) 45%, transparent 100%);
+  filter: blur(14px);
+  animation: spellFireGlowPulse 3.5s ease-in-out infinite alternate;
+}
+
+@keyframes spellFireGlowPulse {
+  0%   { opacity: 0.6; transform: scaleY(1) scaleX(1); }
+  100% { opacity: 1; transform: scaleY(1.12) scaleX(1.04); }
+}
+
+/* Roihuavat liekit - leveitä, limittyviä kielekkeitä jotka muodostavat
+   yhtenäisen tulimeren, ei erillisiä kynttilänliekkejä. */
+.spell-flame {
+  position: absolute;
+  bottom: -8%;
+  transform-origin: bottom center;
+  background: radial-gradient(ellipse 60% 100% at 50% 100%,
+    rgba(243, 232, 255, 0.35) 0%,
+    rgba(216, 180, 254, 0.3) 18%,
+    rgba(168, 85, 247, 0.25) 42%,
+    rgba(126, 34, 206, 0.12) 68%,
+    transparent 100%);
+  filter: blur(18px);
+  animation: spellFlameFlicker 1.6s ease-in-out infinite alternate;
+}
+
+.spell-flame.sf1 { left: -8%; width: 46%; height: 100vh; animation-delay: -0.2s; }
+.spell-flame.sf2 { left: 14%; width: 40%; height: 85vh; animation-delay: -0.7s; }
+.spell-flame.sf3 { left: 34%; width: 50%; height: 115vh; animation-delay: -1.1s; }
+.spell-flame.sf4 { left: 56%; width: 42%; height: 90vh; animation-delay: -0.45s; }
+.spell-flame.sf5 { left: 74%; width: 44%; height: 98vh; animation-delay: -0.9s; }
+
+@keyframes spellFlameFlicker {
+  0%   { transform: scaleY(0.88) scaleX(1.08) skewX(-7deg); opacity: 0.32; }
+  25%  { transform: scaleY(1.18) scaleX(0.88) skewX(5deg); opacity: 0.48; }
+  50%  { transform: scaleY(0.95) scaleX(1.12) skewX(-8deg); opacity: 0.38; }
+  75%  { transform: scaleY(1.25) scaleX(0.85) skewX(4deg); opacity: 0.55; }
+  100% { transform: scaleY(1.05) scaleX(1.02) skewX(-4deg); opacity: 0.4; }
+}
+
+/* Kipinät leijuvat ylös liekeistä ja sammuvat matkalla */
+.spell-ember {
+  position: absolute;
+  bottom: 5%;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(233, 213, 255, 0.95);
+  box-shadow: 0 0 10px rgba(192, 132, 252, 1);
+  animation: spellEmberRise 6s linear infinite;
+}
+
+.spell-ember.se1 { left: 12%; animation-delay: -0.5s; }
+.spell-ember.se2 { left: 30%; animation-delay: -1.8s; width: 3px; height: 3px; }
+.spell-ember.se3 { left: 45%; animation-delay: -3.2s; }
+.spell-ember.se4 { left: 62%; animation-delay: -4.6s; width: 3px; height: 3px; }
+.spell-ember.se5 { left: 78%; animation-delay: -2.4s; }
+.spell-ember.se6 { left: 92%; animation-delay: -5.3s; width: 3px; height: 3px; }
+
+@keyframes spellEmberRise {
+  0%   { bottom: 5%; opacity: 0; transform: translateX(0) scale(1); }
+  10%  { opacity: 1; }
+  60%  { opacity: 0.7; transform: translateX(18px) scale(0.8); }
+  100% { bottom: 95%; opacity: 0; transform: translateX(38px) scale(0.4); }
 }
 
 /* Liikkumisruudun oma alkutarina (5 riviä) - oma animaatio erikseen, koska
@@ -1924,6 +2032,17 @@ div.game-play-screen .player-status-bar {
 
   .intro-screen .intro-scroll-content {
     animation-name: introScrollMobile;
+  }
+
+  /*Purppuran liekin korkeus mobiiliin ettei vie liika tilaa*/
+  .spell-flame.sf1 { height: 115vh; }
+  .spell-flame.sf2 { height: 100vh; }
+  .spell-flame.sf3 { height: 130vh; }
+  .spell-flame.sf4 { height: 105vh; }
+  .spell-flame.sf5 { height: 112vh; }
+
+  .spell-fire-glow {
+    height: 80%;
   }
 
   /* Liikkumisruudun oma intro (5 riviä) - kohdistettu erikseen ettei se
