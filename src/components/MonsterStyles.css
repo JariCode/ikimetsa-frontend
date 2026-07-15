@@ -770,3 +770,14 @@
 }
 
 }
+
+@media (max-height: 480px) and (orientation: landscape) {
+  /*Jumpin scary pienemmäksi vaaka-asennossa, jotta se ei peitä liikaa ruutua*/
+  .monster-reveal-card {
+    width: 60%;
+    max-width: 60vw;
+    height: auto;
+    aspect-ratio: 8 / 9;
+  }
+
+}
