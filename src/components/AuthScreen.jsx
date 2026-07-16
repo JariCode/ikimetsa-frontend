@@ -26,12 +26,14 @@ export default function AuthScreen({
           placeholder="Käyttäjätunnus" 
           value={usernameInput} 
           onChange={e => setUsernameInput(e.target.value)} 
+          autoComplete="username"
           required 
         />
         <PasswordInput
           placeholder="Salasana"
           value={passwordInput}
           onChange={e => setPasswordInput(e.target.value)}
+          autoComplete={authMode === 'login' ? 'current-password' : 'new-password'}
           required
         />
         <button type="submit" className="auth-submit-btn">

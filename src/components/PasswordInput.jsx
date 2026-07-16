@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 // Uudelleenkäytettävä salasanakenttä, jossa silmäkuvake näyttää/piilottaa syötetyn tekstin.
 // Käytetään kaikissa sovelluksen salasanakentissä (kirjautuminen, rekisteröinti, profiili).
-export default function PasswordInput({ value, onChange, placeholder, required, disabled }) {
+export default function PasswordInput({ value, onChange, placeholder, required, disabled, autoComplete }) {
   const [visible, setVisible] = useState(false);
 
   return (
@@ -14,6 +14,7 @@ export default function PasswordInput({ value, onChange, placeholder, required, 
         onChange={onChange}
         required={required}
         disabled={disabled}
+        autoComplete={autoComplete}
       />
       <button
         type="button"

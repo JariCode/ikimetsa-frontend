@@ -3,7 +3,7 @@ import introMusic from '../assets/audio/music/everything_is_dead-horror-horror-5
 import PasswordInput from './PasswordInput';
 
 // Samat säännöt kuin backendissä, jotta virheet näkyvät heti ilman palvelinkutsua
-const USERNAME_REGEX = /^[a-zA-Z0-9_-]{3,30}$/;
+const USERNAME_REGEX = /^[a-zA-ZäöåÄÖÅ0-9_-]{3,30}$/;
 const PASSWORD_MIN_LENGTH = 8;
 const FORBIDDEN_CHARS_REGEX = /[<>$;`\\|]/;
 
@@ -86,7 +86,7 @@ export default function ProfileSettings({
     setUsernameFieldError('');
 
     if (FORBIDDEN_CHARS_REGEX.test(newUsername) || !USERNAME_REGEX.test(newUsername)) {
-      setUsernameFieldError('Käyttäjätunnuksen pitää olla 3-30 merkkiä pitkä ja sisältää vain kirjaimia, numeroita, alaviivan tai väliviivan.');
+      setUsernameFieldError('Käyttäjätunnuksen pitää olla 3-30 merkkiä pitkä ja sisältää vain kirjaimia (myös ä, ö, å), numeroita, alaviivan tai väliviivan.');
       return;
     }
 
@@ -187,6 +187,7 @@ export default function ProfileSettings({
             value={newUsername}
             onChange={e => setNewUsername(e.target.value)}
             disabled={pendingUsername}
+            autoComplete="username"
             required
           />
           <PasswordInput
@@ -194,6 +195,7 @@ export default function ProfileSettings({
             value={usernameConfirmPassword}
             onChange={e => setUsernameConfirmPassword(e.target.value)}
             disabled={pendingUsername}
+            autoComplete="current-password"
             required
           />
           {usernameFieldError && <p className="profile-field-error">{usernameFieldError}</p>}
@@ -221,11 +223,19 @@ export default function ProfileSettings({
       {activeTab === 'password' && (
         <form className="profile-form" onSubmit={handlePasswordSubmit}>
           <h2>Vaihda salasana</h2>
+          <input
+            type="text"
+            value={currentUsername}
+            autoComplete="username"
+            readOnly
+            hidden
+          />
           <PasswordInput
             placeholder="Nykyinen salasana"
             value={currentPasswordForPw}
             onChange={e => setCurrentPasswordForPw(e.target.value)}
             disabled={pendingPassword}
+            autoComplete="current-password"
             required
           />
           <PasswordInput
@@ -233,6 +243,7 @@ export default function ProfileSettings({
             value={newPassword}
             onChange={e => setNewPassword(e.target.value)}
             disabled={pendingPassword}
+            autoComplete="new-password"
             required
           />
           <PasswordInput
@@ -240,6 +251,7 @@ export default function ProfileSettings({
             value={newPasswordAgain}
             onChange={e => setNewPasswordAgain(e.target.value)}
             disabled={pendingPassword}
+            autoComplete="new-password"
             required
           />
           {passwordFieldError && <p className="profile-field-error">{passwordFieldError}</p>}
@@ -270,11 +282,19 @@ export default function ProfileSettings({
           <p className="profile-danger-text">
             Tilin poisto poistaa myös kaikki pelitietosi pysyvästi. Toimintoa ei voi perua.
           </p>
+          <input
+            type="text"
+            value={currentUsername}
+            autoComplete="username"
+            readOnly
+            hidden
+          />
           <PasswordInput
             placeholder="Nykyinen salasana"
             value={deletePassword}
             onChange={e => setDeletePassword(e.target.value)}
             disabled={pendingDelete}
+            autoComplete="current-password"
             required
           />
           {deleteFieldError && <p className="profile-field-error">{deleteFieldError}</p>}
