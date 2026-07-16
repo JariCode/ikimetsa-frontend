@@ -363,3 +363,24 @@
     to   { transform: translateY(-4rem); }
   }
 }
+
+/* Responsiivinen muotoilu pienemmille näytöille, jotka ovat vaakasuunnassa
+   (esim. puhelin vaakatasossa) ja korkeus on alle 480px. */
+@media (max-height: 480px) and (orientation: landscape) {
+  .weapon-visual {
+    transform: scale(0.42);
+    transform-origin: center top;
+    margin: -30px auto -116px;
+  }
+
+  .weapon-screen h2,
+  .weapon-title,
+  .weapon-heading {
+    margin: 0 0 4px 0;
+  }
+
+  .weapon-scroll-window {
+    height: 5rem;
+    margin: 4px auto 6px;
+  }
+}

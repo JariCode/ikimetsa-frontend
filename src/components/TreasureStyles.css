@@ -168,3 +168,29 @@
     to   { transform: translateY(-10.5rem); }
   }
 }
+
+/* Responsiivinen muotoilu pienemmille näytöille, jotka ovat vaakasuunnassa
+   (esim. puhelin vaakatasossa) ja korkeus on alle 480px. */
+@media (max-height: 480px) and (orientation: landscape) {
+
+  .treasure-visual {
+    transform: scale(0.42);
+    transform-origin: center top;
+    margin: -30px auto -116px;
+  }
+
+  .treasure-screen h2,
+  .treasure-title,
+  .treasure-heading {
+    margin: 0 0 4px 0;
+  }
+
+  .treasure-scroll-window {
+    height: 5rem;
+    margin: 4px auto 6px;
+  }
+
+  .treasure-screen .treasure-scroll-content {
+    animation-name: treasureScrollMobile;
+  }
+}

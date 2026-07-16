@@ -51,10 +51,12 @@ export default function GraveScreen({ activeSession, onContinue }) {
       <h1 className="game-title grave-title">IKIMETSÄ</h1>
       <h2 className="grave-subtitle intro-welcome-back">Olet kaatunut! Yritä uudelleen.</h2>
 
-      <div className="grave-visual" aria-hidden="true">
+      <div className="grave-visual">
         <div className="grave-mist"></div>
         <div className="grave-mound"></div>
-        <div className="gravestone"></div>
+        <div className="gravestone">
+          <span className="gravestone-name">{activeSession?.characterType}</span>
+        </div>
       </div>
 
       <div className="intro-scroll-window grave-scroll-window">

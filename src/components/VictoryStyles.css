@@ -455,3 +455,99 @@
     height: 14px;
   }
 }
+
+/* --- PUHELIN LANDSCAPE (max-height 480px, vaakasuunta) - rullausikkuna
+   matalaksi, teksti mobiilikokoiseksi, perhoset/linnut pienemmiksi. --- */
+@media (max-height: 480px) and (orientation: landscape) {
+  .victory-scroll-window {
+    width: 82vw;
+    height: 62vh;
+  }
+
+  .victory-scroll-content {
+    padding: 14px 0;
+  }
+
+  .victory-title {
+    font-size: 1.4rem;
+    margin-bottom: 18px;
+    letter-spacing: 1px;
+  }
+
+  .victory-text {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    margin-bottom: 12px;
+  }
+
+  .victory-music-credits {
+    margin-top: 16px;
+    margin-bottom: 16px;
+    padding: 12px 0;
+  }
+
+  .victory-music-credits-title {
+    font-size: 0.72rem;
+    margin: 0 0 12px;
+  }
+
+  .victory-music-credit {
+    margin-bottom: 12px;
+  }
+
+  .victory-credits {
+    margin: 16px auto 8px;
+    padding: 12px 10px;
+  }
+
+  .victory-credits-title {
+    font-size: 1.3rem;
+    letter-spacing: 3px;
+    margin: 0 0 12px;
+  }
+
+  .victory-credits-name {
+    font-size: 0.95rem;
+  }
+
+  .victory-credits-role,
+  .victory-credits-published {
+    font-size: 0.72rem;
+    margin: 10px 0 3px;
+  }
+
+  .victory-thanks {
+    margin-top: 20px;
+  }
+
+  .victory-credits-link {
+    font-size: 0.85rem;
+    margin-top: 14px;
+  }
+
+  .victory-exit-btn {
+    padding: 7px 16px;
+    font-size: 0.8rem;
+  }
+
+  .victory-main-container {
+    gap: 10px;
+  }
+
+  .bright-sun {
+    width: 120px;
+    height: 120px;
+    top: -25px;
+    right: -25px;
+  }
+
+  .victory-butterfly {
+    width: 16px;
+    height: 12px;
+  }
+
+  .victory-bird {
+    width: 24px;
+    height: 9px;
+  }
+}

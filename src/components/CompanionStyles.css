@@ -118,24 +118,38 @@
   to   { transform: translateY(-6rem); }
 }
 
-/* 📱 Pienemmillä näytöillä pienennetään hahmon kokoa ja scrollausikkunan korkeutta. */
-@media (max-width: 600px) {
-  .companion-visual {
-    width: 150px;
-    height: 130px;
+/* --- PUHELIN (max 600px) --- */
+@media (max-width: 600px) { 
+    .companion-visual {
+    transform: scale(0.32);
+    transform-origin: center top;
+    margin: -5px auto -158px;
   }
+
+  @keyframes companionScroll {
+  from { transform: translateY(7.8rem); }
+  to   { transform: translateY(-7rem); }
+}
+
+}
+
+/* Responsiivinen muotoilu pienemmille näytöille, jotka ovat vaakasuunnassa
+   (esim. puhelin vaakatasossa) ja korkeus on alle 480px. */
+@media (max-height: 480px) and (orientation: landscape) {
+  .companion-visual {
+    transform: scale(0.32);
+    transform-origin: center top;
+    margin: -10px auto -148px;
+  }
+
+  .companion-screen h2,
+  .companion-title,
+  .companion-heading {
+    margin: 0 0 4px 0;
+  }
+
   .companion-scroll-window {
     height: 5rem;
-  }
-
-  /* Mobili-versio scrollaus-animaatiosta. */
-  .companion-screen .companion-scroll-content {
-    animation-name: companionScrollMobile;
-  }
-
-  /* from-arvo täsmää mobiili-ikkunan korkeuden (5rem) kanssa. */
-  @keyframes companionScrollMobile {
-    from { transform: translateY(5rem); }
-    to   { transform: translateY(-10rem); }
+    margin: 4px auto 6px;
   }
 }

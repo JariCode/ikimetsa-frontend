@@ -64,6 +64,8 @@ export default function CharacterSelection({ characterClasses, selectCharacter }
             <ul className="char-stats">
               <li><strong>Elämä:</strong> {char.baseHp} HP</li>
               <li><strong>Aloitusase:</strong> {char.startingWeapon?.name} ({char.startingWeapon?.maxDurability}/{char.startingWeapon?.maxDurability})</li>
+              <li><strong>Nopeus:</strong> {parseInt(char.initiativeBonus) >= 0 ? '+' : ''}{char.initiativeBonus}</li>
+              <li><strong>Väistö:</strong> {char.baseDefense}</li>
             </ul>
           </div>
         ))}

@@ -525,3 +525,116 @@
   .admin-characters .admin-table td:nth-child(6) { width: 32%; }
 
 }
+
+/* --- PUHELIN LANDSCAPE (max-height 480px, vaakasuunta) - leveyttä on
+   riittävästi, joten taulukot pysyvät desktop-leveyksissä. Vain pystytila
+   tiivistetään: fonttikoot mobiilista, mutta paddingit ja korkeudet
+   pienemmiksi jotta sisältö mahtuu ~430px korkeuteen. --- */
+@media (max-height: 480px) and (orientation: landscape) {
+  .admin-panel {
+    max-width: 94vw;
+    padding: 8px 12px;
+    margin-top: 32px;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    box-sizing: border-box;
+  }
+
+  .admin-title {
+    font-size: 1.1rem;
+    margin: 0 0 6px;
+  }
+
+  .admin-tabs {
+    gap: 5px;
+    margin-bottom: 8px;
+    padding-bottom: 5px;
+  }
+
+  .admin-tab {
+    padding: 5px 12px;
+    font-size: 0.78rem;
+  }
+
+  /* Taulukoille mahdollisimman paljon tilaa matalalla ruudulla */
+  .admin-log-scroll,
+  .admin-users > .admin-table,
+  .admin-monsters > .admin-table,
+  .admin-characters > .admin-table {
+    max-height: 46vh;
+  }
+
+  .admin-table {
+    font-size: 0.72rem;
+  }
+
+  .admin-table th {
+    padding: 4px 5px;
+    font-size: 0.64rem;
+    letter-spacing: 0.4px;
+  }
+
+  .admin-table td {
+    padding: 4px 5px;
+  }
+
+  .admin-log-time {
+    font-size: 0.68rem;
+    line-height: 1.25;
+  }
+
+  .admin-log-details {
+    font-size: 0.72rem;
+  }
+
+  .admin-role-badge {
+    padding: 1px 5px;
+    font-size: 0.62rem;
+  }
+
+  .admin-self-tag {
+    font-size: 0.66rem;
+  }
+
+  /* Napit riviin (leveyttä on), tiiviisti */
+  .admin-actions {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .admin-action-btn {
+    padding: 4px 7px;
+    font-size: 0.65rem;
+    white-space: nowrap;
+  }
+
+  .admin-log-search {
+    padding: 5px 9px;
+    font-size: 0.78rem;
+    margin-bottom: 6px;
+  }
+
+  /* Hirviölomake: neljä saraketta koska leveyttä on */
+  .admin-monster-form {
+    padding: 8px 10px;
+  }
+
+  .admin-monster-form-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+  }
+
+  .admin-monster-form-grid input {
+    padding: 5px 8px;
+    font-size: 0.78rem;
+  }
+
+  .admin-monster-form-buttons button {
+    min-width: auto;
+    padding: 5px 12px;
+    font-size: 0.75rem;
+  }
+
+}

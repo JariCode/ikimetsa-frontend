@@ -891,3 +891,27 @@
     50%      { top: 20px; }
   }
 }
+
+/* --- PUHELIN LANDSCAPE (max-height 480px, vaakasuunta) - fonttikoot samat
+   kuin mobiilissa (600px), mutta kortit ja tarinaikkunat vielä tiiviimpiä,
+   koska pystytilaa on vain ~430px. Navi pysyy oikeassa yläkulmassa. --- */
+@media (max-height: 480px) and (orientation: landscape) {
+    .cave-web {
+    width: 130px;
+    height: 130px;
+  }
+
+  .cave-web-spider-icon {
+    width: 19px;
+    height: 19px;
+  }
+
+  .cave-web-spider::before {
+    height: 20px;
+  }
+
+  @keyframes caveSpiderDrop {
+    0%, 100% { top: 2px; }
+    50%      { top: 20px; }
+  }
+}
