@@ -526,6 +526,28 @@
 
 }
 
+/* --- TABLETTI pystysuunta(min-width 601px, max-width 1024px)  --- */
+@media (min-width: 601px) and (max-width: 1024px) and (orientation: portrait) {
+  .admin-panel {
+    max-width: 94vw;
+    padding: 14px 20px;
+    margin-top: 60px;
+  }
+
+  .admin-table {
+    font-size: 0.85rem;
+  }
+
+  .admin-table th,
+  .admin-table td {
+    padding: 6px 8px;
+  }
+
+  .admin-monster-form-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 /*Tabletti LANDSCAPE (min-height 481px, max-height 850px, vaakasuunta) - leveyttä on
    riittävästi, joten taulukot pysyvät desktop-leveyksissä. Pystytila
    tiivistetään: fonttikoot mobiilista, mutta paddingit ja korkeudet

@@ -892,6 +892,18 @@
   }
 }
 
+@media (min-width: 601px) and (max-width: 1024px) and (orientation: portrait) {
+  .cave-web.cw1 {
+    top: -4%;
+    left: -4%;
+  }
+
+  .cave-web.cw2 {
+    top: -4%;
+    right: -4%;
+  }
+}
+
 /* --- TABLETTI LANDSCAPE (481-850px korkeus, vaakasuunta) --- */
 @media (min-height: 481px) and (max-height: 850px) and (orientation: landscape) {
   .cave-web {

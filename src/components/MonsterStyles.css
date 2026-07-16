@@ -771,6 +771,17 @@
 
 }
 
+/* Tablet-tilassa (601px - 1024px) ja pystyasennossa, hirviön paljastuskortti skaalautuu hieman pienemmäksi */
+@media (min-width: 601px) and (max-width: 1024px) and (orientation: portrait) {
+  .monster-reveal-card {
+    width: 80%;
+    max-width: 80vw;
+    height: auto;
+    aspect-ratio: 8 / 9;
+  }
+}
+
+/*Puhelin vaakatasossa (480px leveys) hirviön paljastuskortti skaalautuu pienemmäksi, jotta se ei peitä liikaa ruutua*/
 @media (max-height: 480px) and (orientation: landscape) {
   /*Jumpin scary pienemmäksi vaaka-asennossa, jotta se ei peitä liikaa ruutua*/
   .monster-reveal-card {
