@@ -1,0 +1,40 @@
+# --- Hakemistolistauksen esto ---
+# Estää "Index of /ikimetsa/assets/" -listauksen, jossa tiedostot näkyisivät
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase jaricode.fi/ikimetsa
+
+  # Jos pyydetty tiedosto tai kansio on olemassa, tarjoillaan se sellaisenaan
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Muuten ohjataan index.html:ään (React hoitaa näkymät)
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+# --- Turvaotsakkeet ---
+<IfModule mod_headers.c>
+  # Pakottaa selaimen käyttämään HTTPS:ää vuoden ajan (myös alidomainit)
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+
+  # Estää sivun upottamisen iframeen (clickjacking-suoja)
+  Header always set X-Frame-Options "SAMEORIGIN"
+
+  # Estää selainta arvaamasta tiedostotyyppiä (MIME-sniffing -suoja)
+  Header always set X-Content-Type-Options "nosniff"
+
+  # Ei vuoda täyttä osoitetta ulkopuolisille sivustoille
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+  # Rajoittaa selaimen ominaisuuksia joita sovellus ei tarvitse
+  Header always set Permissions-Policy "geolocation=(), camera=(), microphone=()"
+
+  # Content Security Policy: sallitaan vain oma domain ja backend.
+  # connect-src sallii API-kutsut Renderiin. media-src 'self' sallii pelin
+  # musiikin ja ääniefektit (paikallisia mp3-tiedostoja, ei data:-URLeja).
+  # style-src sallii inline-tyylit (Vite-build tuottaa niitä).
+  Header always set Content-Security-Policy "default-src 'self'; connect-src 'self' https://ikimetsa-backend.onrender.com; img-src 'self' data:; media-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'"
+</IfModule>
