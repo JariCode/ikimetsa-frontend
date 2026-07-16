@@ -169,6 +169,20 @@
   }
 }
 
+/* --- TABLETTI LANDSCAPE (481-850px korkeus, vaakasuunta) --- */
+@media (min-height: 481px) and (max-height: 850px) and (orientation: landscape) {
+  .treasure-visual {
+    transform: scale(0.72);
+    transform-origin: center top;
+    margin: -16px auto -56px;
+  }
+
+  .treasure-scroll-window {
+    height: 9rem;
+    margin: 10px auto 14px;
+  }
+}
+
 /* Responsiivinen muotoilu pienemmille näytöille, jotka ovat vaakasuunnassa
    (esim. puhelin vaakatasossa) ja korkeus on alle 480px. */
 @media (max-height: 480px) and (orientation: landscape) {

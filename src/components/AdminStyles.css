@@ -526,6 +526,31 @@
 
 }
 
+/*Tabletti LANDSCAPE (min-height 481px, max-height 850px, vaakasuunta) - leveyttä on
+   riittävästi, joten taulukot pysyvät desktop-leveyksissä. Pystytila
+   tiivistetään: fonttikoot mobiilista, mutta paddingit ja korkeudet
+   pienemmiksi jotta sisältö mahtuu ~700px korkeuteen. --- */
+@media (min-height: 481px) and (max-height: 850px) and (orientation: landscape) {
+  .admin-panel {
+    max-width: 92vw;
+    padding: 14px 20px;
+    margin-top: 56px;
+    max-height: calc(100vh - 70px);
+    overflow-y: auto;
+  }
+
+  .admin-log-scroll,
+  .admin-users > .admin-table,
+  .admin-monsters > .admin-table,
+  .admin-characters > .admin-table {
+    max-height: 50vh;
+  }
+
+  .admin-monster-form-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
 /* --- PUHELIN LANDSCAPE (max-height 480px, vaakasuunta) - leveyttä on
    riittävästi, joten taulukot pysyvät desktop-leveyksissä. Vain pystytila
    tiivistetään: fonttikoot mobiilista, mutta paddingit ja korkeudet
