@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './AdminStyles.css';
 import adminMusic from '../assets/audio/music/everything_is_dead-horror-horror-558813.mp3';
+import { apiFetch } from '../utils/api';
 
 export default function AdminPanel({ onError }) {
   const [activeTab, setActiveTab] = useState(sessionStorage.getItem('ikimetsa_admin_tab') || 'users');
@@ -64,7 +65,7 @@ export default function AdminPanel({ onError }) {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${apiUrl}/api/auth/admin/users`, { credentials: 'include' });
+      const res = await apiFetch(`${apiUrl}/api/auth/admin/users`);
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Käyttäjien haku epäonnistui.');
       setUsers(data.users || []);
@@ -79,7 +80,7 @@ export default function AdminPanel({ onError }) {
   const fetchLogs = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${apiUrl}/api/auth/admin/logs`, { credentials: 'include' });
+      const res = await apiFetch(`${apiUrl}/api/auth/admin/logs`);
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Lokien haku epäonnistui.');
       setLogs(data.logs || []);
@@ -93,7 +94,7 @@ export default function AdminPanel({ onError }) {
   const fetchCharacters = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${apiUrl}/api/auth/admin/characters`, { credentials: 'include' });
+      const res = await apiFetch(`${apiUrl}/api/auth/admin/characters`);
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Pelihahmojen haku epäonnistui.');
       setCharacters(data.characters || []);
@@ -107,7 +108,7 @@ export default function AdminPanel({ onError }) {
   const fetchMonsters = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${apiUrl}/api/auth/admin/monsters`, { credentials: 'include' });
+      const res = await apiFetch(`${apiUrl}/api/auth/admin/monsters`);
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Hirviöiden haku epäonnistui.');
       setMonsters(data.monsters || []);
@@ -130,7 +131,7 @@ export default function AdminPanel({ onError }) {
     const { userId, newRole } = pendingAction;
     setPendingAction(null);
     try {
-      const res = await fetch(`${apiUrl}/api/auth/admin/user/${userId}/role`, {
+      const res = await apiFetch(`${apiUrl}/api/auth/admin/user/${userId}/role`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ role: newRole }),
@@ -148,7 +149,7 @@ export default function AdminPanel({ onError }) {
     const { userId } = pendingAction;
     setPendingAction(null);
     try {
-      const res = await fetch(`${apiUrl}/api/auth/admin/user/${userId}`, {
+      const res = await apiFetch(`${apiUrl}/api/auth/admin/user/${userId}`, {
         method: 'DELETE',
         credentials: 'include'
       });
@@ -193,7 +194,7 @@ export default function AdminPanel({ onError }) {
     }
 
     try {
-      const res = await fetch(`${apiUrl}/api/auth/admin/character/${characterForm._id}`, {
+      const res = await apiFetch(`${apiUrl}/api/auth/admin/character/${characterForm._id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(characterForm),
@@ -242,7 +243,7 @@ export default function AdminPanel({ onError }) {
     }
 
     try {
-      const res = await fetch(`${apiUrl}/api/auth/admin/monster/${monsterForm._id}`, {
+      const res = await apiFetch(`${apiUrl}/api/auth/admin/monster/${monsterForm._id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(monsterForm),

@@ -14,6 +14,7 @@ import CompanionScreen from './components/CompanionScreen';
 import WeaponScreen from './components/WeaponScreen';
 import TreasureScreen from './components/TreasureScreen';
 import AdminPanel from './components/AdminPanel';
+import { apiFetch } from './utils/api';
 
 export default function App() {
   const [sessionId, setSessionId] = useState(sessionStorage.getItem('ikimetsa_session_id') || null);
@@ -45,7 +46,7 @@ export default function App() {
   const [isServerWaking, setIsServerWaking] = useState(true);
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/`, { method: 'GET' })
+    apiFetch(`${import.meta.env.VITE_API_URL}/`, { method: 'GET' })
       .catch(() => {})
       .finally(() => setIsServerWaking(false));
   }, []);
@@ -116,16 +117,7 @@ export default function App() {
   const persistLogToServer = (message) => {
     const url = `${import.meta.env.VITE_API_URL}/api/game/log-message`;
     const payload = JSON.stringify({ message });
-    try {
-      if (navigator.sendBeacon) {
-        const blob = new Blob([payload], { type: 'application/json' });
-        const sent = navigator.sendBeacon(url, blob);
-        if (sent) return;
-      }
-    } catch (e) {
-      console.error('sendBeacon epäonnistui, käytetään fetch-varmistusta:', e);
-    }
-    fetch(url, {
+    apiFetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: payload,
@@ -140,7 +132,7 @@ export default function App() {
 
   const handleLogout = async () => {
     try {
-      await fetch(`${import.meta.env.VITE_API_URL}/api/auth/logout`, {
+      await apiFetch(`${import.meta.env.VITE_API_URL}/api/auth/logout`, {
         method: 'POST',
         credentials: 'include'
       });
@@ -181,7 +173,7 @@ export default function App() {
   useEffect(() => {
     if (shouldRestoreSession && sessionId) {
       setIsHydratingSession(true);
-      fetch(`${import.meta.env.VITE_API_URL}/api/auth/me`, {
+      apiFetch(`${import.meta.env.VITE_API_URL}/api/auth/me`, {
         credentials: 'include'
       })
         .then(res => {
@@ -320,7 +312,7 @@ export default function App() {
 
   useEffect(() => {
     if (gameStarted && characterClasses.length === 0 && sessionId) {
-      fetch(`${import.meta.env.VITE_API_URL}/api/game/classes`, {
+      apiFetch(`${import.meta.env.VITE_API_URL}/api/game/classes`, {
         credentials: 'include'
       })
         .then(res => {
@@ -337,7 +329,7 @@ export default function App() {
     setError('');
     const endpoint = authMode === 'login' ? 'login' : 'register';
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/${endpoint}`, {
+      const response = await apiFetch(`${import.meta.env.VITE_API_URL}/api/auth/${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: usernameInput, password: passwordInput }),
@@ -402,7 +394,7 @@ export default function App() {
   const selectCharacter = async (className) => {
     setError('');
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/game/start-game`, {
+      const response = await apiFetch(`${import.meta.env.VITE_API_URL}/api/game/start-game`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ characterClassName: className }),
@@ -434,7 +426,7 @@ export default function App() {
   const handleFindCompanion = async () => {
     setError('');
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/game/find-companion`, {
+      const response = await apiFetch(`${import.meta.env.VITE_API_URL}/api/game/find-companion`, {
         method: 'POST',
         credentials: 'include'
       });
@@ -458,7 +450,7 @@ export default function App() {
   const handleFindWeapon = async () => {
     setError('');
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/game/find-weapon`, {
+      const response = await apiFetch(`${import.meta.env.VITE_API_URL}/api/game/find-weapon`, {
         method: 'POST',
         credentials: 'include'
       });
@@ -482,7 +474,7 @@ export default function App() {
   const handleFindTreasure = async () => {
     setError('');
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/game/find-treasure`, {
+      const response = await apiFetch(`${import.meta.env.VITE_API_URL}/api/game/find-treasure`, {
         method: 'POST',
         credentials: 'include'
       });
@@ -512,7 +504,7 @@ export default function App() {
       setMonsterHp(25);
     }
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/game/enter-combat`, {
+      const response = await apiFetch(`${import.meta.env.VITE_API_URL}/api/game/enter-combat`, {
         method: 'POST',
         credentials: 'include'
       });
@@ -548,7 +540,7 @@ export default function App() {
   const handleRepairWeapon = async (target = 'player') => {
     setError('');
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/combat/repair-weapon`, {
+      const response = await apiFetch(`${import.meta.env.VITE_API_URL}/api/combat/repair-weapon`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ target }),
@@ -571,7 +563,7 @@ export default function App() {
     campfireActionInProgressRef.current = true;
     setError('');
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/game/respawn`, {
+      const response = await apiFetch(`${import.meta.env.VITE_API_URL}/api/game/respawn`, {
         method: 'POST',
         credentials: 'include'
       });
@@ -603,7 +595,7 @@ export default function App() {
     campfireActionInProgressRef.current = true;
     setError('');
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/game/continue-journey`, {
+      const response = await apiFetch(`${import.meta.env.VITE_API_URL}/api/game/continue-journey`, {
         method: 'POST',
         credentials: 'include'
       });
@@ -635,7 +627,7 @@ export default function App() {
     setError('');
     setSuccessMessage('');
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/username`, {
+      const response = await apiFetch(`${import.meta.env.VITE_API_URL}/api/auth/username`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ newUsername, currentPassword }),
@@ -655,7 +647,7 @@ export default function App() {
     setError('');
     setSuccessMessage('');
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/password`, {
+      const response = await apiFetch(`${import.meta.env.VITE_API_URL}/api/auth/password`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ currentPassword, newPassword }),
@@ -673,7 +665,7 @@ export default function App() {
     setError('');
     setSuccessMessage('');
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/account`, {
+      const response = await apiFetch(`${import.meta.env.VITE_API_URL}/api/auth/account`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ currentPassword }),
@@ -704,7 +696,7 @@ export default function App() {
     }, 60);
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/combat/turn`, {
+      const response = await apiFetch(`${import.meta.env.VITE_API_URL}/api/combat/turn`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'hyokkaa' }),
